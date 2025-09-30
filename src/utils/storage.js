@@ -1,0 +1,98 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const STORAGE_KEYS = {
+  PLAYERS: 'crickboard_players',
+  MATCHES: 'crickboard_matches',
+};
+
+export class StorageService {
+  // Player management
+  static async getPlayers() {
+    try {
+      const playersJson = await AsyncStorage.getItem(STORAGE_KEYS.PLAYERS);
+      return playersJson ? JSON.parse(playersJson) : [];
+    } catch (error) {
+      console.error('Error getting players:', error);
+      return [];
+    }
+  }
+
+  static async savePlayers(players) {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(players));
+    } catch (error) {
+      console.error('Error saving players:', error);
+    }
+  }
+
+  static async addPlayer(player) {
+    try {
+      const players = await this.getPlayers();
+      players.push(player);
+      await this.savePlayers(players);
+    } catch (error) {
+      console.error('Error adding player:', error);
+    }
+  }
+
+  static async updatePlayer(updatedPlayer) {
+    try {
+      const players = await this.getPlayers();
+      const index = players.findIndex(p => p.id === updatedPlayer.id);
+      if (index !== -1) {
+        players[index] = updatedPlayer;
+        await this.savePlayers(players);
+      }
+    } catch (error) {
+      console.error('Error updating player:', error);
+    }
+  }
+
+  static async deletePlayer(playerId) {
+    try {
+      const players = await this.getPlayers();
+      const filteredPlayers = players.filter(p => p.id !== playerId);
+      await this.savePlayers(filteredPlayers);
+    } catch (error) {
+      console.error('Error deleting player:', error);
+    }
+  }
+
+  // Match management
+  static async getMatches() {
+    try {
+      const matchesJson = await AsyncStorage.getItem(STORAGE_KEYS.MATCHES);
+      return matchesJson ? JSON.parse(matchesJson) : [];
+    } catch (error) {
+      console.error('Error getting matches:', error);
+      return [];
+    }
+  }
+
+  static async saveMatches(matches) {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.MATCHES, JSON.stringify(matches));
+    } catch (error) {
+      console.error('Error saving matches:', error);
+    }
+  }
+
+  static async addMatch(match) {
+    try {
+      const matches = await this.getMatches();
+      matches.push(match);
+      await this.saveMatches(matches);
+    } catch (error) {
+      console.error('Error adding match:', error);
+    }
+  }
+
+  // Utility functions
+  static async clearAllData() {
+    try {
+      await AsyncStorage.multiRemove([STORAGE_KEYS.PLAYERS, STORAGE_KEYS.MATCHES]);
+    } catch (error) {
+      console.error('Error clearing data:', error);
+    }
+  }
+}
