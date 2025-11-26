@@ -12,35 +12,56 @@ import PlayersScreen from './src/screens/PlayersScreen';
 import AddPlayerScreen from './src/screens/AddPlayerScreen';
 import EditPlayerScreen from './src/screens/EditPlayerScreen';
 import PlayerDetailScreen from './src/screens/PlayerDetailScreen';
+import MatchesScreen from './src/screens/MatchesScreen';
+import RecordMatchScreen from './src/screens/RecordMatchScreen';
+import InsightsScreen from './src/screens/InsightsScreen';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const PlayersStackNav = createStackNavigator();
+const MatchesStackNav = createStackNavigator();
 
 // Stack navigator for Players section
 function PlayersStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen 
+    <PlayersStackNav.Navigator>
+      <PlayersStackNav.Screen 
         name="PlayersList" 
         component={PlayersScreen} 
         options={{ title: 'Players' }}
       />
-      <Stack.Screen 
+      <PlayersStackNav.Screen 
         name="AddPlayer" 
         component={AddPlayerScreen} 
         options={{ title: 'Add Player' }}
       />
-      <Stack.Screen 
+      <PlayersStackNav.Screen 
         name="EditPlayer" 
         component={EditPlayerScreen} 
         options={{ title: 'Edit Player' }}
       />
-      <Stack.Screen 
+      <PlayersStackNav.Screen 
         name="PlayerDetail" 
         component={PlayerDetailScreen} 
         options={{ title: 'Player Details' }}
       />
-    </Stack.Navigator>
+    </PlayersStackNav.Navigator>
+  );
+}
+
+function MatchesStack() {
+  return (
+    <MatchesStackNav.Navigator>
+      <MatchesStackNav.Screen
+        name="MatchesHome"
+        component={MatchesScreen}
+        options={{ title: 'Matches' }}
+      />
+      <MatchesStackNav.Screen
+        name="RecordMatch"
+        component={RecordMatchScreen}
+        options={{ title: 'Record Match' }}
+      />
+    </MatchesStackNav.Navigator>
   );
 }
 
@@ -102,7 +123,21 @@ function MainTabs() {
           tabBarLabel: 'Players',
         }}
       />
-      {/* Advanced features removed for 50% completion */}
+      <Tab.Screen
+        name="Matches"
+        component={MatchesStack}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Matches',
+        }}
+      />
+      <Tab.Screen
+        name="Insights"
+        component={InsightsScreen}
+        options={{
+          title: 'Insights',
+        }}
+      />
     </Tab.Navigator>
   );
 }

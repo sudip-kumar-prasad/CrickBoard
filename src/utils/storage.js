@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatsCalculator } from './calculations';
 
 const STORAGE_KEYS = {
   PLAYERS: 'crickboard_players',
@@ -84,6 +85,60 @@ export class StorageService {
       await this.saveMatches(matches);
     } catch (error) {
       console.error('Error adding match:', error);
+    }
+  }
+
+  static async recordMatch(match) {
+    try {
+      const players = await this.getPlayers();
+      const playerPerformances = new Map(
+        (match.performances || []).map(perf => [perf.playerId, perf])
+      );
+
+      const updatedPlayers = players.map(player => {
+        const performance = playerPerformances.get(player.id);
+        if (!performance) {
+          return player;
+        }
+
+        const matchStats = {
+          batting: {
+            runs: Number(performance.runs) || 0,
+            balls: Number(performance.balls) || 0,
+            fours: Number(performance.fours) || 0,
+            sixes: Number(performance.sixes) || 0,
+          },
+          bowling: {
+            wickets: Number(performance.wickets) || 0,
+            overs: Number(performance.overs) || 0,
+            runs: Number(performance.runsConceded) || 0,
+            maidens: Number(performance.maidens) || 0,
+          },
+          fielding: {
+            catches: Number(performance.catches) || 0,
+            stumpings: Number(performance.stumpings) || 0,
+            runOuts: Number(performance.runOuts) || 0,
+          },
+        };
+
+        const updatedStats = StatsCalculator.updatePlayerStats(
+          player.stats,
+          matchStats
+        );
+
+        return {
+          ...player,
+          stats: updatedStats,
+          updatedAt: new Date().toISOString(),
+        };
+      });
+
+      await this.savePlayers(updatedPlayers);
+      const matches = await this.getMatches();
+      matches.unshift(match);
+      await this.saveMatches(matches);
+    } catch (error) {
+      console.error('Error recording match:', error);
     }
   }
 

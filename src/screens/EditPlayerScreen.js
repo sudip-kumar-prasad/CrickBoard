@@ -11,7 +11,6 @@ import {
   Platform,
 } from 'react-native';
 import { StorageService } from '../utils/storage';
-// No type imports needed for JavaScript
 
 export default function EditPlayerScreen({ navigation, route }) {
   const { player } = route.params;

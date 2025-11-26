@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Alert, RefreshControl } from 'react-native';
-import { Text, Card, Button, Searchbar } from 'react-native-paper';
+import { Text, Card, Button, Searchbar, Chip, TextInput } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { StorageService } from '../utils/storage';
 // No type imports needed for JavaScript
@@ -10,6 +10,9 @@ export default function PlayersScreen({ navigation }) {
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [roleFilter, setRoleFilter] = useState('All');
+  const [teamFilter, setTeamFilter] = useState('');
+  const [sortMetric, setSortMetric] = useState('runs');
 
   // Advanced filtering removed for 50% completion
 
@@ -39,14 +42,34 @@ export default function PlayersScreen({ navigation }) {
   const filterPlayers = () => {
     let filtered = players;
 
-    // Simple search only (50% completion)
     if (searchQuery.trim()) {
-      filtered = filtered.filter(player =>
+      filtered = filtered.filter((player) =>
         player.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    setFilteredPlayers(filtered);
+    if (teamFilter.trim()) {
+      filtered = filtered.filter((player) =>
+        (player.team || '').toLowerCase().includes(teamFilter.toLowerCase())
+      );
+    }
+
+    if (roleFilter !== 'All') {
+      filtered = filtered.filter((player) => player.role === roleFilter);
+    }
+
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortMetric) {
+        case 'wickets':
+          return b.stats.wickets - a.stats.wickets;
+        case 'matches':
+          return b.stats.matches - a.stats.matches;
+        default:
+          return b.stats.runs - a.stats.runs;
+      }
+    });
+
+    setFilteredPlayers(sorted);
   };
 
   useEffect(() => {
@@ -116,11 +139,43 @@ export default function PlayersScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.searchContainer}>
         <Searchbar
-          placeholder="Search players or teams..."
+          placeholder="Search players..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           style={styles.searchInput}
         />
+        <TextInput
+          mode="outlined"
+          label="Filter by team"
+          value={teamFilter}
+          onChangeText={setTeamFilter}
+          style={styles.teamInput}
+        />
+        <View style={styles.roleFilterRow}>
+          {['All', 'Batsman', 'Bowler', 'All-rounder', 'Wicket-keeper'].map((role) => (
+            <Chip
+              key={role}
+              style={styles.roleChip}
+              selected={roleFilter === role}
+              onPress={() => setRoleFilter(role)}
+            >
+              {role}
+            </Chip>
+          ))}
+        </View>
+        <View style={styles.sortRow}>
+          <Text style={styles.sortLabel}>Sort by</Text>
+          {['runs', 'wickets', 'matches'].map((metric) => (
+            <Chip
+              key={metric}
+              selected={sortMetric === metric}
+              onPress={() => setSortMetric(metric)}
+              style={styles.sortChip}
+            >
+              {metric.charAt(0).toUpperCase() + metric.slice(1)}
+            </Chip>
+          ))}
+        </View>
       </View>
 
       <Card style={styles.header} mode="elevated">
@@ -171,30 +226,31 @@ const styles = StyleSheet.create({
   searchInput: {
     borderRadius: 12,
   },
-  roleFilter: {
+  teamInput: {
+    marginTop: 12,
+  },
+  roleFilterRow: {
     flexDirection: 'row',
-    padding: 15,
-    backgroundColor: '#1e293b',
-    borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    flexWrap: 'wrap',
+    marginTop: 12,
   },
-  roleButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  roleChip: {
     marginRight: 8,
-    borderRadius: 15,
-    backgroundColor: '#334155',
+    marginBottom: 8,
   },
-  selectedRoleButton: {
-    backgroundColor: '#3b82f6',
+  sortRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginTop: 12,
   },
-  roleButtonText: {
-    color: '#94a3b8',
-    fontSize: 12,
-    fontWeight: '500',
+  sortLabel: {
+    color: '#cbd5e1',
+    marginRight: 8,
   },
-  selectedRoleButtonText: {
-    color: '#ffffff',
+  sortChip: {
+    marginRight: 8,
+    marginBottom: 8,
   },
   header: {
     marginHorizontal: 20,

@@ -29,20 +29,35 @@ export class StatsCalculator {
   }
 
   // Update player stats after a match
-  static updatePlayerStats(currentStats, matchStats) {
+  static updatePlayerStats(currentStats = {}, matchStats) {
+    const baseStats = {
+      matches: currentStats.matches || 0,
+      runs: currentStats.runs || 0,
+      balls: currentStats.balls || 0,
+      fours: currentStats.fours || 0,
+      sixes: currentStats.sixes || 0,
+      wickets: currentStats.wickets || 0,
+      overs: currentStats.overs || 0,
+      runsConceded: currentStats.runsConceded || 0,
+      maidens: currentStats.maidens || 0,
+      catches: currentStats.catches || 0,
+      stumpings: currentStats.stumpings || 0,
+      runOuts: currentStats.runOuts || 0,
+    };
+
     return {
-      matches: currentStats.matches + 1,
-      runs: currentStats.runs + (matchStats.batting?.runs || 0),
-      balls: currentStats.balls + (matchStats.batting?.balls || 0),
-      fours: currentStats.fours + (matchStats.batting?.fours || 0),
-      sixes: currentStats.sixes + (matchStats.batting?.sixes || 0),
-      wickets: currentStats.wickets + (matchStats.bowling?.wickets || 0),
-      overs: currentStats.overs + (matchStats.bowling?.overs || 0),
-      runsConceded: currentStats.runsConceded + (matchStats.bowling?.runs || 0),
-      maidens: currentStats.maidens + (matchStats.bowling?.maidens || 0),
-      catches: currentStats.catches + (matchStats.fielding?.catches || 0),
-      stumpings: currentStats.stumpings + (matchStats.fielding?.stumpings || 0),
-      runOuts: currentStats.runOuts + (matchStats.fielding?.runOuts || 0),
+      matches: baseStats.matches + 1,
+      runs: baseStats.runs + (matchStats.batting?.runs || 0),
+      balls: baseStats.balls + (matchStats.batting?.balls || 0),
+      fours: baseStats.fours + (matchStats.batting?.fours || 0),
+      sixes: baseStats.sixes + (matchStats.batting?.sixes || 0),
+      wickets: baseStats.wickets + (matchStats.bowling?.wickets || 0),
+      overs: baseStats.overs + (matchStats.bowling?.overs || 0),
+      runsConceded: baseStats.runsConceded + (matchStats.bowling?.runs || 0),
+      maidens: baseStats.maidens + (matchStats.bowling?.maidens || 0),
+      catches: baseStats.catches + (matchStats.fielding?.catches || 0),
+      stumpings: baseStats.stumpings + (matchStats.fielding?.stumpings || 0),
+      runOuts: baseStats.runOuts + (matchStats.fielding?.runOuts || 0),
     };
   }
 
