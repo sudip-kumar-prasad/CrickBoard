@@ -1,168 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
-import { Provider as PaperProvider, MD3DarkTheme } from 'react-native-paper';
+import { StyleSheet, View, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-// Import screens (simplified to 50%)
+// Screens
 import HomeScreen from './src/screens/HomeScreen';
 import PlayersScreen from './src/screens/PlayersScreen';
+import MatchesScreen from './src/screens/MatchesScreen';
+import InsightsScreen from './src/screens/InsightsScreen';
 import AddPlayerScreen from './src/screens/AddPlayerScreen';
 import EditPlayerScreen from './src/screens/EditPlayerScreen';
 import PlayerDetailScreen from './src/screens/PlayerDetailScreen';
-import MatchesScreen from './src/screens/MatchesScreen';
 import RecordMatchScreen from './src/screens/RecordMatchScreen';
-import InsightsScreen from './src/screens/InsightsScreen';
+import LoginScreen from './src/screens/LoginScreen';
+import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
+import { AuthService } from './src/utils/auth';
 
 const Tab = createBottomTabNavigator();
-const PlayersStackNav = createStackNavigator();
-const MatchesStackNav = createStackNavigator();
-
-// Stack navigator for Players section
-function PlayersStack() {
-  return (
-    <PlayersStackNav.Navigator>
-      <PlayersStackNav.Screen 
-        name="PlayersList" 
-        component={PlayersScreen} 
-        options={{ title: 'Players' }}
-      />
-      <PlayersStackNav.Screen 
-        name="AddPlayer" 
-        component={AddPlayerScreen} 
-        options={{ title: 'Add Player' }}
-      />
-      <PlayersStackNav.Screen 
-        name="EditPlayer" 
-        component={EditPlayerScreen} 
-        options={{ title: 'Edit Player' }}
-      />
-      <PlayersStackNav.Screen 
-        name="PlayerDetail" 
-        component={PlayerDetailScreen} 
-        options={{ title: 'Player Details' }}
-      />
-    </PlayersStackNav.Navigator>
-  );
-}
-
-function MatchesStack() {
-  return (
-    <MatchesStackNav.Navigator>
-      <MatchesStackNav.Screen
-        name="MatchesHome"
-        component={MatchesScreen}
-        options={{ title: 'Matches' }}
-      />
-      <MatchesStackNav.Screen
-        name="RecordMatch"
-        component={RecordMatchScreen}
-        options={{ title: 'Record Match' }}
-      />
-    </MatchesStackNav.Navigator>
-  );
-}
-
-// Matches section removed for 50% completion
-
-// Main Tab Navigator
-function MainTabs() {
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopColor: '#e2e8f0',
-          borderTopWidth: 1,
-          height: 80,
-          paddingBottom: 20,
-          paddingTop: 10,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-          elevation: 8,
-        },
-        tabBarActiveTintColor: '#1e40af',
-        tabBarInactiveTintColor: '#94a3b8',
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-          marginTop: 5,
-        },
-        headerStyle: {
-          backgroundColor: '#1e3a8a',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 8,
-        },
-        headerTintColor: '#ffffff',
-        headerTitleStyle: {
-          fontWeight: '700',
-          fontSize: 18,
-        },
-      }}
-    >
-      <Tab.Screen 
-        name="Home" 
-        component={HomeScreen}
-        options={{ 
-          title: 'Home',
-          tabBarLabel: 'Home',
-        }}
-      />
-      <Tab.Screen 
-        name="Players" 
-        component={PlayersStack}
-        options={{ 
-          headerShown: false,
-          tabBarLabel: 'Players',
-        }}
-      />
-      <Tab.Screen
-        name="Matches"
-        component={MatchesStack}
-        options={{
-          headerShown: false,
-          tabBarLabel: 'Matches',
-        }}
-      />
-      <Tab.Screen
-        name="Insights"
-        component={InsightsScreen}
-        options={{
-          title: 'Insights',
-        }}
-      />
-    </Tab.Navigator>
-  );
-}
-
-// Drawer removed per revert
-
-export default function App() {
-  return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <NavigationContainer>
-          <MainTabs />
-        </NavigationContainer>
-        <StatusBar style="light" />
-      </View>
-    </PaperProvider>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f172a',
-  },
-});
 
 const theme = {
   ...MD3DarkTheme,
@@ -178,3 +35,143 @@ const theme = {
     onSurface: '#e2e8f0',
   },
 };
+
+const Stack = createStackNavigator();
+
+function PlayersStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="PlayersList" component={PlayersScreen} options={{ title: 'Players' }} />
+      <Stack.Screen name="AddPlayer" component={AddPlayerScreen} options={{ title: 'Add Player' }} />
+      <Stack.Screen name="EditPlayer" component={EditPlayerScreen} options={{ title: 'Edit Player' }} />
+      <Stack.Screen name="PlayerDetail" component={PlayerDetailScreen} options={{ title: 'Player Details' }} />
+    </Stack.Navigator>
+  );
+}
+
+function MatchesStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="MatchesList" component={MatchesScreen} options={{ title: 'Matches' }} />
+      <Stack.Screen name="RecordMatch" component={RecordMatchScreen} options={{ title: 'Record Match' }} />
+    </Stack.Navigator>
+  );
+}
+
+function MainTabs({ onLogout }) {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          const map = {
+            Home: 'home-outline',
+            Matches: 'list-outline',
+            Insights: 'stats-chart-outline',
+            Players: 'people-outline',
+          };
+          const name = map[route.name] || 'ellipse-outline';
+          return <Ionicons name={name} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen 
+        name="Home" 
+        options={{ 
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  'Logout',
+                  'Are you sure you want to logout?',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Logout', style: 'destructive', onPress: onLogout },
+                  ]
+                );
+              }}
+              style={{ marginRight: 16, padding: 8 }}
+            >
+              <Ionicons name="log-out-outline" size={24} color="#ffffff" />
+            </TouchableOpacity>
+          ),
+        }}
+      >
+        {(props) => <HomeScreen {...props} />}
+      </Tab.Screen>
+      <Tab.Screen name="Matches" component={MatchesStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Insights" component={InsightsScreen} />
+      <Tab.Screen name="Players" component={PlayersStack} options={{ headerShown: false }} />
+    </Tab.Navigator>
+  );
+}
+
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(null); // null = checking, true/false = determined
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const loggedIn = await AuthService.isLoggedIn();
+      setIsLoggedIn(loggedIn);
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      setIsLoggedIn(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <PaperProvider theme={theme}>
+        <View style={[styles.container, styles.loadingContainer]}>
+          <ActivityIndicator size="large" color="#3b82f6" />
+        </View>
+        <StatusBar style="light" />
+      </PaperProvider>
+    );
+  }
+
+  return (
+    <PaperProvider theme={theme}>
+      <View style={styles.container}>
+        <NavigationContainer>
+          {isLoggedIn ? (
+            <MainTabs onLogout={handleLogout} />
+          ) : (
+            <LoginScreen onLoginSuccess={handleLoginSuccess} />
+          )}
+        </NavigationContainer>
+        <StatusBar style="light" />
+      </View>
+    </PaperProvider>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0f172a',
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

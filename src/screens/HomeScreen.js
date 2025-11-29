@@ -1,31 +1,46 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, Button, Chip } from 'react-native-paper';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { Text, Card, Button, Chip, IconButton, Divider } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { StorageService } from '../utils/storage';
 import { StatsCalculator } from '../utils/calculations';
+import { AuthService } from '../utils/auth';
 
 export default function HomeScreen({ navigation }) {
   const [players, setPlayers] = useState([]);
-  const [totalMatches, setTotalMatches] = useState(0);
-  const [topBatsman, setTopBatsman] = useState(null);
-  const [topBowler, setTopBowler] = useState(null);
-  const [recentMatch, setRecentMatch] = useState(null);
+  const [matches, setMatches] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [summary, setSummary] = useState({
     totalRuns: 0,
     totalWickets: 0,
+    totalCatches: 0,
     strikeRate: 0,
     economy: 0,
     winRate: 0,
     avgRuns: 0,
     matchesPlayed: 0,
+    totalPlayers: 0,
   });
+
+  useEffect(() => {
+    loadUser();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       loadData();
     }, [])
   );
+
+  const loadUser = async () => {
+    try {
+      const user = await AuthService.getCurrentUser();
+      setCurrentUser(user);
+    } catch (error) {
+      console.error('Error loading user:', error);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -34,45 +49,63 @@ export default function HomeScreen({ navigation }) {
         StorageService.getMatches(),
       ]);
 
-      setPlayers(playersData);
-      const total = playersData.reduce((sum, player) => sum + player.stats.matches, 0);
-      setTotalMatches(Math.floor(total / playersData.length) || 0);
-      if (playersData.length > 0) {
-        const topBatsmanData = playersData.reduce((prev, current) =>
-          prev.stats.runs > current.stats.runs ? prev : current
-        );
-        setTopBatsman(topBatsmanData);
-        const topBowlerData = playersData.reduce((prev, current) =>
-          prev.stats.wickets > current.stats.wickets ? prev : current
-        );
-        setTopBowler(topBowlerData);
-        const totalRuns = playersData.reduce((sum, player) => sum + player.stats.runs, 0);
-        const totalWickets = playersData.reduce((sum, player) => sum + player.stats.wickets, 0);
-        const totalBalls = playersData.reduce((sum, player) => sum + player.stats.balls, 0);
-        const totalOvers = playersData.reduce((sum, player) => sum + player.stats.overs, 0);
-        const totalRunsConceded = playersData.reduce((sum, player) => sum + player.stats.runsConceded, 0);
+      const validPlayers = playersData.filter(p => p && p.stats);
+      setPlayers(validPlayers);
+      setMatches(matchesData);
+
+      if (validPlayers.length > 0) {
+        const totalRuns = validPlayers.reduce((sum, player) => sum + (player.stats?.runs || 0), 0);
+        const totalWickets = validPlayers.reduce((sum, player) => sum + (player.stats?.wickets || 0), 0);
+        const totalCatches = validPlayers.reduce((sum, player) => sum + (player.stats?.catches || 0), 0);
+        const totalBalls = validPlayers.reduce((sum, player) => sum + (player.stats?.balls || 0), 0);
+        const totalOvers = validPlayers.reduce((sum, player) => sum + (player.stats?.overs || 0), 0);
+        const totalRunsConceded = validPlayers.reduce((sum, player) => sum + (player.stats?.runsConceded || 0), 0);
 
         const matchesPlayed = matchesData.length;
         const wins = matchesData.filter((match) =>
           (match.result || '').toLowerCase().includes('win')
         ).length;
 
+        const avgMatches = validPlayers.length > 0
+          ? Math.round(validPlayers.reduce((sum, player) => sum + (player.stats?.matches || 0), 0) / validPlayers.length)
+          : 0;
+
         setSummary({
           totalRuns,
           totalWickets,
+          totalCatches,
           strikeRate: StatsCalculator.calculateStrikeRate(totalRuns, totalBalls),
           economy: StatsCalculator.calculateEconomyRate(totalRunsConceded, totalOvers),
           winRate: matchesPlayed ? Math.round((wins / matchesPlayed) * 100) : 0,
-          avgRuns: matchesPlayed ? Math.round(totalRuns / (matchesPlayed || 1)) : 0,
+          avgRuns: matchesPlayed ? Math.round(totalRuns / matchesPlayed) : 0,
           matchesPlayed,
+          totalPlayers: validPlayers.length,
+          avgMatches,
+        });
+      } else {
+        setSummary({
+          totalRuns: 0,
+          totalWickets: 0,
+          totalCatches: 0,
+          strikeRate: 0,
+          economy: 0,
+          winRate: 0,
+          avgRuns: 0,
+          matchesPlayed: 0,
+          totalPlayers: 0,
+          avgMatches: 0,
         });
       }
-
-      setRecentMatch(matchesData[0] || null);
     } catch (error) {
       console.error('Error loading data:', error);
     }
   };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  }, []);
 
   const handleQuickAddPlayer = useCallback(() => {
     navigation.navigate('Players', { screen: 'AddPlayer' });
@@ -90,243 +123,454 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('Insights');
   }, [navigation]);
 
+  const topPerformers = useMemo(() => {
+    if (players.length === 0) return null;
+
+    const validPlayers = players.filter(p => p && p.stats);
+    const topBatsman = [...validPlayers].sort(
+      (a, b) => (b.stats?.runs || 0) - (a.stats?.runs || 0)
+    )[0];
+    const topBowler = [...validPlayers].sort(
+      (a, b) => (b.stats?.wickets || 0) - (a.stats?.wickets || 0)
+    )[0];
+    const topFielder = [...validPlayers].sort(
+      (a, b) => (b.stats?.catches || 0) - (a.stats?.catches || 0)
+    )[0];
+
+    return { topBatsman, topBowler, topFielder };
+  }, [players]);
+
+  const recentMatches = useMemo(() => {
+    return matches
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 3);
+  }, [matches]);
+
+  const recentPlayers = useMemo(() => {
+    return players
+      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+      .slice(0, 3);
+  }, [players]);
+
   const heroCTA = useMemo(
     () => [
       {
         label: 'Record Match',
         icon: 'cricket',
         action: handleRecordMatch,
+        color: '#3b82f6',
       },
       {
         label: 'Add Player',
         icon: 'account-plus',
         action: handleQuickAddPlayer,
+        color: '#10b981',
       },
       {
-        label: 'Insights',
-        icon: 'chart-box',
+        label: 'View Insights',
+        icon: 'chart-line',
         action: handleViewInsights,
+        color: '#f59e0b',
       },
     ],
     [handleRecordMatch, handleQuickAddPlayer, handleViewInsights]
   );
 
-  const quickLinks = [
+  const quickStats = useMemo(() => [
     {
-      title: 'Manage Squad',
-      description: 'Edit roles, update teams & review stats.',
-      actionLabel: 'Open Players',
+      label: 'Total Players',
+      value: summary.totalPlayers,
+      icon: '👥',
+      color: '#3b82f6',
       onPress: handleViewPlayers,
     },
     {
-      title: 'Analytics Hub',
-      description: 'Leaderboards, trends & performance charts.',
-      actionLabel: 'Open Insights',
+      label: 'Matches Played',
+      value: summary.matchesPlayed,
+      icon: '🏏',
+      color: '#10b981',
+      onPress: () => navigation.navigate('Matches'),
+    },
+    {
+      label: 'Total Runs',
+      value: summary.totalRuns,
+      icon: '⚡',
+      color: '#f59e0b',
       onPress: handleViewInsights,
     },
-  ];
+    {
+      label: 'Win Rate',
+      value: `${summary.winRate}%`,
+      icon: '🏆',
+      color: '#ef4444',
+      onPress: handleViewInsights,
+    },
+  ], [summary, handleViewPlayers, handleViewInsights, navigation]);
+
+  const renderStatCard = (stat, index) => (
+    <TouchableOpacity
+      key={index}
+      style={[styles.statCard, { borderLeftColor: stat.color }]}
+      onPress={stat.onPress}
+      activeOpacity={0.7}
+    >
+      <View style={styles.statCardContent}>
+        <Text style={styles.statIcon}>{stat.icon}</Text>
+        <Text style={styles.statValue}>{stat.value}</Text>
+        <Text style={styles.statLabel}>{stat.label}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderTopPerformer = (performer, type, icon, color) => {
+    if (!performer) return null;
+
+    const getValue = () => {
+      switch (type) {
+        case 'batsman':
+          return `${performer.stats?.runs || 0} runs`;
+        case 'bowler':
+          return `${performer.stats?.wickets || 0} wickets`;
+        case 'fielder':
+          return `${performer.stats?.catches || 0} catches`;
+        default:
+          return '';
+      }
+    };
+
+    return (
+      <TouchableOpacity
+        style={[styles.performerCard, { borderLeftColor: color }]}
+        onPress={() =>
+          navigation.navigate('Players', {
+            screen: 'PlayerDetail',
+            params: { player: performer },
+          })
+        }
+        activeOpacity={0.7}
+      >
+        <View style={styles.performerContent}>
+          <Text style={styles.performerIcon}>{icon}</Text>
+          <View style={styles.performerInfo}>
+            <Text style={styles.performerName} numberOfLines={1}>
+              {performer.name || 'Unknown'}
+            </Text>
+            <Text style={styles.performerRole}>{performer.role}</Text>
+          </View>
+          <View style={styles.performerValue}>
+            <Text style={[styles.performerStat, { color }]}>{getValue()}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderMiniLeaderboard = () => {
     if (players.length === 0) return null;
 
     const topRuns = [...players]
-      .sort((a, b) => b.stats.runs - a.stats.runs)
-      .slice(0, 3);
+      .filter(p => p && p.stats)
+      .sort((a, b) => (b.stats?.runs || 0) - (a.stats?.runs || 0))
+      .slice(0, 5);
     const topWickets = [...players]
-      .sort((a, b) => b.stats.wickets - a.stats.wickets)
-      .slice(0, 3);
+      .filter(p => p && p.stats)
+      .sort((a, b) => (b.stats?.wickets || 0) - (a.stats?.wickets || 0))
+      .slice(0, 5);
+
+    if (topRuns.length === 0 && topWickets.length === 0) return null;
 
     return (
-      <View style={styles.leaderboardSection}>
-        <Text variant="titleLarge" style={styles.sectionTitle}>Leaderboard Highlights</Text>
-        <View style={styles.leaderboardRow}>
-          <Card style={[styles.leaderCard, { marginRight: 12 }]} mode="elevated">
-            <Card.Title title="Top Scorers" />
-            <Card.Content>
-              {topRuns.map((player) => (
-                <View key={player.id} style={styles.leaderRow}>
-                  <Text style={styles.leaderName}>{player.name}</Text>
-                  <Text style={styles.leaderValue}>{player.stats.runs} runs</Text>
-                </View>
+      <Card style={styles.leaderboardCard} mode="elevated">
+        <Card.Title
+          title="🏅 Top Performers"
+          titleStyle={styles.cardTitle}
+          right={(props) => (
+            <IconButton
+              {...props}
+              icon="chevron-right"
+              onPress={handleViewInsights}
+              iconColor="#60a5fa"
+            />
+          )}
+        />
+        <Card.Content>
+          <View style={styles.leaderboardGrid}>
+            <View style={styles.leaderboardColumn}>
+              <Text style={styles.leaderboardHeader}>Top Scorers</Text>
+              {topRuns.slice(0, 3).map((player, index) => (
+                <TouchableOpacity
+                  key={player.id}
+                  style={styles.leaderboardItem}
+                  onPress={() =>
+                    navigation.navigate('Players', {
+                      screen: 'PlayerDetail',
+                      params: { player },
+                    })
+                  }
+                >
+                  <View style={styles.leaderboardRank}>
+                    <Text style={styles.rankBadge}>
+                      {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                    </Text>
+                  </View>
+                  <View style={styles.leaderboardInfo}>
+                    <Text style={styles.leaderboardName} numberOfLines={1}>
+                      {player.name || 'Unknown'}
+                    </Text>
+                    <Text style={styles.leaderboardValue}>
+                      {player.stats?.runs || 0} runs
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               ))}
-            </Card.Content>
-          </Card>
-          <Card style={styles.leaderCard} mode="elevated">
-            <Card.Title title="Wicket Takers" />
-            <Card.Content>
-              {topWickets.map((player) => (
-                <View key={player.id} style={styles.leaderRow}>
-                  <Text style={styles.leaderName}>{player.name}</Text>
-                  <Text style={styles.leaderValue}>{player.stats.wickets} wkts</Text>
-                </View>
+            </View>
+            <View style={styles.leaderboardDivider} />
+            <View style={styles.leaderboardColumn}>
+              <Text style={styles.leaderboardHeader}>Wicket Takers</Text>
+              {topWickets.slice(0, 3).map((player, index) => (
+                <TouchableOpacity
+                  key={player.id}
+                  style={styles.leaderboardItem}
+                  onPress={() =>
+                    navigation.navigate('Players', {
+                      screen: 'PlayerDetail',
+                      params: { player },
+                    })
+                  }
+                >
+                  <View style={styles.leaderboardRank}>
+                    <Text style={styles.rankBadge}>
+                      {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                    </Text>
+                  </View>
+                  <View style={styles.leaderboardInfo}>
+                    <Text style={styles.leaderboardName} numberOfLines={1}>
+                      {player.name || 'Unknown'}
+                    </Text>
+                    <Text style={styles.leaderboardValue}>
+                      {player.stats?.wickets || 0} wkts
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               ))}
-            </Card.Content>
-          </Card>
-        </View>
-      </View>
+            </View>
+          </View>
+        </Card.Content>
+      </Card>
     );
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      {/* Enhanced Header */}
       <View style={styles.header}>
-        <Text variant="headlineLarge" style={styles.title}>CrickBoard HQ</Text>
-        <Text variant="titleMedium" style={styles.subtitle}>Your cricket control center</Text>
+        <View style={styles.headerContent}>
+          <Text variant="headlineLarge" style={styles.title}>
+            🏏 CrickBoard
+          </Text>
+          <Text variant="titleMedium" style={styles.subtitle}>
+            Your Cricket Command Center
+          </Text>
+          {currentUser && (
+            <Text style={styles.userGreeting}>
+              Welcome, {currentUser.name}! 👋
+            </Text>
+          )}
+        </View>
         <View style={styles.heroActions}>
           {heroCTA.map((cta) => (
-            <Chip
+            <TouchableOpacity
               key={cta.label}
-              icon={cta.icon}
-              style={styles.heroChip}
-              textStyle={styles.heroChipText}
+              style={[styles.heroButton, { backgroundColor: cta.color }]}
               onPress={cta.action}
+              activeOpacity={0.8}
             >
-              {cta.label}
-            </Chip>
+              <Text style={styles.heroButtonText}>{cta.label}</Text>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
 
-      <View style={styles.statsContainer}>
-        <Card style={styles.statCard} mode="elevated">
-          <Card.Content>
-            <Text variant="headlineMedium" style={styles.statNumber}>{players.length}</Text>
-            <Text variant="labelLarge" style={styles.statLabel}>Total Players</Text>
-          </Card.Content>
-        </Card>
-        <Card style={styles.statCard} mode="elevated">
-          <Card.Content>
-            <Text variant="headlineMedium" style={styles.statNumber}>{totalMatches}</Text>
-            <Text variant="labelLarge" style={styles.statLabel}>Avg Matches</Text>
-          </Card.Content>
-        </Card>
-        <Card style={styles.statCard} mode="elevated">
-          <Card.Content>
-            <Text variant="headlineMedium" style={styles.statNumber}>{summary.strikeRate || 0}</Text>
-            <Text variant="labelLarge" style={styles.statLabel}>Team Strike Rate</Text>
-          </Card.Content>
-        </Card>
-        <Card style={styles.statCard} mode="elevated">
-          <Card.Content>
-            <Text variant="headlineMedium" style={styles.statNumber}>{summary.winRate}%</Text>
-            <Text variant="labelLarge" style={styles.statLabel}>Win Rate</Text>
-          </Card.Content>
-        </Card>
+      {/* Quick Stats Grid */}
+      <View style={styles.quickStatsContainer}>
+        {quickStats.map((stat, index) => renderStatCard(stat, index))}
       </View>
 
-      <View style={styles.quickActions}>
-        <Text variant="titleLarge" style={styles.sectionTitle}>Quick Actions</Text>
-        <Button mode="contained" onPress={handleQuickAddPlayer} style={styles.actionButton}>
-          + Add Player
-        </Button>
-        <Button mode="outlined" onPress={handleViewPlayers} style={styles.actionButton}>
-          Manage Players
-        </Button>
-        <Button mode="outlined" onPress={handleRecordMatch} style={styles.actionButton}>
-          Record Match
-        </Button>
-        <Button mode="outlined" onPress={handleViewInsights} style={styles.actionButton}>
-          View Insights
-        </Button>
-      </View>
-
-      <View style={styles.kpiRow}>
-        <Card style={styles.kpiCard} mode="elevated">
+      {/* Top Performers Section */}
+      {topPerformers && (
+        <Card style={styles.sectionCard} mode="elevated">
+          <Card.Title
+            title="⭐ Star Performers"
+            titleStyle={styles.cardTitle}
+            right={(props) => (
+              <IconButton
+                {...props}
+                icon="chevron-right"
+                onPress={handleViewInsights}
+                iconColor="#60a5fa"
+              />
+            )}
+          />
           <Card.Content>
-            <Text style={styles.kpiLabel}>Matches Logged</Text>
-            <Text style={styles.kpiValue}>{summary.matchesPlayed}</Text>
-            <Text style={styles.kpiSubtext}>Across all fixtures</Text>
+            {renderTopPerformer(topPerformers.topBatsman, 'batsman', '🏏', '#3b82f6')}
+            {renderTopPerformer(topPerformers.topBowler, 'bowler', '🎯', '#10b981')}
+            {renderTopPerformer(topPerformers.topFielder, 'fielder', '✋', '#f59e0b')}
           </Card.Content>
         </Card>
-        <Card style={styles.kpiCard} mode="elevated">
-          <Card.Content>
-            <Text style={styles.kpiLabel}>Avg Runs / Match</Text>
-            <Text style={styles.kpiValue}>{summary.avgRuns}</Text>
-            <Text style={styles.kpiSubtext}>Team batting output</Text>
-          </Card.Content>
-        </Card>
-      </View>
+      )}
 
-      {recentMatch && (
-        <View style={styles.recentMatch}>
-          <Text variant="titleLarge" style={styles.sectionTitle}>Recent Match</Text>
-          <Card style={styles.recentCard} mode="elevated">
-            <Card.Content>
-              <Text style={styles.recentOpponent}>vs {recentMatch.opponent}</Text>
-              <Text style={styles.recentMeta}>
-                {new Date(recentMatch.date).toLocaleDateString()} • {recentMatch.venue}
-              </Text>
-              {recentMatch.result && (
-                <Text style={styles.recentResult}>{recentMatch.result}</Text>
-              )}
-              {recentMatch.performances?.slice(0, 2).map((performance) => (
-                <View key={performance.playerId} style={styles.recentPerformance}>
-                  <Text style={styles.recentPlayer}>{performance.playerName}</Text>
-                  <Text style={styles.recentStats}>
-                    {performance.runs || 0} runs • {performance.wickets || 0} wkts • {performance.catches || 0} catches
+      {/* Performance Metrics */}
+      <Card style={styles.sectionCard} mode="elevated">
+        <Card.Title title="📊 Performance Metrics" titleStyle={styles.cardTitle} />
+        <Card.Content>
+          <View style={styles.metricsGrid}>
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>Team Strike Rate</Text>
+              <Text style={styles.metricValue}>{summary.strikeRate.toFixed(2)}</Text>
+            </View>
+            <View style={styles.metricDivider} />
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>Team Economy</Text>
+              <Text style={styles.metricValue}>{summary.economy.toFixed(2)}</Text>
+            </View>
+            <View style={styles.metricDivider} />
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>Avg Runs/Match</Text>
+              <Text style={styles.metricValue}>{summary.avgRuns}</Text>
+            </View>
+          </View>
+        </Card.Content>
+      </Card>
+
+      {/* Recent Matches */}
+      {recentMatches.length > 0 && (
+        <Card style={styles.sectionCard} mode="elevated">
+          <Card.Title
+            title="📅 Recent Matches"
+            titleStyle={styles.cardTitle}
+            right={(props) => (
+              <IconButton
+                {...props}
+                icon="chevron-right"
+                onPress={() => navigation.navigate('Matches')}
+                iconColor="#60a5fa"
+              />
+            )}
+          />
+          <Card.Content>
+            {recentMatches.map((match, index) => (
+              <TouchableOpacity
+                key={match.id || index}
+                style={styles.matchItem}
+                onPress={() => navigation.navigate('Matches')}
+                activeOpacity={0.7}
+              >
+                <View style={styles.matchContent}>
+                  <View style={styles.matchHeader}>
+                    <Text style={styles.matchOpponent}>
+                      vs {match.opponent || 'Opponent'}
+                    </Text>
+                    {match.result && (
+                      <Chip
+                        style={[
+                          styles.matchResultChip,
+                          match.result.toLowerCase().includes('win')
+                            ? styles.winChip
+                            : styles.lossChip,
+                        ]}
+                        textStyle={styles.matchResultText}
+                      >
+                        {match.result}
+                      </Chip>
+                    )}
+                  </View>
+                  <Text style={styles.matchDetails}>
+                    {new Date(match.date).toLocaleDateString()} • {match.venue || 'Venue TBD'}
                   </Text>
                 </View>
-              ))}
-            </Card.Content>
-          </Card>
-        </View>
+                {index < recentMatches.length - 1 && <Divider style={styles.itemDivider} />}
+              </TouchableOpacity>
+            ))}
+          </Card.Content>
+        </Card>
       )}
 
+      {/* Mini Leaderboard */}
       {renderMiniLeaderboard()}
 
-      {players.length > 0 && (
-        <View style={styles.topPerformers}>
-          <Text variant="titleLarge" style={styles.sectionTitle}>Top Performers</Text>
-          {topBatsman && (
-            <Card style={styles.performerCard} mode="elevated">
-              <Card.Content>
-                <Text variant="titleMedium" style={styles.performerTitle}>🏏 Top Batsman</Text>
-                <Text variant="titleLarge" style={styles.performerName}>{topBatsman.name}</Text>
-                <Text variant="bodyMedium" style={styles.performerStats}>
-                  {topBatsman.stats.runs} runs in {topBatsman.stats.matches} matches
-                </Text>
-              </Card.Content>
-            </Card>
-          )}
-          {topBowler && (
-            <Card style={styles.performerCard} mode="elevated">
-              <Card.Content>
-                <Text variant="titleMedium" style={styles.performerTitle}>🎯 Top Bowler</Text>
-                <Text variant="titleLarge" style={styles.performerName}>{topBowler.name}</Text>
-                <Text variant="bodyMedium" style={styles.performerStats}>
-                  {topBowler.stats.wickets} wickets in {topBowler.stats.matches} matches
-                </Text>
-              </Card.Content>
-            </Card>
-          )}
-        </View>
-      )}
-
-      {players.length === 0 && (
-        <View style={styles.emptyState}>
-          <Text variant="headlineSmall" style={styles.emptyStateTitle}>Welcome to CrickBoard!</Text>
-          <Text variant="bodyMedium" style={styles.emptyStateText}>
-            Start by adding your first player to begin tracking cricket statistics.
-          </Text>
-          <Button mode="contained" onPress={handleQuickAddPlayer} style={styles.primaryButton}>
-            Add Your First Player
+      {/* Quick Actions */}
+      <Card style={styles.sectionCard} mode="elevated">
+        <Card.Title title="⚡ Quick Actions" titleStyle={styles.cardTitle} />
+        <Card.Content>
+          <Button
+            mode="contained"
+            onPress={handleQuickAddPlayer}
+            style={styles.actionButton}
+            icon="account-plus"
+          >
+            Add New Player
           </Button>
-        </View>
-      )}
+          <Button
+            mode="outlined"
+            onPress={handleRecordMatch}
+            style={styles.actionButton}
+            icon="cricket"
+          >
+            Record Match
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={handleViewPlayers}
+            style={styles.actionButton}
+            icon="account-group"
+          >
+            Manage Squad
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={handleViewInsights}
+            style={styles.actionButton}
+            icon="chart-line"
+          >
+            View Analytics
+          </Button>
+        </Card.Content>
+      </Card>
 
-      <View style={styles.quickLinkSection}>
-        {quickLinks.map((link) => (
-          <Card key={link.title} style={styles.quickLinkCard} mode="elevated">
-            <Card.Content>
-              <Text style={styles.quickLinkTitle}>{link.title}</Text>
-              <Text style={styles.quickLinkText}>{link.description}</Text>
-              <Button mode="text" onPress={link.onPress}>
-                {link.actionLabel}
+      {/* Empty State */}
+      {players.length === 0 && (
+        <Card style={styles.emptyStateCard} mode="elevated">
+          <Card.Content style={styles.emptyState}>
+            <Text variant="headlineMedium" style={styles.emptyStateTitle}>
+              🎉 Welcome to CrickBoard!
+            </Text>
+            <Text variant="bodyLarge" style={styles.emptyStateText}>
+              Start tracking your cricket team's performance. Add players and record matches to unlock powerful insights.
+            </Text>
+            <View style={styles.emptyStateActions}>
+              <Button
+                mode="contained"
+                onPress={handleQuickAddPlayer}
+                style={styles.emptyStateButton}
+                icon="account-plus"
+              >
+                Add Your First Player
               </Button>
-            </Card.Content>
-          </Card>
-        ))}
-      </View>
+              <Button
+                mode="outlined"
+                onPress={handleRecordMatch}
+                style={styles.emptyStateButton}
+                icon="cricket"
+              >
+                Record a Match
+              </Button>
+            </View>
+          </Card.Content>
+        </Card>
+      )}
     </ScrollView>
   );
 }
@@ -337,277 +581,281 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f172a',
   },
   header: {
-    padding: 30,
+    padding: 20,
+    paddingTop: 24,
+    backgroundColor: '#1e293b',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    marginBottom: 16,
+  },
+  headerContent: {
     alignItems: 'center',
-    backgroundColor: '#1e3a8a',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '800',
     color: '#ffffff',
+    fontWeight: 'bold',
     marginBottom: 8,
-    textAlign: 'center',
+    fontSize: 32,
   },
   subtitle: {
+    color: '#94a3b8',
     fontSize: 16,
-    color: '#cbd5e1',
-    textAlign: 'center',
-    opacity: 0.9,
+  },
+  userGreeting: {
+    color: '#60a5fa',
+    fontSize: 14,
+    marginTop: 8,
+    fontWeight: '500',
   },
   heroActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginTop: 16,
+    gap: 8,
   },
-  heroChip: {
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    margin: 6,
+  heroButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginHorizontal: 4,
+    marginVertical: 4,
   },
-  heroChipText: {
+  heroButtonText: {
+    color: '#ffffff',
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  quickStatsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 16,
+    gap: 12,
+  },
+  statCard: {
+    width: '48%',
+    backgroundColor: '#1e293b',
+    borderRadius: 16,
+    borderLeftWidth: 4,
+    padding: 16,
+    minHeight: 120,
+  },
+  statCardContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  statIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#94a3b8',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  sectionCard: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 16,
+    backgroundColor: '#1e293b',
+  },
+  cardTitle: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  performerCard: {
+    backgroundColor: '#0f172a',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+  },
+  performerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  performerIcon: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  performerInfo: {
+    flex: 1,
+  },
+  performerName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  performerRole: {
+    fontSize: 12,
+    color: '#94a3b8',
+  },
+  performerValue: {
+    alignItems: 'flex-end',
+  },
+  performerStat: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  metricItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  metricLabel: {
+    fontSize: 12,
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+  metricValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#60a5fa',
+  },
+  metricDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#334155',
+  },
+  matchItem: {
+    paddingVertical: 12,
+  },
+  matchContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  matchHeader: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  matchOpponent: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  matchResultChip: {
+    height: 24,
+  },
+  winChip: {
+    backgroundColor: '#10b981',
+  },
+  lossChip: {
+    backgroundColor: '#ef4444',
+  },
+  matchResultText: {
+    fontSize: 10,
     color: '#ffffff',
     fontWeight: '600',
   },
-  statsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 25,
-    justifyContent: 'space-around',
-    marginTop: -15,
-  },
-  statCard: {
-    backgroundColor: '#ffffff',
-    padding: 25,
-    borderRadius: 20,
-    alignItems: 'center',
-    minWidth: 140,
-    flexBasis: '46%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: '#f1f5f9',
-  },
-  statNumber: {
-    fontSize: 28,
-    fontWeight: '900',
-    color: '#1e40af',
-    marginBottom: 5,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: '#64748b',
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  recentMatch: {
-    paddingHorizontal: 25,
-    marginBottom: 10,
-  },
-  recentCard: {
-    borderRadius: 16,
-  },
-  recentOpponent: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1e293b',
-  },
-  recentMeta: {
-    color: '#64748b',
-    marginBottom: 6,
-  },
-  recentResult: {
-    color: '#0f172a',
-    fontWeight: '700',
-    marginBottom: 10,
-  },
-  recentPerformance: {
-    marginBottom: 8,
-  },
-  recentPlayer: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1e293b',
-  },
-  recentStats: {
-    color: '#475569',
-  },
-  leaderboardSection: {
-    paddingHorizontal: 25,
-    marginBottom: 15,
-  },
-  leaderboardRow: {
-    flexDirection: 'row',
-  },
-  leaderCard: {
-    flex: 1,
-    borderRadius: 18,
-  },
-  leaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  leaderName: {
-    color: '#0f172a',
-    fontWeight: '600',
-  },
-  leaderValue: {
-    color: '#475569',
-    fontWeight: '700',
-  },
-  kpiRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 25,
-    marginBottom: 20,
-  },
-  kpiCard: {
-    flex: 1,
-    marginHorizontal: 6,
-    borderRadius: 18,
-  },
-  kpiLabel: {
-    color: '#475569',
+  matchDetails: {
     fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  kpiValue: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#0f172a',
-  },
-  kpiSubtext: {
     color: '#94a3b8',
     marginTop: 4,
   },
-  quickActions: {
-    padding: 25,
+  itemDivider: {
+    backgroundColor: '#334155',
+    marginTop: 12,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#ffffff',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  actionButton: {
-    backgroundColor: '#ffffff',
-    padding: 20,
+  leaderboardCard: {
+    marginHorizontal: 16,
+    marginBottom: 16,
     borderRadius: 16,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    backgroundColor: '#1e293b',
   },
-  actionButtonText: {
-    color: '#1e40af',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+  leaderboardGrid: {
+    flexDirection: 'row',
   },
-  topPerformers: {
-    padding: 25,
+  leaderboardColumn: {
+    flex: 1,
   },
-  performerCard: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+  leaderboardDivider: {
+    width: 1,
+    backgroundColor: '#334155',
+    marginHorizontal: 12,
   },
-  performerTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1e40af',
-    marginBottom: 8,
-  },
-  performerName: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#1e293b',
-    marginBottom: 8,
-  },
-  performerStats: {
+  leaderboardHeader: {
     fontSize: 14,
-    color: '#64748b',
-    fontWeight: '500',
+    fontWeight: '600',
+    color: '#60a5fa',
+    marginBottom: 12,
+    textAlign: 'center',
   },
-  emptyState: {
-    padding: 50,
+  leaderboardItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+  },
+  leaderboardRank: {
+    width: 32,
     alignItems: 'center',
   },
-  emptyStateTitle: {
-    fontSize: 28,
-    fontWeight: '800',
+  rankBadge: {
+    fontSize: 20,
+  },
+  leaderboardInfo: {
+    flex: 1,
+    marginLeft: 8,
+  },
+  leaderboardName: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#ffffff',
-    marginBottom: 15,
+    marginBottom: 2,
+  },
+  leaderboardValue: {
+    fontSize: 12,
+    color: '#94a3b8',
+  },
+  actionButton: {
+    marginBottom: 8,
+  },
+  emptyStateCard: {
+    margin: 16,
+    borderRadius: 16,
+    backgroundColor: '#1e293b',
+  },
+  emptyState: {
+    alignItems: 'center',
+    padding: 24,
+  },
+  emptyStateTitle: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginBottom: 12,
     textAlign: 'center',
   },
   emptyStateText: {
-    fontSize: 16,
-    color: '#cbd5e1',
+    color: '#94a3b8',
     textAlign: 'center',
-    marginBottom: 35,
-    lineHeight: 26,
-    opacity: 0.9,
+    marginBottom: 24,
+    lineHeight: 22,
   },
-  primaryButton: {
-    backgroundColor: '#1e40af',
-    paddingHorizontal: 35,
-    paddingVertical: 18,
-    borderRadius: 16,
-    shadowColor: '#1e40af',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
+  emptyStateActions: {
+    width: '100%',
+    gap: 12,
   },
-  primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  quickLinkSection: {
-    padding: 25,
-    paddingTop: 0,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  quickLinkCard: {
-    flex: 1,
-    minWidth: 150,
-    borderRadius: 16,
-    marginRight: 12,
-    marginBottom: 15,
-  },
-  quickLinkTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  quickLinkText: {
-    color: '#475569',
-    marginVertical: 8,
+  emptyStateButton: {
+    marginBottom: 8,
   },
 });

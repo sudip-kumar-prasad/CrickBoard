@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { StorageService } from '../utils/storage';
+import { createPlayerStats } from '../types';
 
 export default function EditPlayerScreen({ navigation, route }) {
   const { player } = route.params;
@@ -19,11 +20,45 @@ export default function EditPlayerScreen({ navigation, route }) {
   const [team, setTeam] = useState(player.team || '');
   const [loading, setLoading] = useState(false);
 
+  // Initialize stats with current player stats or defaults
+  const [stats, setStats] = useState(() => ({
+    matches: player.stats?.matches || 0,
+    runs: player.stats?.runs || 0,
+    balls: player.stats?.balls || 0,
+    fours: player.stats?.fours || 0,
+    sixes: player.stats?.sixes || 0,
+    wickets: player.stats?.wickets || 0,
+    overs: player.stats?.overs || 0,
+    runsConceded: player.stats?.runsConceded || 0,
+    maidens: player.stats?.maidens || 0,
+    catches: player.stats?.catches || 0,
+    stumpings: player.stats?.stumpings || 0,
+    runOuts: player.stats?.runOuts || 0,
+  }));
+
   const roles = ['Batsman', 'Bowler', 'All-rounder', 'Wicket-keeper'];
+
+  const updateStat = (key, value) => {
+    const numValue = value === '' ? 0 : parseInt(value, 10) || 0;
+    setStats((prev) => ({ ...prev, [key]: numValue }));
+  };
 
   const handleSave = async () => {
     if (!name.trim()) {
       Alert.alert('Error', 'Please enter player name');
+      return;
+    }
+
+    // Validate numeric inputs
+    const invalidFields = [];
+    Object.entries(stats).forEach(([key, value]) => {
+      if (isNaN(value) || value < 0) {
+        invalidFields.push(key);
+      }
+    });
+
+    if (invalidFields.length > 0) {
+      Alert.alert('Error', 'Please enter valid numbers for all statistics');
       return;
     }
 
@@ -35,7 +70,10 @@ export default function EditPlayerScreen({ navigation, route }) {
         name: name.trim(),
         role,
         team: team.trim() || undefined,
-        updatedAt: new Date(),
+        stats: {
+          ...stats,
+        },
+        updatedAt: new Date().toISOString(),
       };
 
       await StorageService.updatePlayer(updatedPlayer);
@@ -48,6 +86,24 @@ export default function EditPlayerScreen({ navigation, route }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleResetStats = () => {
+    Alert.alert(
+      'Reset Statistics',
+      'Are you sure you want to reset all statistics to zero?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            const defaultStats = createPlayerStats();
+            setStats(defaultStats);
+          },
+        },
+      ]
+    );
   };
 
   const renderRoleSelector = () => (
@@ -77,6 +133,20 @@ export default function EditPlayerScreen({ navigation, route }) {
     </View>
   );
 
+  const renderStatInput = (label, key, placeholder = '0') => (
+    <View style={styles.statInputGroup}>
+      <Text style={styles.statLabel}>{label}</Text>
+      <TextInput
+        style={styles.statInput}
+        value={stats[key].toString()}
+        onChangeText={(value) => updateStat(key, value)}
+        placeholder={placeholder}
+        placeholderTextColor="#94a3b8"
+        keyboardType="numeric"
+      />
+    </View>
+  );
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -84,55 +154,78 @@ export default function EditPlayerScreen({ navigation, route }) {
     >
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Player Name *</Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="Enter player name"
-              placeholderTextColor="#94a3b8"
-              autoCapitalize="words"
-            />
-          </View>
-
-          {renderRoleSelector()}
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Team (Optional)</Text>
-            <TextInput
-              style={styles.input}
-              value={team}
-              onChangeText={setTeam}
-              placeholder="Enter team name"
-              placeholderTextColor="#94a3b8"
-              autoCapitalize="words"
-            />
-          </View>
-
-          <View style={styles.statsInfo}>
-            <Text style={styles.statsTitle}>📊 Current Statistics</Text>
-            <View style={styles.statsGrid}>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{player.stats.matches}</Text>
-                <Text style={styles.statLabel}>Matches</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{player.stats.runs}</Text>
-                <Text style={styles.statLabel}>Runs</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{player.stats.wickets}</Text>
-                <Text style={styles.statLabel}>Wickets</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{player.stats.catches}</Text>
-                <Text style={styles.statLabel}>Catches</Text>
-              </View>
+          {/* Basic Info */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>👤 Basic Information</Text>
+            
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Player Name *</Text>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter player name"
+                placeholderTextColor="#94a3b8"
+                autoCapitalize="words"
+              />
             </View>
-            <Text style={styles.statsNote}>
-              Statistics are automatically updated when you record match performances.
-            </Text>
+
+            {renderRoleSelector()}
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Team (Optional)</Text>
+              <TextInput
+                style={styles.input}
+                value={team}
+                onChangeText={setTeam}
+                placeholder="Enter team name"
+                placeholderTextColor="#94a3b8"
+                autoCapitalize="words"
+              />
+            </View>
+          </View>
+
+          {/* Batting Statistics */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>🏏 Batting Statistics</Text>
+            <View style={styles.statsGrid}>
+              {renderStatInput('Matches', 'matches')}
+              {renderStatInput('Runs', 'runs')}
+              {renderStatInput('Balls Faced', 'balls')}
+              {renderStatInput('Fours', 'fours')}
+              {renderStatInput('Sixes', 'sixes')}
+            </View>
+          </View>
+
+          {/* Bowling Statistics */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>🎯 Bowling Statistics</Text>
+            <View style={styles.statsGrid}>
+              {renderStatInput('Wickets', 'wickets')}
+              {renderStatInput('Overs', 'overs')}
+              {renderStatInput('Runs Conceded', 'runsConceded')}
+              {renderStatInput('Maidens', 'maidens')}
+            </View>
+          </View>
+
+          {/* Fielding Statistics */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>✋ Fielding Statistics</Text>
+            <View style={styles.statsGrid}>
+              {renderStatInput('Catches', 'catches')}
+              {renderStatInput('Stumpings', 'stumpings')}
+              {renderStatInput('Run Outs', 'runOuts')}
+            </View>
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.actionSection}>
+            <TouchableOpacity
+              style={styles.resetButton}
+              onPress={handleResetStats}
+            >
+              <Text style={styles.resetButtonText}>Reset All Statistics</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -169,8 +262,22 @@ const styles = StyleSheet.create({
   form: {
     padding: 20,
   },
+  section: {
+    marginBottom: 24,
+    backgroundColor: '#1e293b',
+    padding: 16,
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3b82f6',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 16,
+  },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   label: {
     fontSize: 16,
@@ -179,7 +286,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#0f172a',
     borderWidth: 1,
     borderColor: '#334155',
     borderRadius: 8,
@@ -188,7 +295,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   roleContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   roleButtons: {
     flexDirection: 'row',
@@ -199,7 +306,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#1e293b',
+    backgroundColor: '#0f172a',
     borderWidth: 1,
     borderColor: '#334155',
   },
@@ -215,47 +322,46 @@ const styles = StyleSheet.create({
   selectedRoleButtonText: {
     color: '#ffffff',
   },
-  statsInfo: {
-    backgroundColor: '#1e293b',
-    padding: 15,
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#10b981',
-  },
-  statsTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#10b981',
-    marginBottom: 15,
-  },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 15,
+    gap: 12,
   },
-  statItem: {
+  statInputGroup: {
     width: '48%',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#0f172a',
-    borderRadius: 6,
-    marginBottom: 10,
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#60a5fa',
+    marginBottom: 12,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: '500',
     color: '#94a3b8',
-    marginTop: 2,
+    marginBottom: 6,
   },
-  statsNote: {
-    fontSize: 12,
-    color: '#94a3b8',
-    fontStyle: 'italic',
+  statInput: {
+    backgroundColor: '#0f172a',
+    borderWidth: 1,
+    borderColor: '#334155',
+    borderRadius: 8,
+    padding: 12,
+    color: '#ffffff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  actionSection: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  resetButton: {
+    backgroundColor: '#ef4444',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  resetButtonText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   buttonContainer: {
     flexDirection: 'row',
