@@ -154,5 +154,48 @@ export class AuthService {
       throw error;
     }
   }
+
+  // DEBUG: Clear all authentication data (for testing)
+  static async clearAuthData() {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.USER);
+      await AsyncStorage.setItem(STORAGE_KEYS.IS_LOGGED_IN, 'false');
+      console.log('✅ Auth session cleared! Reload the app to see login screen.');
+      return { success: true };
+    } catch (error) {
+      console.error('Error clearing auth data:', error);
+      throw error;
+    }
+  }
+
+  // DEBUG: Clear everything including all registered users
+  static async clearAll() {
+    try {
+      await AsyncStorage.clear();
+      console.log('✅ All AsyncStorage data cleared! Reload the app.');
+      return { success: true };
+    } catch (error) {
+      console.error('Error clearing all data:', error);
+      throw error;
+    }
+  }
+
+  // DEBUG: View all stored auth data
+  static async debugStorage() {
+    try {
+      const users = await AsyncStorage.getItem(STORAGE_KEYS.USERS);
+      const currentUser = await AsyncStorage.getItem(STORAGE_KEYS.USER);
+      const isLoggedIn = await AsyncStorage.getItem(STORAGE_KEYS.IS_LOGGED_IN);
+
+      console.log('📦 AsyncStorage Debug Info:');
+      console.log('----------------------------');
+      console.log('Registered Users:', users ? JSON.parse(users) : 'None');
+      console.log('Current User:', currentUser ? JSON.parse(currentUser) : 'None');
+      console.log('Is Logged In:', isLoggedIn);
+      console.log('----------------------------');
+    } catch (error) {
+      console.error('Error reading storage:', error);
+    }
+  }
 }
 

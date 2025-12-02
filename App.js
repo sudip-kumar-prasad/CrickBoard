@@ -74,9 +74,9 @@ function MainTabs({ onLogout }) {
         },
       })}
     >
-      <Tab.Screen 
-        name="Home" 
-        options={{ 
+      <Tab.Screen
+        name="Home"
+        options={{
           headerRight: () => (
             <TouchableOpacity
               onPress={() => {
@@ -115,6 +115,9 @@ export default function App() {
 
   const checkAuthStatus = async () => {
     try {
+      // 🐛 DEBUG: Clear login to see login page - REMOVE THIS LINE AFTER TESTING!
+      await AuthService.clearAuthData();
+
       const loggedIn = await AuthService.isLoggedIn();
       setIsLoggedIn(loggedIn);
     } catch (error) {
