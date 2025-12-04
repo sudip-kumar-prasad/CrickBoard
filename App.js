@@ -16,6 +16,7 @@ import EditPlayerScreen from './src/screens/EditPlayerScreen';
 import PlayerDetailScreen from './src/screens/PlayerDetailScreen';
 import RecordMatchScreen from './src/screens/RecordMatchScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
 import { AuthService } from './src/utils/auth';
 
@@ -68,39 +69,18 @@ function MainTabs({ onLogout }) {
             Matches: 'list-outline',
             Insights: 'stats-chart-outline',
             Players: 'people-outline',
+            Profile: 'person-outline',
           };
           const name = map[route.name] || 'ellipse-outline';
           return <Ionicons name={name} size={size} color={color} />;
         },
       })}
     >
-      <Tab.Screen
-        name="Home"
-        options={{
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                Alert.alert(
-                  'Logout',
-                  'Are you sure you want to logout?',
-                  [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Logout', style: 'destructive', onPress: onLogout },
-                  ]
-                );
-              }}
-              style={{ marginRight: 16, padding: 8 }}
-            >
-              <Ionicons name="log-out-outline" size={24} color="#ffffff" />
-            </TouchableOpacity>
-          ),
-        }}
-      >
-        {(props) => <HomeScreen {...props} />}
-      </Tab.Screen>
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Matches" component={MatchesStack} options={{ headerShown: false }} />
       <Tab.Screen name="Insights" component={InsightsScreen} />
       <Tab.Screen name="Players" component={PlayersStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
