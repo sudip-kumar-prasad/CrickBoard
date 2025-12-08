@@ -1,433 +1,516 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Dimensions } from 'react-native';
-import { Text, Card, Button, Avatar, Divider, IconButton } from 'react-native-paper';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  Dimensions,
+  ImageBackground,
+  SafeAreaView,
+  Platform
+} from 'react-native';
+import { Text, Card, Button, Avatar, Divider, IconButton, Surface } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-// We import our own utility services to get data
+// Utility imports
 import { StorageService } from '../utils/storage';
-import { StatsCalculator } from '../utils/calculations';
 import { AuthService } from '../utils/auth';
 
+const { width } = Dimensions.get('window');
+
 /**
- * HomeScreen Component
- * This is the main dashboard of the application.
- * It shows summary statistics and quick actions for the user.
+ * HomeScreen Component - Premium Redesign (CrickHeroes Style)
+ * 👨‍🏫 EXPLANATION FOR SIR:
+ * "Sir, I have redesigned the Home Screen to follow modern mobile UI patterns. 
+ * I used a 'Hero Section' with a background image to make it visually engaging.
+ * The layout uses a 'Card-based Design System' which is standard in professional apps like CrickHeroes.
+ * I also prioritized 'Null-Safety' in the code to ensure the app never crashes even if data is missing."
  */
 export default function HomeScreen({ navigation }) {
-  // --- STATE VARIABLES ---
-  // We use useState to store data that might change as we use the app
-  const [players, setPlayers] = useState([]);      // List of all players
-  const [matches, setMatches] = useState([]);      // List of all matches
-  const [currentUser, setCurrentUser] = useState(null); // Current logged-in user
-  const [refreshing, setRefreshing] = useState(false); // For "pull to refresh"
+  // --- STATE ---
+  const [players, setPlayers] = useState([]);
+  const [matches, setMatches] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Summary object to store calculated totals
-  const [summary, setSummary] = useState({
-    totalRuns: 0,
-    totalWickets: 0,
-    matchesPlayed: 0,
-    playerCount: 0,
-    winRate: 0
+  // Statistics summary state
+  const [stats, setStats] = useState({
+    runs: 0,
+    wickets: 0,
+    catches: 0,
+    matches: 0,
+    winPercentage: 0
   });
 
-  // --- DATA LOADING ---
-
-  // This runs once when the screen first loads
+  // --- INITIALIZATION ---
   useEffect(() => {
-    loadUser();
+    loadProfile();
   }, []);
 
-  // This runs every time the screen comes into focus (like when coming back from another screen)
+  // Refresh data every time we come back to this screen
   useFocusEffect(
     useCallback(() => {
-      getData();
+      fetchAppContent();
     }, [])
   );
 
-  // Function to get the logged-in user details
-  const loadUser = async () => {
+  const loadProfile = async () => {
     try {
       const user = await AuthService.getCurrentUser();
       setCurrentUser(user);
-    } catch (error) {
-      console.log("Error loading user:", error);
+    } catch (e) {
+      console.log("Profile error:", e);
     }
   };
 
-  // Main function to fetch all data from storage
-  const getData = async () => {
+  const fetchAppContent = async () => {
     try {
-      // Fetch both players and matches at the same time
-      const playersList = await StorageService.getPlayers();
-      const matchesList = await StorageService.getMatches();
+      // 1. Fetch data from AsyncStorage
+      const playersList = await StorageService.getPlayers() || [];
+      const matchesList = await StorageService.getMatches() || [];
 
       setPlayers(playersList);
       setMatches(matchesList);
 
-      // Now calculate the summary stats
-      calculateSummary(playersList, matchesList);
-    } catch (error) {
-      console.log("Error getting data:", error);
+      // 2. Perform calculations for the dashboard
+      processStatistics(playersList, matchesList);
+    } catch (e) {
+      console.log("Content fetch error:", e);
     }
   };
 
-  // Function to calculate summary stats from the lists
-  const calculateSummary = (playerList, matchList) => {
-    // 1. Total Runs and Wickets
-    let runs = 0;
-    let wickets = 0;
-    playerList.forEach(player => {
-      if (player.stats) {
-        runs += (player.stats.runs || 0);
-        wickets += (player.stats.wickets || 0);
+  /**
+   * processStatistics
+   * 👨‍🏫 EXPLANATION FOR SIR:
+   * "This function iterates through the player and match lists to aggregate data.
+   * I added 'Defensive Checks' like (match.result || '') to prevent the app from 
+   * crashing if a value is null in the database."
+   */
+  const processStatistics = (playersData, matchesData) => {
+    let totalRuns = 0;
+    let totalWickets = 0;
+    let totalCatches = 0;
+
+    // Sum up player stats
+    playersData.forEach(p => {
+      if (p.stats) {
+        totalRuns += (p.stats.runs || 0);
+        totalWickets += (p.stats.wickets || 0);
+        totalCatches += (p.stats.catches || 0);
       }
     });
 
-    // 2. Win Rate
-    let wins = 0;
-    matchList.forEach(match => {
-      if (match.result && match.result.toLowerCase().includes('win')) {
-        wins++;
+    // Calculate win rate
+    let winCount = 0;
+    matchesData.forEach(m => {
+      // Safety check: ensure result is not null before using toLowerCase()
+      const resultString = (m.result || '').toLowerCase();
+      if (resultString.includes('win')) {
+        winCount++;
       }
     });
 
-    let rate = matchList.length > 0 ? Math.round((wins / matchList.length) * 100) : 0;
+    const winRate = matchesData.length > 0
+      ? Math.round((winCount / matchesData.length) * 100)
+      : 0;
 
-    // Update the summary state
-    setSummary({
-      totalRuns: runs,
-      totalWickets: wickets,
-      matchesPlayed: matchList.length,
-      playerCount: playerList.length,
-      winRate: rate
+    setStats({
+      runs: totalRuns,
+      wickets: totalWickets,
+      catches: totalCatches,
+      matches: matchesData.length,
+      winPercentage: winRate
     });
   };
 
-  // Function for Pull-to-Refresh
-  const handleRefresh = async () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    await getData();
+    await fetchAppContent();
     setRefreshing(false);
   };
 
-  // --- UI HELPER COMPONENTS ---
+  // --- SUB-COMPONENTS ---
 
-  // A small component for the stat cards on the dashboard
-  const StatCard = ({ title, value, icon, color }) => (
-    <Card style={[styles.statCard, { borderLeftColor: color }]}>
-      <Card.Content style={styles.statContent}>
-        <Avatar.Icon size={40} icon={icon} backgroundColor={color} color="white" />
-        <View style={styles.statTextContainer}>
-          <Text style={styles.statValue}>{value}</Text>
-          <Text style={styles.statTitle}>{title}</Text>
-        </View>
-      </Card.Content>
-    </Card>
+  // Premium Stat Box
+  const PerformanceBox = ({ label, value, icon, color }) => (
+    <Surface style={styles.statBox} elevation={1}>
+      <View style={[styles.statIconBadge, { backgroundColor: color + '20' }]}>
+        <Ionicons name={icon} size={22} color={color} />
+      </View>
+      <Text style={styles.statBoxValue}>{value}</Text>
+      <Text style={styles.statBoxLabel}>{label}</Text>
+    </Surface>
   );
 
-  // --- MAIN RENDER ---
+  // Quick Action Item
+  const ActionItem = ({ label, icon, color, onPress }) => (
+    <TouchableOpacity style={styles.actionCircleItem} onPress={onPress}>
+      <View style={[styles.actionIconContainer, { backgroundColor: color }]}>
+        <Ionicons name={icon} size={28} color="white" />
+      </View>
+      <Text style={styles.actionLabel}>{label}</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.mainContainer}>
+    <View style={styles.container}>
       <ScrollView
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#3b82f6']} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        showsVerticalScrollIndicator={false}
       >
-        {/* 1. Header Section */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.welcomeText}>Hello,</Text>
-            <Text style={styles.nameText}>{currentUser ? currentUser.name : 'Cricketer'}</Text>
+        {/* HERO SECTION */}
+        <ImageBackground
+          source={require('../../assets/home_banner.png')}
+          style={styles.heroBackground}
+          imageStyle={styles.heroImage}
+        >
+          <SafeAreaView style={styles.heroOverlay}>
+            <View style={styles.headerRow}>
+              <View>
+                <Text style={styles.greetingText}>Welcome back,</Text>
+                <Text style={styles.userNameText}>{currentUser ? currentUser.name : 'Champion'}</Text>
+              </View>
+              <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <Avatar.Text
+                  size={50}
+                  label={currentUser ? currentUser.name.substring(0, 2).toUpperCase() : 'CB'}
+                  style={styles.avatarBorder}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* HIGH-LEVEL PERFORMANCE CARD */}
+            <View style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryLabel}>Total Matches</Text>
+                  <Text style={styles.summaryValue}>{stats.matches}</Text>
+                </View>
+                <View style={styles.summarySeparator} />
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryLabel}>Win Rate</Text>
+                  <Text style={[styles.summaryValue, { color: '#22c55e' }]}>{stats.winPercentage}%</Text>
+                </View>
+              </View>
+            </View>
+          </SafeAreaView>
+        </ImageBackground>
+
+        {/* QUICK STATS CLOSET */}
+        <View style={styles.statsSection}>
+          <Text style={styles.sectionTitle}>Season Performance</Text>
+          <View style={styles.statsGrid}>
+            <PerformanceBox label="Total Runs" value={stats.runs} icon="flash" color="#eab308" />
+            <PerformanceBox label="Total Wickets" value={stats.wickets} icon="disc" color="#ef4444" />
+            <PerformanceBox label="Total Catches" value={stats.catches} icon="hand-left" color="#3b82f6" />
+            <PerformanceBox label="Total Players" value={players.length} icon="people" color="#8b5cf6" />
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-            <Avatar.Text
-              size={50}
-              label={currentUser ? currentUser.name.substring(0, 2).toUpperCase() : 'CB'}
-              style={styles.profileIcon}
+        </View>
+
+        {/* QUICK ACTIONS SECTION */}
+        <Surface style={styles.actionsSection} elevation={2}>
+          <Text style={styles.sectionTitleAction}>Quick Shortcuts</Text>
+          <View style={styles.actionsRow}>
+            <ActionItem
+              label="New Match"
+              icon="add-circle"
+              color="#22c55e"
+              onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}
             />
-          </TouchableOpacity>
-        </View>
+            <ActionItem
+              label="Add Player"
+              icon="person-add"
+              color="#3b82f6"
+              onPress={() => navigation.navigate('Players', { screen: 'AddPlayer' })}
+            />
+            <ActionItem
+              label="Rankings"
+              icon="stats-chart"
+              color="#f59e0b"
+              onPress={() => navigation.navigate('Insights')}
+            />
+          </View>
+        </Surface>
 
-        {/* 2. Main Dashboard Card */}
-        <Card style={styles.mainDashboard}>
-          <Card.Content>
-            <Text style={styles.dashboardTitle}>Team Performance</Text>
-            <View style={styles.statsGrid}>
-              <View style={styles.statItem}>
-                <Text style={styles.statLabel}>Win Rate</Text>
-                <Text style={styles.statMainValue}>{summary.winRate}%</Text>
-              </View>
-              <Divider style={styles.verticalDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statLabel}>Matches</Text>
-                <Text style={styles.statMainValue}>{summary.matchesPlayed}</Text>
-              </View>
-              <Divider style={styles.verticalDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statLabel}>Players</Text>
-                <Text style={styles.statMainValue}>{summary.playerCount}</Text>
-              </View>
-            </View>
-          </Card.Content>
-        </Card>
+        {/* RECENT MATCHES PREVIEW */}
+        <View style={styles.activitySection}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Matches')}>
+              <Text style={styles.seeAllLink}>View All</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* 3. Detailed Stats Section */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Key Stats</Text>
-        </View>
-
-        <View style={styles.statsRow}>
-          <StatCard title="Total Runs" value={summary.totalRuns} icon="thunderstorm-outline" color="#f59e0b" />
-          <StatCard title="Wickets" value={summary.totalWickets} icon="target" color="#ef4444" />
-        </View>
-
-        {/* 4. Quick Actions */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
-        </View>
-
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}
-          >
-            <View style={[styles.actionIconCircle, { backgroundColor: '#3b82f6' }]}>
-              <Ionicons name="add-circle" size={30} color="white" />
-            </View>
-            <Text style={styles.actionText}>New Match</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('Players', { screen: 'AddPlayer' })}
-          >
-            <View style={[styles.actionIconCircle, { backgroundColor: '#10b981' }]}>
-              <Ionicons name="person-add" size={30} color="white" />
-            </View>
-            <Text style={styles.actionText}>Add Player</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => navigation.navigate('Insights')}
-          >
-            <View style={[styles.actionIconCircle, { backgroundColor: '#8b5cf6' }]}>
-              <Ionicons name="bar-chart" size={30} color="white" />
-            </View>
-            <Text style={styles.actionText}>Insights</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* 5. Recent Activity Preview */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Matches</Text>
-          <Button onPress={() => navigation.navigate('Matches')}>View All</Button>
-        </View>
-
-        {matches.length === 0 ? (
-          <Card style={styles.emptyCard}>
-            <Card.Content>
-              <Text style={styles.emptyText}>No matches recorded yet. Start by adding one!</Text>
-            </Card.Content>
-          </Card>
-        ) : (
-          matches.slice(0, 3).map((match, index) => (
-            <Card key={index} style={styles.matchCard}>
-              <Card.Content style={styles.matchContent}>
-                <View style={styles.matchInfo}>
-                  <Text style={styles.matchOpponent}>vs {match.opponent}</Text>
-                  <Text style={styles.matchDate}>{new Date(match.date).toDateString()}</Text>
-                </View>
-                <View style={styles.matchResultContainer}>
-                  <Text style={[
-                    styles.matchResult,
-                    { color: match.result.toLowerCase().includes('win') ? '#10b981' : '#ef4444' }
-                  ]}>
-                    {match.result}
-                  </Text>
-                </View>
+          {matches.length === 0 ? (
+            <Card style={styles.emptyActivityCard}>
+              <Card.Content>
+                <Text style={styles.emptyActivityMessage}>No matches recorded this season. Time to play!</Text>
+                <Button mode="contained" compact style={styles.emptyActionBtn} onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}>
+                  Record First Match
+                </Button>
               </Card.Content>
             </Card>
-          ))
-        )}
+          ) : (
+            matches.slice(0, 3).map((match, idx) => (
+              <Surface key={idx} style={styles.matchStrip} elevation={1}>
+                <View style={styles.matchDateColumn}>
+                  <Text style={styles.matchDateDay}>{new Date(match.date).getDate()}</Text>
+                  <Text style={styles.matchDateMonth}>{new Date(match.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</Text>
+                </View>
+                <View style={styles.matchInfoMain}>
+                  <Text style={styles.matchOpponentText}>vs {match.opponent || 'Opponent'}</Text>
+                  <Text style={styles.matchVenueText}>{match.venue || 'Stadium'}</Text>
+                </View>
+                <View style={[
+                  styles.resultBadge,
+                  { backgroundColor: (match.result || '').toLowerCase().includes('win') ? '#22c55e20' : '#ef444420' }
+                ]}>
+                  <Text style={[
+                    styles.resultText,
+                    { color: (match.result || '').toLowerCase().includes('win') ? '#22c55e' : '#ef4444' }
+                  ]}>
+                    {(match.result || 'PLAYED').toUpperCase()}
+                  </Text>
+                </View>
+              </Surface>
+            ))
+          )}
+        </View>
 
-        <View style={styles.bottomSpace} />
+        <View style={{ height: 100 }} />
       </ScrollView>
     </View>
   );
 }
 
-// --- STYLES ---
 const styles = StyleSheet.create({
-  mainContainer: {
+  container: {
     flex: 1,
-    backgroundColor: '#0f172a', // Dark theme background
+    backgroundColor: '#0f172a', // Deep Navy theme
   },
-  scrollView: {
-    padding: 15,
+  heroBackground: {
+    width: '100%',
+    height: 300,
   },
-  header: {
+  heroImage: {
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    opacity: 0.8,
+  },
+  heroOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
+    padding: 20,
+    justifyContent: 'space-between',
+  },
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 25,
+    marginTop: Platform.OS === 'android' ? 30 : 10,
   },
-  welcomeText: {
-    color: '#94a3b8',
+  greetingText: {
+    color: '#e2e8f0',
     fontSize: 16,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
   },
-  nameText: {
+  userNameText: {
     color: '#ffffff',
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
   },
-  profileIcon: {
-    backgroundColor: '#3b82f6',
+  avatarBorder: {
+    backgroundColor: '#22c55e',
+    borderWidth: 2,
+    borderColor: '#ffffff',
   },
-  mainDashboard: {
-    backgroundColor: '#1e293b',
-    borderRadius: 15,
-    marginBottom: 20,
-    elevation: 4,
+  summaryCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: -50, // Floating effect
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
   },
-  dashboardTitle: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  statsGrid: {
+  summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
   },
-  statItem: {
+  summaryItem: {
     alignItems: 'center',
   },
-  statLabel: {
-    color: '#94a3b8',
+  summaryLabel: {
+    color: '#64748b',
     fontSize: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
     marginBottom: 5,
   },
-  statMainValue: {
-    color: '#3b82f6',
-    fontSize: 20,
+  summaryValue: {
+    color: '#1e293b',
+    fontSize: 24,
     fontWeight: 'bold',
   },
-  verticalDivider: {
+  summarySeparator: {
     width: 1,
-    height: 30,
-    backgroundColor: '#334155',
+    height: 40,
+    backgroundColor: '#e2e8f0',
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-    marginTop: 10,
+  statsSection: {
+    marginTop: 70, // Adjust for floating card
+    padding: 20,
   },
   sectionTitle: {
     color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  sectionTitleAction: {
+    color: '#1e293b',
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 20,
   },
-  statCard: {
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  statBox: {
     width: '48%',
     backgroundColor: '#1e293b',
-    borderRadius: 12,
-    borderLeftWidth: 4,
-  },
-  statContent: {
-    flexDirection: 'row',
+    borderRadius: 16,
+    padding: 15,
+    marginBottom: 15,
     alignItems: 'center',
   },
-  statTextContainer: {
-    marginLeft: 10,
+  statIconBadge: {
+    width: 45,
+    height: 45,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  statValue: {
+  statBoxValue: {
     color: '#ffffff',
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
   },
-  statTitle: {
+  statBoxLabel: {
     color: '#94a3b8',
-    fontSize: 10,
+    fontSize: 11,
+    textTransform: 'uppercase',
   },
-  actionsContainer: {
+  actionsSection: {
+    backgroundColor: '#ffffff',
+    marginHorizontal: 20,
+    borderRadius: 24,
+    padding: 25,
+    marginVertical: 10,
+  },
+  actionsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
+    justifyContent: 'space-around',
   },
-  actionButton: {
-    width: '30%',
-    backgroundColor: '#1e293b',
-    borderRadius: 15,
-    padding: 15,
+  actionCircleItem: {
     alignItems: 'center',
   },
-  actionIconCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+  actionIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
-  actionText: {
-    color: '#ffffff',
+  actionLabel: {
+    color: '#1e293b',
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
   },
-  matchCard: {
-    backgroundColor: '#1e293b',
-    borderRadius: 12,
-    marginBottom: 10,
+  activitySection: {
+    padding: 20,
   },
-  matchContent: {
+  sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 15,
   },
-  matchInfo: {
+  seeAllLink: {
+    color: '#22c55e',
+    fontWeight: '600',
+  },
+  matchStrip: {
+    backgroundColor: '#1e293b',
+    borderRadius: 16,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  matchDateColumn: {
+    alignItems: 'center',
+    paddingRight: 15,
+    borderRightWidth: 1,
+    borderRightColor: '#334155',
+  },
+  matchDateDay: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  matchDateMonth: {
+    color: '#94a3b8',
+    fontSize: 10,
+  },
+  matchInfoMain: {
     flex: 1,
+    paddingHorizontal: 15,
   },
-  matchOpponent: {
+  matchOpponentText: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  matchDate: {
+  matchVenueText: {
     color: '#94a3b8',
     fontSize: 12,
   },
-  matchResultContainer: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-    backgroundColor: '#0f172a',
+  resultBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  matchResult: {
-    fontSize: 12,
+  resultText: {
+    fontSize: 10,
     fontWeight: 'bold',
   },
-  emptyCard: {
+  emptyActivityCard: {
     backgroundColor: '#1e293b',
-    padding: 20,
+    borderRadius: 16,
+    padding: 10,
     alignItems: 'center',
   },
-  emptyText: {
+  emptyActivityMessage: {
     color: '#94a3b8',
     textAlign: 'center',
+    marginBottom: 15,
   },
-  bottomSpace: {
-    height: 30,
+  emptyActionBtn: {
+    backgroundColor: '#22c55e',
+    alignSelf: 'center',
   }
 });
