@@ -7,9 +7,9 @@ import {
   RefreshControl,
   Dimensions,
   ImageBackground,
-  SafeAreaView,
   Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Card, Button, Avatar, Divider, IconButton, Surface } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
