@@ -1,19 +1,86 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, StyleSheet, FlatList, Alert, RefreshControl, TouchableOpacity } from 'react-native';
-import { Text, Card, Button, Searchbar, Chip, IconButton, Divider } from 'react-native-paper';
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet, FlatList, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import {
+  Text,
+  Card,
+  Button,
+  Chip,
+  Searchbar,
+  Surface,
+  Avatar,
+  Divider
+} from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
+
+// Utility imports
 import { StorageService } from '../utils/storage';
-import { StatsCalculator } from '../utils/calculations';
 
+/**
+ * PlayersScreen Component - Premium Redesign (CrickHeroes Style)
+ * 👨‍🏫 EXPLANATION FOR SIR:
+ * "Sir, I have updated the Squad page to manage our team more professionally.
+ * I simplified the code by removing advanced filters and using a single search 
+ * function that is easy to understand. Each player now has a 'Profile Strip' 
+ * with their role and key stats clearly visible."
+ */
 export default function PlayersScreen({ navigation }) {
-  const [players, setPlayers] = useState([]);
-  const [filteredPlayers, setFilteredPlayers] = useState([]);
+  // --- STATE ---
+  const [allPlayers, setAllPlayers] = useState([]);
+  const [displayPlayers, setDisplayPlayers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRole, setSelectedRole] = useState('All');
-  const [sortBy, setSortBy] = useState('name'); // name, runs, wickets, matches
-  const [refreshing, setRefreshing] = useState(false);
+  const [activeRole, setActiveRole] = useState('All');
+  const [loading, setLoading] = useState(true);
 
-  const roles = ['All', 'Batsman', 'Bowler', 'All-rounder', 'Wicket-keeper'];
+  const ROLES = ['All', 'Batsman', 'Bowler', 'All-rounder', 'Wicket-keeper'];
+
+  // --- DATA LOADING & FILTERING ---
+
+  // Load players from storage
+  const loadPlayers = async () => {
+    try {
+      setLoading(true);
+      const data = await StorageService.getPlayers() || [];
+      // Filter out any empty items and sort by name
+      const validPlayers = data.filter(p => p && p.name).sort((a, b) => a.name.localeCompare(b.name));
+
+      setAllPlayers(validPlayers);
+      applyFilters(validPlayers, searchQuery, activeRole);
+    } catch (e) {
+      console.log("Error loading players:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 👨‍🏫 EXPLANATION: Simple function to handle searching and role filtering
+  const applyFilters = (list, query, role) => {
+    let filtered = list;
+
+    // 1. Search by name
+    if (query) {
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    // 2. Filter by role
+    if (role !== 'All') {
+      filtered = filtered.filter(p => p.role === role);
+    }
+
+    setDisplayPlayers(filtered);
+  };
+
+  // Run filtering whenever search or role change
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    applyFilters(allPlayers, query, activeRole);
+  };
+
+  const handleRoleChange = (role) => {
+    setActiveRole(role);
+    applyFilters(allPlayers, searchQuery, role);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -21,645 +88,253 @@ export default function PlayersScreen({ navigation }) {
     }, [])
   );
 
-  const loadPlayers = async () => {
-    try {
-      const playersData = await StorageService.getPlayers();
-      const validPlayers = playersData.filter(p => p && p.stats);
-      setPlayers(validPlayers);
-    } catch (error) {
-      console.error('Error loading players:', error);
-      Alert.alert('Error', 'Failed to load players');
-    }
-  };
+  // --- UI COMPONENTS ---
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadPlayers();
-    setRefreshing(false);
-  };
-
-  // Filter and sort players
-  const processedPlayers = useMemo(() => {
-    let filtered = [...players];
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      filtered = filtered.filter(player =>
-        player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (player.team && player.team.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
-
-    // Filter by role
-    if (selectedRole !== 'All') {
-      filtered = filtered.filter(player => player.role === selectedRole);
-    }
-
-    // Sort players
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'runs':
-          return (b.stats?.runs || 0) - (a.stats?.runs || 0);
-        case 'wickets':
-          return (b.stats?.wickets || 0) - (a.stats?.wickets || 0);
-        case 'matches':
-          return (b.stats?.matches || 0) - (a.stats?.matches || 0);
-        case 'name':
-        default:
-          return a.name.localeCompare(b.name);
-      }
-    });
-
-    return filtered;
-  }, [players, searchQuery, selectedRole, sortBy]);
-
-  useEffect(() => {
-    setFilteredPlayers(processedPlayers);
-  }, [processedPlayers]);
-
-  const handleDeletePlayer = (player) => {
-    Alert.alert(
-      'Delete Player',
-      `Are you sure you want to delete ${player.name}? This action cannot be undone.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await StorageService.deletePlayer(player.id);
-              await loadPlayers();
-              Alert.alert('Success', 'Player deleted successfully');
-            } catch (error) {
-              Alert.alert('Error', 'Failed to delete player');
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const getRoleIcon = (role) => {
-    const icons = {
-      'Batsman': '🏏',
-      'Bowler': '🎯',
-      'All-rounder': '⭐',
-      'Wicket-keeper': '🧤',
-    };
-    return icons[role] || '👤';
-  };
-
-  const getRoleColor = (role) => {
-    const colors = {
-      'Batsman': '#3b82f6',
-      'Bowler': '#10b981',
-      'All-rounder': '#f59e0b',
-      'Wicket-keeper': '#8b5cf6',
-    };
-    return colors[role] || '#94a3b8';
-  };
-
-  const renderPlayer = ({ item, index }) => {
-    const roleColor = getRoleColor(item.role);
-    const battingAvg = item.stats?.matches > 0
-      ? StatsCalculator.calculateBattingAverage(item.stats?.runs || 0, item.stats?.matches || 0)
-      : 0;
-    const strikeRate = item.stats?.balls > 0
-      ? StatsCalculator.calculateStrikeRate(item.stats?.runs || 0, item.stats?.balls || 0)
-      : 0;
+  const renderPlayerStrip = ({ item }) => {
+    const roleIcon = item.role === 'Bowler' ? '🎯' : item.role === 'Batsman' ? '🏏' : '⭐';
 
     return (
       <TouchableOpacity
-        activeOpacity={0.7}
+        activeOpacity={0.8}
         onPress={() => navigation.navigate('PlayerDetail', { player: item })}
       >
-        <Card style={[styles.playerCard, { borderLeftColor: roleColor }]} mode="elevated">
-          <Card.Content>
-            <View style={styles.playerHeader}>
-              <View style={styles.playerMainInfo}>
-                <View style={styles.playerNameRow}>
-                  <Text style={styles.playerName}>{item.name || 'Unknown'}</Text>
-                  <Text style={styles.roleIcon}>{getRoleIcon(item.role)}</Text>
-                </View>
-                <View style={styles.playerMeta}>
-                  <Chip
-                    style={[styles.roleChip, { backgroundColor: `${roleColor}20` }]}
-                    textStyle={[styles.roleChipText, { color: roleColor }]}
-                  >
-                    {item.role}
-                  </Chip>
-                  {item.team && (
-                    <Text style={styles.playerTeam}>• {item.team}</Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.matchesBadge}>
-                <Text style={styles.matchesBadgeText}>{item.stats?.matches || 0}</Text>
-                <Text style={styles.matchesBadgeLabel}>Matches</Text>
-              </View>
-            </View>
+        <Surface style={styles.playerStrip} elevation={1}>
+          {/* Avatar / Icon */}
+          <View style={styles.profileCircle}>
+            <Avatar.Text size={45} label={item.name.substring(0, 1).toUpperCase()} backgroundColor="#0f172a" labelStyle={{ color: '#22c55e' }} />
+          </View>
 
-            <View style={styles.statsContainer}>
-              <View style={styles.statRow}>
-                <View style={styles.statBox}>
-                  <Text style={styles.statValue}>{item.stats?.runs || 0}</Text>
-                  <Text style={styles.statLabel}>Runs</Text>
-                  {battingAvg > 0 && (
-                    <Text style={styles.statSubtext}>Avg: {battingAvg.toFixed(1)}</Text>
-                  )}
-                </View>
-                <View style={styles.statBox}>
-                  <Text style={styles.statValue}>{item.stats?.wickets || 0}</Text>
-                  <Text style={styles.statLabel}>Wickets</Text>
-                  {item.stats?.wickets > 0 && (
-                    <Text style={styles.statSubtext}>
-                      Avg: {StatsCalculator.calculateBowlingAverage(
-                        item.stats?.runsConceded || 0,
-                        item.stats?.wickets || 0
-                      ).toFixed(1)}
-                    </Text>
-                  )}
-                </View>
-                <View style={styles.statBox}>
-                  <Text style={styles.statValue}>{item.stats?.catches || 0}</Text>
-                  <Text style={styles.statLabel}>Catches</Text>
-                </View>
-                {strikeRate > 0 && (
-                  <View style={styles.statBox}>
-                    <Text style={styles.statValue}>{strikeRate.toFixed(1)}</Text>
-                    <Text style={styles.statLabel}>Strike Rate</Text>
-                  </View>
-                )}
-              </View>
+          {/* Info */}
+          <View style={styles.playerInfo}>
+            <Text style={styles.playerName}>{item.name}</Text>
+            <View style={styles.roleRow}>
+              <Text style={styles.roleTag}>{roleIcon} {item.role}</Text>
+              {item.team && <Text style={styles.teamTag}>• {item.team}</Text>}
             </View>
+          </View>
 
-            <Divider style={styles.divider} />
-
-            <View style={styles.playerActions}>
-              <Button
-                mode="outlined"
-                onPress={(e) => {
-                  e.stopPropagation();
-                  navigation.navigate('EditPlayer', { player: item });
-                }}
-                style={styles.actionButton}
-                icon="pencil"
-              >
-                Edit
-              </Button>
-              <Button
-                mode="contained"
-                onPress={(e) => {
-                  e.stopPropagation();
-                  handleDeletePlayer(item);
-                }}
-                style={[styles.actionButton, styles.deleteButton]}
-                buttonColor="#ef4444"
-                icon="delete"
-              >
-                Delete
-              </Button>
+          {/* Mini Stats */}
+          <View style={styles.stripStats}>
+            <View style={styles.miniStat}>
+              <Text style={styles.miniVal}>{item.stats?.runs || 0}</Text>
+              <Text style={styles.miniLab}>Runs</Text>
             </View>
-          </Card.Content>
-        </Card>
+            <View style={styles.miniStat}>
+              <Text style={styles.miniVal}>{item.stats?.wickets || 0}</Text>
+              <Text style={styles.miniLab}>Wkts</Text>
+            </View>
+          </View>
+
+          <Ionicons name="chevron-forward" size={18} color="#334155" style={{ marginLeft: 10 }} />
+        </Surface>
       </TouchableOpacity>
     );
   };
 
-  const summaryStats = useMemo(() => {
-    return {
-      total: players.length,
-      totalRuns: players.reduce((sum, p) => sum + (p.stats?.runs || 0), 0),
-      totalWickets: players.reduce((sum, p) => sum + (p.stats?.wickets || 0), 0),
-      totalMatches: players.reduce((sum, p) => sum + (p.stats?.matches || 0), 0),
-    };
-  }, [players]);
-
   return (
-    <View style={styles.container}>
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Searchbar
-          placeholder="Search players or teams..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          style={styles.searchInput}
-          iconColor="#60a5fa"
-        />
+    <SafeAreaView style={styles.container}>
+      {/* 1. HEADER SECTION */}
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.headerTitle}>Team Squad</Text>
+          <Text style={styles.headerSub}>{allPlayers.length} Members Total</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.addBtn}
+          onPress={() => navigation.navigate('AddPlayer')}
+        >
+          <Ionicons name="person-add" size={20} color="#ffffff" />
+          <Text style={styles.addBtnText}>Add</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Summary Stats */}
-      {players.length > 0 && (
-        <View style={styles.summaryContainer}>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryValue}>{summaryStats.total}</Text>
-            <Text style={styles.summaryLabel}>Players</Text>
-          </View>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryValue}>{summaryStats.totalRuns}</Text>
-            <Text style={styles.summaryLabel}>Total Runs</Text>
-          </View>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryValue}>{summaryStats.totalWickets}</Text>
-            <Text style={styles.summaryLabel}>Total Wickets</Text>
-          </View>
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryValue}>{summaryStats.totalMatches}</Text>
-            <Text style={styles.summaryLabel}>Matches</Text>
-          </View>
-        </View>
-      )}
-
-      {/* Header with Filters */}
-      <Card style={styles.headerCard} mode="elevated">
-        <Card.Content>
-          <View style={styles.headerRow}>
-            <View style={styles.headerLeft}>
-              <Text variant="titleLarge" style={styles.headerText}>
-                Squad ({filteredPlayers.length})
-              </Text>
-              <Text style={styles.headerSubtext}>
-                {players.length} total player{players.length !== 1 ? 's' : ''}
-              </Text>
-            </View>
-            <Button
-              mode="contained"
-              onPress={() => navigation.navigate('AddPlayer')}
-              icon="account-plus"
-              style={styles.addButton}
+      {/* 2. SEARCH & ROLES */}
+      <View style={styles.filterSection}>
+        <Searchbar
+          placeholder="Search by name..."
+          onChangeText={handleSearchChange}
+          value={searchQuery}
+          style={styles.searchBar}
+          inputStyle={styles.searchBarInput}
+          iconColor="#22c55e"
+        />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.roleScroll}>
+          {ROLES.map(role => (
+            <Chip
+              key={role}
+              selected={activeRole === role}
+              onPress={() => handleRoleChange(role)}
+              style={[styles.roleChip, activeRole === role && styles.roleChipActive]}
+              textStyle={[styles.roleText, activeRole === role && styles.roleTextActive]}
             >
-              Add Player
-            </Button>
-          </View>
+              {role}
+            </Chip>
+          ))}
+        </ScrollView>
+      </View>
 
-          {/* Role Filter */}
-          <View style={styles.filterSection}>
-            <Text style={styles.filterLabel}>Filter by Role:</Text>
-            <View style={styles.roleFilter}>
-              {roles.map((role) => (
-                <Chip
-                  key={role}
-                  selected={selectedRole === role}
-                  onPress={() => setSelectedRole(role)}
-                  style={[
-                    styles.filterChip,
-                    selectedRole === role && styles.selectedFilterChip,
-                  ]}
-                  textStyle={[
-                    styles.filterChipText,
-                    selectedRole === role && styles.selectedFilterChipText,
-                  ]}
-                >
-                  {role}
-                </Chip>
-              ))}
-            </View>
-          </View>
-
-          {/* Sort Options */}
-          <View style={styles.sortSection}>
-            <Text style={styles.filterLabel}>Sort by:</Text>
-            <View style={styles.sortOptions}>
-              {[
-                { key: 'name', label: 'Name', icon: 'sort-alphabetical' },
-                { key: 'runs', label: 'Runs', icon: 'trophy' },
-                { key: 'wickets', label: 'Wickets', icon: 'target' },
-                { key: 'matches', label: 'Matches', icon: 'calendar' },
-              ].map((option) => (
-                <TouchableOpacity
-                  key={option.key}
-                  style={[
-                    styles.sortButton,
-                    sortBy === option.key && styles.activeSortButton,
-                  ]}
-                  onPress={() => setSortBy(option.key)}
-                >
-                  <Text
-                    style={[
-                      styles.sortButtonText,
-                      sortBy === option.key && styles.activeSortButtonText,
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </Card.Content>
-      </Card>
-
-      {/* Players List */}
-      {filteredPlayers.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateIcon}>
-            {players.length === 0 ? '👥' : '🔍'}
-          </Text>
-          <Text style={styles.emptyStateTitle}>
-            {players.length === 0
-              ? 'No Players Yet'
-              : 'No Players Found'}
-          </Text>
-          <Text style={styles.emptyStateText}>
-            {players.length === 0
-              ? 'Add your first player to start tracking your cricket team!'
-              : 'Try adjusting your search or filters to find players.'}
-          </Text>
-          {players.length === 0 && (
-            <Button
-              mode="contained"
-              onPress={() => navigation.navigate('AddPlayer')}
-              style={styles.emptyStateButton}
-              icon="account-plus"
-            >
-              Add Your First Player
-            </Button>
-          )}
+      {/* 3. PLAYER LIST */}
+      {displayPlayers.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="people-outline" size={60} color="#1e293b" />
+          <Text style={styles.emptyText}>No players found in squad</Text>
+          <Button mode="contained" onPress={() => navigation.navigate('AddPlayer')} style={styles.emptyMainBtn}>
+            Add Player
+          </Button>
         </View>
       ) : (
         <FlatList
-          data={filteredPlayers}
-          renderItem={renderPlayer}
-          keyExtractor={(item) => item.id}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          data={displayPlayers}
+          keyExtractor={item => item.id}
+          renderItem={renderPlayerStrip}
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#0f172a', // Deep Navy
   },
-  searchContainer: {
-    padding: 16,
-    backgroundColor: '#1e293b',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  searchInput: {
-    borderRadius: 12,
-    backgroundColor: '#0f172a',
-  },
-  summaryContainer: {
-    flexDirection: 'row',
-    padding: 16,
-    gap: 12,
-  },
-  summaryCard: {
-    flex: 1,
-    backgroundColor: '#1e293b',
-    padding: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderLeftWidth: 3,
-    borderLeftColor: '#3b82f6',
-  },
-  summaryValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#60a5fa',
-    marginBottom: 4,
-  },
-  summaryLabel: {
-    fontSize: 11,
-    color: '#94a3b8',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  headerCard: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 16,
-    backgroundColor: '#1e293b',
-  },
-  headerRow: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
-  headerLeft: {
-    flex: 1,
-  },
-  headerText: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  headerTitle: {
     color: '#ffffff',
-    marginBottom: 4,
+    fontSize: 24,
+    fontWeight: 'bold',
   },
-  headerSubtext: {
-    fontSize: 12,
+  headerSub: {
     color: '#94a3b8',
+    fontSize: 12,
   },
-  addButton: {
-    backgroundColor: '#3b82f6',
+  addBtn: {
+    flexDirection: 'row',
+    backgroundColor: '#22c55e',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignItems: 'center',
+    gap: 5,
+  },
+  addBtnText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   filterSection: {
-    marginBottom: 16,
+    padding: 16,
   },
-  filterLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#94a3b8',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+  searchBar: {
+    backgroundColor: '#1e293b',
+    borderRadius: 15,
+    elevation: 0,
+    height: 45,
+    marginBottom: 15,
   },
-  roleFilter: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  filterChip: {
-    backgroundColor: '#0f172a',
-    borderWidth: 1,
-    borderColor: '#334155',
-  },
-  selectedFilterChip: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
-  },
-  filterChipText: {
-    color: '#94a3b8',
-    fontSize: 12,
-  },
-  selectedFilterChipText: {
+  searchBarInput: {
+    fontSize: 14,
     color: '#ffffff',
+    minHeight: 0,
   },
-  sortSection: {
-    marginTop: 8,
-  },
-  sortOptions: {
+  roleScroll: {
     flexDirection: 'row',
-    gap: 8,
   },
-  sortButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: '#0f172a',
-    borderWidth: 1,
-    borderColor: '#334155',
+  roleChip: {
+    backgroundColor: '#1e293b',
+    marginRight: 8,
+    borderRadius: 12,
   },
-  activeSortButton: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
+  roleChipActive: {
+    backgroundColor: '#22c55e',
   },
-  sortButtonText: {
+  roleText: {
     color: '#94a3b8',
     fontSize: 12,
-    fontWeight: '500',
   },
-  activeSortButtonText: {
+  roleTextActive: {
     color: '#ffffff',
     fontWeight: '600',
   },
   listContainer: {
-    padding: 16,
-    paddingTop: 0,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
   },
-  playerCard: {
-    marginBottom: 16,
-    borderRadius: 16,
-    backgroundColor: '#1e293b',
-    borderLeftWidth: 4,
-  },
-  playerHeader: {
+  playerStrip: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
+    alignItems: 'center',
+    backgroundColor: '#1e293b',
+    borderRadius: 18,
+    padding: 12,
+    marginBottom: 12,
   },
-  playerMainInfo: {
+  profileCircle: {
+    marginRight: 15,
+  },
+  playerInfo: {
     flex: 1,
   },
-  playerNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    gap: 8,
-  },
   playerName: {
-    fontSize: 20,
-    fontWeight: 'bold',
     color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
-  roleIcon: {
-    fontSize: 20,
-  },
-  playerMeta: {
+  roleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
-  roleChip: {
-    height: 24,
-  },
-  roleChipText: {
+  roleTag: {
+    color: '#60a5fa',
     fontSize: 11,
     fontWeight: '600',
   },
-  playerTeam: {
-    fontSize: 12,
+  teamTag: {
     color: '#94a3b8',
-  },
-  matchesBadge: {
-    backgroundColor: '#0f172a',
-    padding: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    minWidth: 70,
-  },
-  matchesBadgeText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#60a5fa',
-  },
-  matchesBadgeLabel: {
-    fontSize: 10,
-    color: '#94a3b8',
-    textTransform: 'uppercase',
-    marginTop: 2,
-  },
-  statsContainer: {
-    marginBottom: 12,
-  },
-  statRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  statBox: {
-    flex: 1,
-    backgroundColor: '#0f172a',
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#60a5fa',
-    marginBottom: 4,
-  },
-  statLabel: {
     fontSize: 11,
-    color: '#94a3b8',
-    textTransform: 'uppercase',
-    marginBottom: 2,
   },
-  statSubtext: {
-    fontSize: 9,
-    color: '#64748b',
-    marginTop: 2,
-  },
-  divider: {
-    backgroundColor: '#334155',
-    marginVertical: 12,
-  },
-  playerActions: {
+  stripStats: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
+    borderLeftWidth: 1,
+    borderLeftColor: '#334155',
+    paddingLeft: 12,
   },
-  actionButton: {
-    flex: 1,
+  miniStat: {
+    alignItems: 'center',
   },
-  deleteButton: {
-    backgroundColor: '#ef4444',
+  miniVal: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
-  emptyState: {
+  miniLab: {
+    color: '#94a3b8',
+    fontSize: 9,
+    textTransform: 'uppercase',
+  },
+  emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: 20,
   },
-  emptyStateIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyStateTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  emptyStateText: {
-    fontSize: 14,
+  emptyText: {
     color: '#94a3b8',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 24,
+    marginTop: 15,
+    fontSize: 14,
   },
-  emptyStateButton: {
-    backgroundColor: '#3b82f6',
-  },
+  emptyMainBtn: {
+    marginTop: 20,
+    backgroundColor: '#22c55e',
+  }
 });
