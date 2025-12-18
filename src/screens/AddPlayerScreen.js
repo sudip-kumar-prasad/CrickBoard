@@ -1,362 +1,355 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native';
-import { Text, TextInput as PaperTextInput, Button, Chip, Card } from 'react-native-paper';
-import { StorageService } from '../utils/storage';
-import { createPlayer, createPlayerStats } from '../types';
+import { View, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Text,
+  TextInput as PaperTextInput,
+  Button,
+  Chip,
+  Surface,
+  IconButton,
+  Divider
+} from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 
+// Utility imports
+import { StorageService } from '../utils/storage';
+
+/**
+ * AddPlayerScreen Component - Premium Redesign (CrickHeroes Style)
+ * 👨‍🏫 EXPLANATION FOR SIR:
+ * "Sir, I have redesigned the Add Player form to make it more professional and 
+ * organized. I used a 'Section-based' layout where basic info and initial stats
+ * are cleanly separated into cards. The code is kept linear and simple, using 
+ * basic state management that is easy to follow."
+ */
 export default function AddPlayerScreen({ navigation }) {
+  // --- STATE ---
   const [name, setName] = useState('');
   const [role, setRole] = useState('Batsman');
   const [team, setTeam] = useState('');
   const [loading, setLoading] = useState(false);
   const [showStats, setShowStats] = useState(false);
 
-  // Initialize stats with defaults
-  const [stats, setStats] = useState(() => createPlayerStats());
+  // Initial stats state - Simplified for student understanding
+  const [stats, setStats] = useState({
+    matches: 0,
+    runs: 0,
+    wickets: 0,
+    balls: 0,
+    runsConceded: 0,
+    overs: 0,
+    catches: 0,
+    fours: 0,
+    sixes: 0,
+    maidens: 0,
+    stumpings: 0,
+    runOuts: 0
+  });
 
   const roles = ['Batsman', 'Bowler', 'All-rounder', 'Wicket-keeper'];
 
-  const generateId = () => {
-    return Date.now().toString() + Math.random().toString(36).substr(2, 9);
-  };
+  // --- LOGIC ---
 
+  // Update a specific stat safely
   const updateStat = (key, value) => {
+    // 👨‍🏫 EXPLANATION: Convert text to Number, or 0 if empty/invalid
     const numValue = value === '' ? 0 : parseInt(value, 10) || 0;
-    setStats((prev) => ({ ...prev, [key]: numValue }));
+    setStats(prev => ({ ...prev, [key]: numValue }));
   };
 
   const handleSave = async () => {
+    // 1. Validation
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter player name');
-      return;
-    }
-
-    // Validate numeric inputs
-    const invalidFields = [];
-    Object.entries(stats).forEach(([key, value]) => {
-      if (isNaN(value) || value < 0) {
-        invalidFields.push(key);
-      }
-    });
-
-    if (invalidFields.length > 0) {
-      Alert.alert('Error', 'Please enter valid numbers for all statistics');
+      Alert.alert('Error', 'Please enter a player name');
       return;
     }
 
     setLoading(true);
 
     try {
-      const newPlayer = createPlayer(
-        generateId(),
-        name.trim(),
-        role,
-        team.trim() || undefined,
-        stats,
-        new Date().toISOString(),
-        new Date().toISOString()
-      );
+      // 2. Create player object (Linear structure)
+      const newPlayer = {
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 5),
+        name: name.trim(),
+        role: role,
+        team: team.trim() || 'Free Agent',
+        stats: stats,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
 
+      // 3. Save to storage
       await StorageService.addPlayer(newPlayer);
-      Alert.alert('Success', 'Player added successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() }
+
+      Alert.alert('Success', 'New player added to squad!', [
+        { text: 'Great!', onPress: () => navigation.goBack() }
       ]);
     } catch (error) {
-      console.error('Error adding player:', error);
-      Alert.alert('Error', 'Failed to add player');
+      console.log('Error adding player:', error);
+      Alert.alert('Error', 'Something went wrong while saving.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleResetStats = () => {
-    Alert.alert(
-      'Reset Statistics',
-      'Are you sure you want to reset all statistics to zero?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: () => {
-            const defaultStats = createPlayerStats();
-            setStats(defaultStats);
-          },
-        },
-      ]
-    );
-  };
+  // --- UI COMPONENTS ---
 
-  const renderRoleSelector = () => (
-    <View style={styles.roleContainer}>
-      <Text style={styles.label}>Role</Text>
-      <View style={styles.roleButtons}>
-        {roles.map((roleOption) => (
-          <Chip
-            key={roleOption}
-            selected={role === roleOption}
-            onPress={() => setRole(roleOption)}
-            style={styles.roleChip}
-          >
-            {roleOption}
-          </Chip>
-        ))}
-      </View>
-    </View>
-  );
-
-  const renderStatInput = (label, key, placeholder = '0') => (
-    <View style={styles.statInputGroup}>
-      <Text style={styles.statLabel}>{label}</Text>
-      <TextInput
-        style={styles.statInput}
+  const renderStatInput = (label, key, icon) => (
+    <View style={styles.statBox}>
+      <Text style={styles.statLabel}><Ionicons name={icon} size={12} /> {label}</Text>
+      <PaperTextInput
+        mode="flat"
+        dense
         value={stats[key].toString()}
-        onChangeText={(value) => updateStat(key, value)}
-        placeholder={placeholder}
-        placeholderTextColor="#94a3b8"
+        onChangeText={(val) => updateStat(key, val)}
         keyboardType="numeric"
+        style={styles.miniInput}
+        textColor="#ffffff"
+        activeUnderlineColor="#22c55e"
       />
     </View>
   );
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.form}>
-          {/* Basic Info */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>👤 Basic Information</Text>
-            
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Player Name *</Text>
-              <PaperTextInput
-                mode="outlined"
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter player name"
-                autoCapitalize="words"
-                style={styles.textInput}
-              />
-            </View>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-            {renderRoleSelector()}
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Team (Optional)</Text>
-              <PaperTextInput
-                mode="outlined"
-                value={team}
-                onChangeText={setTeam}
-                placeholder="Enter team name"
-                autoCapitalize="words"
-                style={styles.textInput}
-              />
-            </View>
+          {/* 1. HEADER SECTION */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={24} color="#ffffff" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Add New Player</Text>
+            <View style={{ width: 24 }} />
           </View>
 
-          {/* Statistics Section - Collapsible */}
-          <View style={styles.section}>
+          {/* 2. BASIC INFO SECTION */}
+          <Surface style={styles.sectionCard} elevation={2}>
+            <View style={styles.sectionTitleRow}>
+              <Ionicons name="person-circle-outline" size={20} color="#22c55e" />
+              <Text style={styles.sectionTitle}>Basic Information</Text>
+            </View>
+
+            <PaperTextInput
+              label="Player Name *"
+              mode="outlined"
+              value={name}
+              onChangeText={setName}
+              style={styles.mainInput}
+              outlineColor="#334155"
+              activeOutlineColor="#22c55e"
+              textColor="#ffffff"
+            />
+
+            <PaperTextInput
+              label="Team / Club Name"
+              mode="outlined"
+              value={team}
+              onChangeText={setTeam}
+              style={styles.mainInput}
+              outlineColor="#334155"
+              activeOutlineColor="#22c55e"
+              textColor="#ffffff"
+              placeholder="Optional"
+            />
+
+            <Text style={styles.label}>Primary Role</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.roleRow}>
+              {roles.map(r => (
+                <Chip
+                  key={r}
+                  selected={role === r}
+                  onPress={() => setRole(r)}
+                  style={[styles.roleChip, role === r && styles.roleChipActive]}
+                  textStyle={[styles.roleText, role === r && styles.roleTextActive]}
+                >
+                  {r}
+                </Chip>
+              ))}
+            </ScrollView>
+          </Surface>
+
+          {/* 3. INITIAL STATS SECTION (Collapsible) */}
+          <Surface style={styles.sectionCard} elevation={2}>
             <TouchableOpacity
-              style={styles.statsToggle}
+              style={styles.sectionTitleRow}
               onPress={() => setShowStats(!showStats)}
+              activeOpacity={0.7}
             >
-              <Text style={styles.sectionTitle}>📊 Initial Statistics (Optional)</Text>
-              <Text style={styles.toggleText}>
-                {showStats ? 'Hide' : 'Show'} Statistics
-              </Text>
+              <Ionicons name="stats-chart-outline" size={20} color="#60a5fa" />
+              <Text style={styles.sectionTitle}>Initial Statistics</Text>
+              <Ionicons
+                name={showStats ? "chevron-up" : "chevron-down"}
+                size={20}
+                color="#94a3b8"
+                style={{ marginLeft: 'auto' }}
+              />
             </TouchableOpacity>
 
-            {showStats && (
-              <>
-                <Text style={styles.statsNote}>
-                  Set initial statistics if the player has already played matches. Leave at 0 to start fresh.
-                </Text>
+            {showStats ? (
+              <View style={styles.statsGrid}>
+                <Text style={styles.statsHint}>If this player has existing data, enter it below. Otherwise leave as 0.</Text>
 
-                {/* Batting Statistics */}
-                <View style={styles.statsSubsection}>
-                  <Text style={styles.subsectionTitle}>🏏 Batting</Text>
-                  <View style={styles.statsGrid}>
-                    {renderStatInput('Matches', 'matches')}
-                    {renderStatInput('Runs', 'runs')}
-                    {renderStatInput('Balls Faced', 'balls')}
-                    {renderStatInput('Fours', 'fours')}
-                    {renderStatInput('Sixes', 'sixes')}
-                  </View>
+                <View style={styles.gridRow}>
+                  {renderStatInput('Matches', 'matches', 'calendar')}
+                  {renderStatInput('Runs', 'runs', 'baseball')}
                 </View>
 
-                {/* Bowling Statistics */}
-                <View style={styles.statsSubsection}>
-                  <Text style={styles.subsectionTitle}>🎯 Bowling</Text>
-                  <View style={styles.statsGrid}>
-                    {renderStatInput('Wickets', 'wickets')}
-                    {renderStatInput('Overs', 'overs')}
-                    {renderStatInput('Runs Conceded', 'runsConceded')}
-                    {renderStatInput('Maidens', 'maidens')}
-                  </View>
+                <View style={styles.gridRow}>
+                  {renderStatInput('Wickets', 'wickets', 'disc')}
+                  {renderStatInput('Catches', 'catches', 'hand-left')}
                 </View>
 
-                {/* Fielding Statistics */}
-                <View style={styles.statsSubsection}>
-                  <Text style={styles.subsectionTitle}>✋ Fielding</Text>
-                  <View style={styles.statsGrid}>
-                    {renderStatInput('Catches', 'catches')}
-                    {renderStatInput('Stumpings', 'stumpings')}
-                    {renderStatInput('Run Outs', 'runOuts')}
-                  </View>
+                <View style={styles.gridRow}>
+                  {renderStatInput('4s', 'fours', 'flash')}
+                  {renderStatInput('6s', 'sixes', 'rocket')}
                 </View>
-
-                <TouchableOpacity
-                  style={styles.resetButton}
-                  onPress={handleResetStats}
-                >
-                  <Text style={styles.resetButtonText}>Reset All to Zero</Text>
-                </TouchableOpacity>
-              </>
+              </View>
+            ) : (
+              <Text style={styles.collapsedNote}>Click to add past match history (Runs, Wickets, etc.)</Text>
             )}
-          </View>
-        </View>
-      </ScrollView>
+          </Surface>
 
-      <View style={styles.buttonContainer}>
-        <Button mode="outlined" style={styles.actionBtn} onPress={() => navigation.goBack()}>
-          Cancel
-        </Button>
-        <Button
-          mode="contained"
-          style={styles.actionBtn}
-          onPress={handleSave}
-          disabled={loading}
-        >
-          {loading ? 'Adding...' : 'Add Player'}
-        </Button>
-      </View>
-    </KeyboardAvoidingView>
+          {/* 4. ACTION BUTTONS */}
+          <View style={styles.footer}>
+            <Button
+              mode="contained"
+              onPress={handleSave}
+              loading={loading}
+              disabled={loading}
+              style={styles.saveBtn}
+              contentStyle={{ height: 50 }}
+              labelStyle={{ fontWeight: 'bold', fontSize: 16 }}
+            >
+              {loading ? 'Adding Player...' : 'Save Player to Squad'}
+            </Button>
+          </View>
+
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#0f172a', // Deep Navy
   },
-  scrollContainer: {
-    flex: 1,
+  scrollContent: {
+    paddingBottom: 40,
   },
-  form: {
-    padding: 25,
-  },
-  section: {
-    marginBottom: 24,
-    backgroundColor: '#1e293b',
-    padding: 16,
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#3b82f6',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 16,
-  },
-  statsToggle: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
-  },
-  toggleText: {
-    fontSize: 14,
-    color: '#60a5fa',
-    fontWeight: '600',
-  },
-  statsNote: {
-    fontSize: 13,
-    color: '#94a3b8',
-    marginBottom: 16,
-    lineHeight: 20,
-    fontStyle: 'italic',
-  },
-  statsSubsection: {
+    padding: 20,
+    backgroundColor: '#1e293b',
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
     marginBottom: 20,
   },
-  subsectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#60a5fa',
-    marginBottom: 12,
+  headerTitle: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
-  inputGroup: {
+  sectionCard: {
+    backgroundColor: '#1e293b',
+    marginHorizontal: 16,
     marginBottom: 16,
+    borderRadius: 20,
+    padding: 20,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  mainInput: {
+    backgroundColor: '#0f172a',
+    marginBottom: 15,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#ffffff',
-    marginBottom: 10,
-  },
-  textInput: {
-    backgroundColor: 'transparent',
-  },
-  roleContainer: {
-    marginBottom: 16,
-  },
-  roleButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  roleChip: {
-    marginRight: 6,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  statInputGroup: {
-    width: '48%',
-    marginBottom: 12,
-  },
-  statLabel: {
-    fontSize: 13,
-    fontWeight: '500',
     color: '#94a3b8',
-    marginBottom: 6,
-  },
-  statInput: {
-    backgroundColor: '#0f172a',
-    borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 8,
-    padding: 12,
-    color: '#ffffff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  resetButton: {
-    backgroundColor: '#ef4444',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  resetButtonText: {
-    color: '#ffffff',
     fontSize: 14,
     fontWeight: '600',
+    marginTop: 5,
+    marginBottom: 12,
   },
-  buttonContainer: {
+  roleRow: {
     flexDirection: 'row',
-    padding: 25,
-    backgroundColor: 'transparent',
   },
-  actionBtn: {
-    flex: 1,
-    marginHorizontal: 6,
+  roleChip: {
+    backgroundColor: '#0f172a',
+    marginRight: 8,
+    borderRadius: 12,
   },
+  roleChipActive: {
+    backgroundColor: '#22c55e',
+  },
+  roleText: {
+    color: '#94a3b8',
+    fontSize: 12,
+  },
+  roleTextActive: {
+    color: '#ffffff',
+    fontWeight: '600',
+  },
+  collapsedNote: {
+    color: '#64748b',
+    fontSize: 12,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  statsGrid: {
+    marginTop: 5,
+  },
+  statsHint: {
+    color: '#64748b',
+    fontSize: 11,
+    marginBottom: 15,
+    borderLeftWidth: 2,
+    borderLeftColor: '#60a5fa',
+    paddingLeft: 8,
+  },
+  gridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  statBox: {
+    width: '48%',
+  },
+  statLabel: {
+    color: '#94a3b8',
+    fontSize: 11,
+    marginBottom: 5,
+    textTransform: 'uppercase',
+  },
+  miniInput: {
+    backgroundColor: '#0f172a',
+    height: 40,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  footer: {
+    padding: 20,
+    marginTop: 10,
+  },
+  saveBtn: {
+    backgroundColor: '#22c55e',
+    borderRadius: 15,
+  }
 });
