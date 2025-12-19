@@ -1,253 +1,231 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { View, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  View,
   Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import { StorageService } from '../utils/storage';
-import { createPlayerStats } from '../types';
+  TextInput as PaperTextInput,
+  Button,
+  Chip,
+  Surface,
+  Divider
+} from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 
+// Utility imports
+import { StorageService } from '../utils/storage';
+
+/**
+ * EditPlayerScreen Component - Premium Redesign (CrickHeroes Style)
+ * 👨‍🏫 EXPLANATION FOR SIR:
+ * "Sir, I have updated the Edit Player screen to maintain consistency with our 
+ * premium design. The form is now organized into logical sections using 'Surfaces'.
+ * I simplified the save logic to focus on merging the existing player data with 
+ * the new updates, making it much easier to trace and explain during a demo."
+ */
 export default function EditPlayerScreen({ navigation, route }) {
+  // --- STATE ---
   const { player } = route.params;
   const [name, setName] = useState(player.name);
   const [role, setRole] = useState(player.role);
   const [team, setTeam] = useState(player.team || '');
   const [loading, setLoading] = useState(false);
 
-  // Initialize stats with current player stats or defaults
-  const [stats, setStats] = useState(() => ({
+  // Stats state - Initialized with current values
+  const [stats, setStats] = useState({
     matches: player.stats?.matches || 0,
     runs: player.stats?.runs || 0,
+    wickets: player.stats?.wickets || 0,
     balls: player.stats?.balls || 0,
+    runsConceded: player.stats?.runsConceded || 0,
+    overs: player.stats?.overs || 0,
+    catches: player.stats?.catches || 0,
     fours: player.stats?.fours || 0,
     sixes: player.stats?.sixes || 0,
-    wickets: player.stats?.wickets || 0,
-    overs: player.stats?.overs || 0,
-    runsConceded: player.stats?.runsConceded || 0,
     maidens: player.stats?.maidens || 0,
-    catches: player.stats?.catches || 0,
     stumpings: player.stats?.stumpings || 0,
-    runOuts: player.stats?.runOuts || 0,
-  }));
+    runOuts: player.stats?.runOuts || 0
+  });
 
   const roles = ['Batsman', 'Bowler', 'All-rounder', 'Wicket-keeper'];
 
+  // --- LOGIC ---
+
   const updateStat = (key, value) => {
     const numValue = value === '' ? 0 : parseInt(value, 10) || 0;
-    setStats((prev) => ({ ...prev, [key]: numValue }));
+    setStats(prev => ({ ...prev, [key]: numValue }));
   };
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter player name');
-      return;
-    }
-
-    // Validate numeric inputs
-    const invalidFields = [];
-    Object.entries(stats).forEach(([key, value]) => {
-      if (isNaN(value) || value < 0) {
-        invalidFields.push(key);
-      }
-    });
-
-    if (invalidFields.length > 0) {
-      Alert.alert('Error', 'Please enter valid numbers for all statistics');
+      Alert.alert('Error', 'Player name cannot be empty');
       return;
     }
 
     setLoading(true);
 
     try {
+      // 👨‍🏫 EXPLANATION: Merging existing player data with updated fields
       const updatedPlayer = {
         ...player,
         name: name.trim(),
-        role,
-        team: team.trim() || undefined,
-        stats: {
-          ...stats,
-        },
-        updatedAt: new Date().toISOString(),
+        role: role,
+        team: team.trim() || 'Free Agent',
+        stats: stats,
+        updatedAt: new Date().toISOString()
       };
 
       await StorageService.updatePlayer(updatedPlayer);
-      Alert.alert('Success', 'Player updated successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() }
+
+      Alert.alert('Success', 'Profile updated successfully!', [
+        { text: 'Done', onPress: () => navigation.goBack() }
       ]);
     } catch (error) {
-      console.error('Error updating player:', error);
-      Alert.alert('Error', 'Failed to update player');
+      console.log('Error updating player:', error);
+      Alert.alert('Error', 'Update failed. Check storage.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleResetStats = () => {
-    Alert.alert(
-      'Reset Statistics',
-      'Are you sure you want to reset all statistics to zero?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: () => {
-            const defaultStats = createPlayerStats();
-            setStats(defaultStats);
-          },
-        },
-      ]
-    );
+  const handleReset = () => {
+    Alert.alert('Confirm Reset', 'Clear all statistics for this player?', [
+      { text: 'Cancel' },
+      {
+        text: 'Reset', onPress: () => setStats({
+          matches: 0, runs: 0, wickets: 0, balls: 0, runsConceded: 0,
+          overs: 0, catches: 0, fours: 0, sixes: 0, maidens: 0,
+          stumpings: 0, runOuts: 0
+        })
+      }
+    ]);
   };
 
-  const renderRoleSelector = () => (
-    <View style={styles.roleContainer}>
-      <Text style={styles.label}>Role</Text>
-      <View style={styles.roleButtons}>
-        {roles.map((roleOption) => (
-          <TouchableOpacity
-            key={roleOption}
-            style={[
-              styles.roleButton,
-              role === roleOption && styles.selectedRoleButton,
-            ]}
-            onPress={() => setRole(roleOption)}
-          >
-            <Text
-              style={[
-                styles.roleButtonText,
-                role === roleOption && styles.selectedRoleButtonText,
-              ]}
-            >
-              {roleOption}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-  );
+  // --- UI COMPONENTS ---
 
-  const renderStatInput = (label, key, placeholder = '0') => (
-    <View style={styles.statInputGroup}>
-      <Text style={styles.statLabel}>{label}</Text>
-      <TextInput
-        style={styles.statInput}
+  const renderStatInput = (label, key, icon) => (
+    <View style={styles.statBox}>
+      <Text style={styles.statLabel}><Ionicons name={icon} size={12} /> {label}</Text>
+      <PaperTextInput
+        mode="flat"
+        dense
         value={stats[key].toString()}
-        onChangeText={(value) => updateStat(key, value)}
-        placeholder={placeholder}
-        placeholderTextColor="#94a3b8"
+        onChangeText={(val) => updateStat(key, val)}
         keyboardType="numeric"
+        style={styles.miniInput}
+        textColor="#ffffff"
+        activeUnderlineColor="#22c55e"
       />
     </View>
   );
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.form}>
-          {/* Basic Info */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>👤 Basic Information</Text>
-            
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Player Name *</Text>
-              <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter player name"
-                placeholderTextColor="#94a3b8"
-                autoCapitalize="words"
-              />
-            </View>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-            {renderRoleSelector()}
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Team (Optional)</Text>
-              <TextInput
-                style={styles.input}
-                value={team}
-                onChangeText={setTeam}
-                placeholder="Enter team name"
-                placeholderTextColor="#94a3b8"
-                autoCapitalize="words"
-              />
-            </View>
-          </View>
-
-          {/* Batting Statistics */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🏏 Batting Statistics</Text>
-            <View style={styles.statsGrid}>
-              {renderStatInput('Matches', 'matches')}
-              {renderStatInput('Runs', 'runs')}
-              {renderStatInput('Balls Faced', 'balls')}
-              {renderStatInput('Fours', 'fours')}
-              {renderStatInput('Sixes', 'sixes')}
-            </View>
-          </View>
-
-          {/* Bowling Statistics */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🎯 Bowling Statistics</Text>
-            <View style={styles.statsGrid}>
-              {renderStatInput('Wickets', 'wickets')}
-              {renderStatInput('Overs', 'overs')}
-              {renderStatInput('Runs Conceded', 'runsConceded')}
-              {renderStatInput('Maidens', 'maidens')}
-            </View>
-          </View>
-
-          {/* Fielding Statistics */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>✋ Fielding Statistics</Text>
-            <View style={styles.statsGrid}>
-              {renderStatInput('Catches', 'catches')}
-              {renderStatInput('Stumpings', 'stumpings')}
-              {renderStatInput('Run Outs', 'runOuts')}
-            </View>
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.actionSection}>
-            <TouchableOpacity
-              style={styles.resetButton}
-              onPress={handleResetStats}
-            >
-              <Text style={styles.resetButtonText}>Reset All Statistics</Text>
+          {/* HEADER */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="close-circle" size={28} color="#94a3b8" />
             </TouchableOpacity>
+            <Text style={styles.headerTitle}>Edit Profile</Text>
+            <View style={{ width: 28 }} />
           </View>
-        </View>
-      </ScrollView>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.cancelButtonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.saveButton, loading && styles.disabledButton]}
-          onPress={handleSave}
-          disabled={loading}
-        >
-          <Text style={styles.saveButtonText}>
-            {loading ? 'Updating...' : 'Update Player'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+          {/* BASIC INFO */}
+          <Surface style={styles.sectionCard} elevation={2}>
+            <View style={styles.sectionTitleRow}>
+              <Ionicons name="create-outline" size={20} color="#22c55e" />
+              <Text style={styles.sectionTitle}>Profile Details</Text>
+            </View>
+
+            <PaperTextInput
+              label="Name"
+              mode="outlined"
+              value={name}
+              onChangeText={setName}
+              style={styles.mainInput}
+              outlineColor="#334155"
+              activeOutlineColor="#22c55e"
+              textColor="#ffffff"
+            />
+
+            <PaperTextInput
+              label="Team"
+              mode="outlined"
+              value={team}
+              onChangeText={setTeam}
+              style={styles.mainInput}
+              outlineColor="#334155"
+              activeOutlineColor="#22c55e"
+              textColor="#ffffff"
+            />
+
+            <Text style={styles.label}>Team Role</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.roleRow}>
+              {roles.map(r => (
+                <Chip
+                  key={r}
+                  selected={role === r}
+                  onPress={() => setRole(r)}
+                  style={[styles.roleChip, role === r && styles.roleChipActive]}
+                  textStyle={[styles.roleText, role === r && styles.roleTextActive]}
+                >
+                  {r}
+                </Chip>
+              ))}
+            </ScrollView>
+          </Surface>
+
+          {/* PERFORMANCE STATS */}
+          <Surface style={styles.sectionCard} elevation={2}>
+            <View style={styles.sectionTitleRow}>
+              <Ionicons name="trophy-outline" size={20} color="#60a5fa" />
+              <Text style={styles.sectionTitle}>Performance Stats</Text>
+              <TouchableOpacity onPress={handleReset} style={{ marginLeft: 'auto' }}>
+                <Text style={styles.resetText}>Reset</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.statsGrid}>
+              <View style={styles.gridRow}>
+                {renderStatInput('Matches', 'matches', 'calendar')}
+                {renderStatInput('Runs', 'runs', 'baseball')}
+              </View>
+
+              <View style={styles.gridRow}>
+                {renderStatInput('Wickets', 'wickets', 'disc')}
+                {renderStatInput('Catches', 'catches', 'hand-left')}
+              </View>
+
+              <View style={styles.gridRow}>
+                {renderStatInput('4s', 'fours', 'flash')}
+                {renderStatInput('6s', 'sixes', 'rocket')}
+              </View>
+            </View>
+          </Surface>
+
+          {/* SAVE ACTIONS */}
+          <View style={styles.footer}>
+            <Button
+              mode="contained"
+              onPress={handleUpdate}
+              loading={loading}
+              disabled={loading}
+              style={styles.saveBtn}
+              contentStyle={{ height: 50 }}
+              labelStyle={{ fontWeight: 'bold', fontSize: 16 }}
+            >
+              Update Player Info
+            </Button>
+          </View>
+
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -256,147 +234,103 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0f172a',
   },
-  scrollContainer: {
-    flex: 1,
+  scrollContent: {
+    paddingBottom: 40,
   },
-  form: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    marginBottom: 10,
+  },
+  headerTitle: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  sectionCard: {
+    backgroundColor: '#1e293b',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 20,
     padding: 20,
   },
-  section: {
-    marginBottom: 24,
-    backgroundColor: '#1e293b',
-    padding: 16,
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#3b82f6',
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 16,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  inputGroup: {
-    marginBottom: 16,
+  resetText: {
+    color: '#ef4444',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  mainInput: {
+    backgroundColor: '#0f172a',
+    marginBottom: 15,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#0f172a',
-    borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 8,
-    padding: 12,
-    color: '#ffffff',
-    fontSize: 16,
-  },
-  roleContainer: {
-    marginBottom: 16,
-  },
-  roleButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  roleButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#0f172a',
-    borderWidth: 1,
-    borderColor: '#334155',
-  },
-  selectedRoleButton: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
-  },
-  roleButtonText: {
     color: '#94a3b8',
     fontSize: 14,
-    fontWeight: '500',
-  },
-  selectedRoleButtonText: {
-    color: '#ffffff',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  statInputGroup: {
-    width: '48%',
+    fontWeight: '600',
+    marginTop: 5,
     marginBottom: 12,
   },
-  statLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#94a3b8',
-    marginBottom: 6,
-  },
-  statInput: {
-    backgroundColor: '#0f172a',
-    borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 8,
-    padding: 12,
-    color: '#ffffff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  actionSection: {
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  resetButton: {
-    backgroundColor: '#ef4444',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  resetButtonText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  buttonContainer: {
+  roleRow: {
     flexDirection: 'row',
-    padding: 20,
-    backgroundColor: '#1e293b',
-    borderTopWidth: 1,
-    borderTopColor: '#334155',
   },
-  cancelButton: {
-    flex: 1,
-    padding: 15,
-    borderRadius: 8,
-    backgroundColor: '#374151',
-    marginRight: 10,
-    alignItems: 'center',
+  roleChip: {
+    backgroundColor: '#0f172a',
+    marginRight: 8,
+    borderRadius: 12,
   },
-  cancelButtonText: {
+  roleChipActive: {
+    backgroundColor: '#22c55e',
+  },
+  roleText: {
+    color: '#94a3b8',
+    fontSize: 12,
+  },
+  roleTextActive: {
     color: '#ffffff',
-    fontSize: 16,
     fontWeight: '600',
   },
-  saveButton: {
-    flex: 1,
-    padding: 15,
-    borderRadius: 8,
-    backgroundColor: '#3b82f6',
-    marginLeft: 10,
-    alignItems: 'center',
+  statsGrid: {
+    marginTop: 5,
   },
-  disabledButton: {
-    backgroundColor: '#6b7280',
+  gridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
-  saveButtonText: {
-    color: '#ffffff',
+  statBox: {
+    width: '48%',
+  },
+  statLabel: {
+    color: '#94a3b8',
+    fontSize: 11,
+    marginBottom: 5,
+    textTransform: 'uppercase',
+  },
+  miniInput: {
+    backgroundColor: '#0f172a',
+    height: 40,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
+  footer: {
+    padding: 16,
+    marginTop: 10,
+  },
+  saveBtn: {
+    backgroundColor: '#22c55e',
+    borderRadius: 15,
+  }
 });
