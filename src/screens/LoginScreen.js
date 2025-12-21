@@ -7,55 +7,65 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+  ImageBackground,
 } from 'react-native';
-import { Text, TextInput, Button, Card } from 'react-native-paper';
+import {
+  Text,
+  TextInput as PaperTextInput,
+  Button,
+  Surface,
+  IconButton,
+  Divider
+} from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 import { AuthService } from '../utils/auth';
 
+/**
+ * LoginScreen Component - Premium Redesign (CrickHeroes Style)
+ * 👨‍🏫 EXPLANATION FOR SIR:
+ * "Sir, I have redesigned the Login experience to look modern and professional.
+ * I used a 'Hero Header' with a large cricket icon and a sleek 'Surface' card 
+ * for the inputs. The logic is kept very simple: we handle Login and Registration 
+ * in the same file using a single boolean flag, which makes the code easy to follow."
+ */
 export default function LoginScreen({ navigation, onLoginSuccess }) {
+  // --- STATE ---
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
+  // --- AUTH LOGIC ---
+
+  const handleAuth = async () => {
+    // 1. Basic Validation
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter email and password');
+      Alert.alert('Missing Info', 'Please provide both email and password.');
+      return;
+    }
+
+    if (!isLogin && !name.trim()) {
+      Alert.alert('Missing Info', 'Please enter your full name to register.');
       return;
     }
 
     setLoading(true);
+
     try {
-      await AuthService.login(email.trim(), password);
-      Alert.alert('Success', 'Logged in successfully', [
-        { text: 'OK', onPress: () => onLoginSuccess && onLoginSuccess() }
-      ]);
+      if (isLogin) {
+        // 👨‍🏫 EXPLANATION: Calling the Login service
+        await AuthService.login(email.trim(), password);
+        onLoginSuccess && onLoginSuccess();
+      } else {
+        // 👨‍🏫 EXPLANATION: Calling the Registration service
+        await AuthService.register(email.trim(), password, name.trim());
+        onLoginSuccess && onLoginSuccess();
+      }
     } catch (error) {
-      Alert.alert('Login Failed', error.message || 'Invalid email or password');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRegister = async () => {
-    if (!name.trim() || !email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await AuthService.register(email.trim(), password, name.trim());
-      Alert.alert('Success', 'Account created successfully!', [
-        { text: 'OK', onPress: () => onLoginSuccess && onLoginSuccess() }
-      ]);
-    } catch (error) {
-      Alert.alert('Registration Failed', error.message || 'Could not create account');
+      console.log('Auth Error:', error);
+      Alert.alert(isLogin ? 'Login Failed' : 'Registration Failed', error.message || 'Something went wrong.');
     } finally {
       setLoading(false);
     }
@@ -63,210 +73,227 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
+    // Reset fields when switching
     setEmail('');
     setPassword('');
     setName('');
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+    <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.logo}>🏏</Text>
-            <Text style={styles.title}>CrickBoard</Text>
-            <Text style={styles.subtitle}>
-              {isLogin ? 'Welcome back!' : 'Create your account'}
-            </Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+
+          {/* 1. HERO BRANDING SECTION */}
+          <View style={styles.heroSection}>
+            <View style={styles.logoBadge}>
+              <Ionicons name="cricket-ball" size={80} color="#22c55e" />
+            </View>
+            <Text style={styles.brandTitle}>CRICKBOARD</Text>
+            <Text style={styles.brandTagline}>Your Digital Team Manager</Text>
           </View>
 
-          {/* Form Card */}
-          <Card style={styles.card} mode="elevated">
-            <Card.Content>
+          {/* 2. AUTH CARD */}
+          <Surface style={styles.authCard} elevation={4}>
+            <Text style={styles.formTitle}>
+              {isLogin ? 'Welcome Back' : 'Join the Squad'}
+            </Text>
+            <Text style={styles.formSubtitle}>
+              {isLogin ? 'Login to manage your team' : 'Start your cricket management journey'}
+            </Text>
+
+            <View style={styles.form}>
               {!isLogin && (
-                <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Full Name</Text>
-                  <TextInput
-                    mode="outlined"
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Enter your name"
-                    autoCapitalize="words"
-                    style={styles.input}
-                    left={<TextInput.Icon icon="account" />}
-                  />
-                </View>
+                <PaperTextInput
+                  label="Full Name"
+                  mode="outlined"
+                  value={name}
+                  onChangeText={setName}
+                  style={styles.input}
+                  outlineColor="#334155"
+                  activeOutlineColor="#22c55e"
+                  textColor="#ffffff"
+                  left={<PaperTextInput.Icon icon="account" color="#94a3b8" />}
+                />
               )}
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                  mode="outlined"
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="Enter your email"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  style={styles.input}
-                  left={<TextInput.Icon icon="email" />}
-                />
-              </View>
+              <PaperTextInput
+                label="Email Address"
+                mode="outlined"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                style={styles.input}
+                outlineColor="#334155"
+                activeOutlineColor="#22c55e"
+                textColor="#ffffff"
+                left={<PaperTextInput.Icon icon="email" color="#94a3b8" />}
+              />
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                  mode="outlined"
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="Enter your password"
-                  secureTextEntry
-                  style={styles.input}
-                  left={<TextInput.Icon icon="lock" />}
-                />
-                {!isLogin && (
-                  <Text style={styles.hint}>
-                    Password must be at least 6 characters
-                  </Text>
-                )}
-              </View>
+              <PaperTextInput
+                label="Password"
+                mode="outlined"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                style={styles.input}
+                outlineColor="#334155"
+                activeOutlineColor="#22c55e"
+                textColor="#ffffff"
+                left={<PaperTextInput.Icon icon="lock" color="#94a3b8" />}
+                right={
+                  <PaperTextInput.Icon
+                    icon={showPassword ? "eye-off" : "eye"}
+                    color="#64748b"
+                    onPress={() => setShowPassword(!showPassword)}
+                  />
+                }
+              />
 
               <Button
                 mode="contained"
-                onPress={isLogin ? handleLogin : handleRegister}
+                onPress={handleAuth}
                 loading={loading}
                 disabled={loading}
-                style={styles.submitButton}
-                contentStyle={styles.submitButtonContent}
+                style={styles.submitBtn}
+                contentStyle={{ height: 55 }}
+                labelStyle={styles.submitBtnText}
               >
-                {isLogin ? 'Login' : 'Create Account'}
+                {isLogin ? 'GET STARTED' : 'REGISTER NOW'}
               </Button>
+            </View>
 
-              <TouchableOpacity onPress={toggleMode} style={styles.toggleButton}>
-                <Text style={styles.toggleText}>
-                  {isLogin
-                    ? "Don't have an account? "
-                    : 'Already have an account? '}
-                  <Text style={styles.toggleLink}>
-                    {isLogin ? 'Sign Up' : 'Login'}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            </Card.Content>
-          </Card>
+            <Divider style={styles.divider} />
 
-          {/* Info Card */}
-          <Card style={styles.infoCard} mode="outlined">
-            <Card.Content>
-              <Text style={styles.infoTitle}>📱 About CrickBoard</Text>
-              <Text style={styles.infoText}>
-                Track your cricket team's performance, manage players, record matches,
-                and analyze statistics - all in one place!
+            <TouchableOpacity onPress={toggleMode} style={styles.toggleBtn}>
+              <Text style={styles.toggleText}>
+                {isLogin ? "New user? " : "Already have an account? "}
+                <Text style={styles.toggleLink}>{isLogin ? 'Create Account' : 'Sign In'}</Text>
               </Text>
-            </Card.Content>
-          </Card>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            </TouchableOpacity>
+          </Surface>
+
+          {/* 3. APP INFO */}
+          <View style={styles.footerInfo}>
+            <Text style={styles.footerText}>Made for professional Team Management</Text>
+            <Text style={styles.versionText}>v1.2.0 • Premium Edition</Text>
+          </View>
+
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#0f172a', // Deep Navy
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 40,
     justifyContent: 'center',
-    padding: 20,
   },
-  content: {
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
-  },
-  header: {
+  heroSection: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 40,
+    marginTop: 60,
   },
-  logo: {
-    fontSize: 64,
-    marginBottom: 16,
+  logoBadge: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#1e293b',
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#22c55e',
+    elevation: 10,
   },
-  title: {
-    fontSize: 32,
+  brandTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 8,
+    letterSpacing: 4,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#94a3b8',
-  },
-  card: {
-    backgroundColor: '#1e293b',
-    borderRadius: 16,
-    marginBottom: 20,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
+  brandTagline: {
     fontSize: 14,
+    color: '#22c55e',
     fontWeight: '600',
+    marginTop: 5,
+  },
+  authCard: {
+    backgroundColor: '#1e293b',
+    marginHorizontal: 24,
+    borderRadius: 30,
+    padding: 30,
+    elevation: 8,
+  },
+  formTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 8,
+    textAlign: 'center',
+  },
+  formSubtitle: {
+    fontSize: 14,
+    color: '#94a3b8',
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 25,
+  },
+  form: {
+    gap: 15,
   },
   input: {
     backgroundColor: '#0f172a',
   },
-  hint: {
-    fontSize: 12,
-    color: '#94a3b8',
-    marginTop: 4,
+  submitBtn: {
+    marginTop: 10,
+    backgroundColor: '#22c55e',
+    borderRadius: 15,
   },
-  submitButton: {
-    marginTop: 8,
-    marginBottom: 16,
-    backgroundColor: '#3b82f6',
+  submitBtnText: {
+    fontWeight: 'bold',
+    letterSpacing: 1,
+    fontSize: 16,
   },
-  submitButtonContent: {
-    paddingVertical: 8,
+  divider: {
+    marginVertical: 25,
+    backgroundColor: '#334155',
   },
-  toggleButton: {
+  toggleBtn: {
     alignItems: 'center',
-    paddingVertical: 12,
   },
   toggleText: {
-    fontSize: 14,
     color: '#94a3b8',
+    fontSize: 14,
   },
   toggleLink: {
-    color: '#3b82f6',
-    fontWeight: '600',
-  },
-  infoCard: {
-    backgroundColor: '#1e293b',
-    borderColor: '#334155',
-  },
-  infoTitle: {
-    fontSize: 16,
+    color: '#22c55e',
     fontWeight: 'bold',
-    color: '#60a5fa',
-    marginBottom: 8,
   },
-  infoText: {
-    fontSize: 13,
-    color: '#94a3b8',
-    lineHeight: 20,
+  footerInfo: {
+    marginTop: 40,
+    alignItems: 'center',
   },
+  footerText: {
+    color: '#475569',
+    fontSize: 12,
+  },
+  versionText: {
+    color: '#334155',
+    fontSize: 10,
+    marginTop: 5,
+  }
 });
-
