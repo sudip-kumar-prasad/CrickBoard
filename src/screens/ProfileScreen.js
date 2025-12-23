@@ -29,7 +29,7 @@ import { useFocusEffect } from '@react-navigation/native';
  * and status chips. The code is kept very direct: we use focused effects 
  * to load user data and a simple toggle for editing/viewing modes."
  */
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({ navigation, onLogout }) {
     // --- STATE ---
     const [user, setUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -89,7 +89,7 @@ export default function ProfileScreen({ navigation }) {
                     onPress: async () => {
                         try {
                             await AuthService.logout();
-                            // App.js handles the navigation switch automatically
+                            if (onLogout) onLogout();
                         } catch (error) {
                             Alert.alert('Error', 'Failed to logout');
                         }

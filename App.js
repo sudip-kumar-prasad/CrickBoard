@@ -80,7 +80,9 @@ function MainTabs({ onLogout }) {
       <Tab.Screen name="Matches" component={MatchesStack} options={{ headerShown: false }} />
       <Tab.Screen name="Insights" component={InsightsScreen} />
       <Tab.Screen name="Players" component={PlayersStack} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile">
+        {props => <ProfileScreen {...props} onLogout={onLogout} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
