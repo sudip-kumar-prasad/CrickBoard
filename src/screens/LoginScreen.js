@@ -17,7 +17,7 @@ import {
   IconButton,
   Divider
 } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthService } from '../utils/auth';
 
 /**
@@ -94,7 +94,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
           {/* 1. HERO BRANDING SECTION */}
           <View style={styles.heroSection}>
             <View style={styles.logoBadge}>
-              <Ionicons name="cricket-ball" size={80} color="#22c55e" />
+              <MaterialCommunityIcons name="cricket" size={80} color="#22c55e" />
             </View>
             <Text style={styles.brandTitle}>CRICKBOARD</Text>
             <Text style={styles.brandTagline}>Your Digital Team Manager</Text>
