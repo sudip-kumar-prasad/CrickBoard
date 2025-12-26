@@ -71,7 +71,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
 
         // 👨‍🏫 EXPLANATION: Launching the image picker
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaType.IMAGE,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 0.5,
