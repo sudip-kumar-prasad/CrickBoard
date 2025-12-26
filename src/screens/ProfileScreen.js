@@ -20,6 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthService } from '../utils/auth';
 import { useFocusEffect } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 /**
  * ProfileScreen Component - Premium Redesign (CrickHeroes Style)
@@ -34,6 +35,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
     const [user, setUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState('');
+    const [profileImage, setProfileImage] = useState(null);
     const [loading, setLoading] = useState(false);
 
     // --- DATA LOADING ---
@@ -49,6 +51,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
             if (userData) {
                 setUser(userData);
                 setName(userData.name);
+                setProfileImage(userData.profileImage || null);
             }
         } catch (error) {
             console.error('Error loading user data:', error);
@@ -56,6 +59,36 @@ export default function ProfileScreen({ navigation, onLogout }) {
     };
 
     // --- LOGIC ---
+
+    const pickImage = async () => {
+        // 👨‍🏫 EXPLANATION: Requesting permission to access the media library
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+            return;
+        }
+
+        // 👨‍🏫 EXPLANATION: Launching the image picker
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5,
+        });
+
+        if (!result.canceled) {
+            const imageUri = result.assets[0].uri;
+            setProfileImage(imageUri);
+
+            // 👨‍🏫 EXPLANATION: Direct update to our AuthService to save the image path
+            try {
+                await AuthService.updateUser({ profileImage: imageUri });
+            } catch (error) {
+                console.error('Error saving profile image:', error);
+            }
+        }
+    };
 
     const handleSaveProfile = async () => {
         if (!name.trim()) {
@@ -122,12 +155,27 @@ export default function ProfileScreen({ navigation, onLogout }) {
                 {/* 1. HERO PROFILE SECTION */}
                 <Surface style={styles.heroSection} elevation={4}>
                     <View style={styles.avatarWrapper}>
-                        <Avatar.Text
-                            size={110}
-                            label={getInitials(user.name)}
-                            backgroundColor="#22c55e"
-                            labelStyle={styles.avatarLabel}
-                        />
+                        {profileImage ? (
+                            <Avatar.Image
+                                size={110}
+                                source={{ uri: profileImage }}
+                            />
+                        ) : (
+                            <Avatar.Text
+                                size={110}
+                                label={getInitials(user.name)}
+                                backgroundColor="#22c55e"
+                                labelStyle={styles.avatarLabel}
+                            />
+                        )}
+
+                        {/* Camera Control Badge */}
+                        <TouchableOpacity
+                            style={styles.cameraBadge}
+                            onPress={pickImage}
+                        >
+                            <Ionicons name="camera" size={18} color="#ffffff" />
+                        </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.editBadge}
                             onPress={() => setIsEditing(!isEditing)}
@@ -255,18 +303,33 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ffffff',
     },
-    editBadge: {
+    cameraBadge: {
         position: 'absolute',
-        bottom: 5,
-        right: 5,
-        backgroundColor: '#3b82f6',
-        width: 34,
-        height: 34,
-        borderRadius: 17,
+        top: 0,
+        right: -5,
+        backgroundColor: '#22c55e',
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
         borderColor: '#1e293b',
+        zIndex: 1,
+    },
+    editBadge: {
+        position: 'absolute',
+        bottom: 0,
+        right: -5,
+        backgroundColor: '#3b82f6',
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 3,
+        borderColor: '#1e293b',
+        zIndex: 1,
     },
     profileInfo: {
         alignItems: 'center',
