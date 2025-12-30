@@ -13,7 +13,7 @@ import {
   Avatar
 } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { BarChart } from 'react-native-chart-kit';
+import { BarChart, LineChart, ProgressChart } from 'react-native-chart-kit';
 
 // Utility imports
 import { StorageService } from '../utils/storage';
@@ -38,6 +38,8 @@ export default function InsightsScreen({ navigation }) {
   const [bowlingLeaders, setBowlingLeaders] = useState([]);
   const [topPerformers, setTopPerformers] = useState({ batsman: null, bowler: null, fielder: null });
   const [chartData, setChartData] = useState({ labels: [], datasets: [{ data: [] }] });
+  const [runRateData, setRunRateData] = useState({ labels: [], datasets: [{ data: [] }] });
+  const [extrasData, setExtrasData] = useState({ labels: [], data: [0] });
 
   // --- DATA LOADING & CALCULATIONS ---
 
@@ -89,6 +91,42 @@ export default function InsightsScreen({ navigation }) {
         setChartData({
           labels: labels,
           datasets: [{ data: runsData }]
+        });
+
+        // 5. Calculate Run Rate Trends (Runs / Overs)
+        const rrData = lastFiveMatches.map(m => {
+          let totalRuns = (Number(m.wides) || 0) + (Number(m.noBalls) || 0);
+          let totalOvers = 0;
+          if (m.performances) {
+            m.performances.forEach(p => {
+              totalRuns += (Number(p.runs) || 0);
+              totalOvers += (Number(p.overs) || 0);
+            });
+          }
+          // Avoid division by zero
+          return totalOvers > 0 ? Number((totalRuns / totalOvers).toFixed(2)) : 0;
+        });
+
+        setRunRateData({
+          labels: labels,
+          datasets: [{ data: rrData }]
+        });
+
+        // 6. Extras Distribution (Percentage of extras to total runs)
+        let totalAllRuns = 0;
+        let totalAllExtras = 0;
+        matchesList.forEach(m => {
+          let matchRuns = (Number(m.wides) || 0) + (Number(m.noBalls) || 0);
+          totalAllExtras += matchRuns;
+          if (m.performances) {
+            m.performances.forEach(p => matchRuns += (Number(p.runs) || 0));
+          }
+          totalAllRuns += matchRuns;
+        });
+
+        setExtrasData({
+          labels: ["Extras"],
+          data: [totalAllRuns > 0 ? (totalAllExtras / totalAllRuns) : 0]
         });
       }
 
@@ -194,6 +232,68 @@ export default function InsightsScreen({ navigation }) {
           </Card.Content>
         </Card>
 
+        {/* 2.5 ADVANCED ANALYTICS SECTION */}
+        <Text style={styles.sectionTitle}>📈 Advanced Analytics</Text>
+
+        <Card style={styles.chartCard}>
+          <Card.Title
+            title="Run Rate (Current Momentum)"
+            titleStyle={styles.cardTitle}
+            left={(props) => <Ionicons name="speedometer-outline" size={20} color="#60a5fa" />}
+          />
+          <Card.Content>
+            <LineChart
+              data={runRateData}
+              width={Dimensions.get('window').width - 64}
+              height={180}
+              chartConfig={{
+                backgroundColor: '#1e293b',
+                backgroundGradientFrom: '#1e293b',
+                backgroundGradientTo: '#1e293b',
+                decimalPlaces: 1,
+                color: (opacity = 1) => `rgba(96, 165, 250, ${opacity})`, // Blue
+                labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
+                propsForDots: { r: "5", strokeWidth: "2", stroke: "#60a5fa" }
+              }}
+              bezier
+              style={{ marginVertical: 8, borderRadius: 16 }}
+            />
+            <Text style={styles.chartNote}>
+              👨‍🏫 SIR: This graph shows our Run Rate (Runs per Over) across matches.
+            </Text>
+          </Card.Content>
+        </Card>
+
+        <Card style={[styles.chartCard, { marginTop: 15 }]}>
+          <Card.Title
+            title="Extras Discipline"
+            titleStyle={styles.cardTitle}
+            left={(props) => <Ionicons name="shield-checkmark-outline" size={20} color="#f59e0b" />}
+          />
+          <Card.Content style={styles.progressRow}>
+            <ProgressChart
+              data={extrasData}
+              width={Dimensions.get('window').width / 2}
+              height={120}
+              strokeWidth={12}
+              radius={32}
+              chartConfig={{
+                backgroundColor: '#1e293b',
+                backgroundGradientFrom: '#1e293b',
+                backgroundGradientTo: '#1e293b',
+                color: (opacity = 1) => `rgba(245, 158, 11, ${opacity})`, // Orange
+                labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
+              }}
+              hideLegend={false}
+            />
+            <View style={styles.progressInfo}>
+              <Text style={styles.progressLabel}>Extras Ratio</Text>
+              <Text style={styles.progressValue}>{(extrasData.data[0] * 100).toFixed(1)}%</Text>
+              <Text style={styles.progressSub}>Lower is better</Text>
+            </View>
+          </Card.Content>
+        </Card>
+
         {/* 3. BATTING LEADERBOARD */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>🏏 Batting Leaders</Text>
@@ -289,8 +389,39 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
+  },
+  chartNote: {
+    color: '#94a3b8',
+    fontSize: 10,
+    fontStyle: 'italic',
+    marginTop: 5,
+    textAlign: 'center',
+  },
+  progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  progressInfo: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  progressLabel: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  progressValue: {
+    color: '#f59e0b',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  progressSub: {
+    color: '#94a3b8',
+    fontSize: 10,
   },
   rankStrip: {
     flexDirection: 'row',

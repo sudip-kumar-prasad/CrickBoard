@@ -42,6 +42,8 @@ export default function RecordMatchScreen({ navigation }) {
     venue: '',
     result: 'Win', // Win, Loss, Draw
     date: new Date().toISOString().substring(0, 10),
+    wides: '0',
+    noBalls: '0',
     notes: ''
   });
   const [modalVisible, setModalVisible] = useState(false);
@@ -108,6 +110,8 @@ export default function RecordMatchScreen({ navigation }) {
       const matchData = {
         id: Date.now().toString(),
         ...matchDetails,
+        wides: Number(matchDetails.wides) || 0,
+        noBalls: Number(matchDetails.noBalls) || 0,
         performances: performances.map(p => ({
           ...p,
           runs: Number(p.runs) || 0,
@@ -260,6 +264,38 @@ export default function RecordMatchScreen({ navigation }) {
                 />
               </View>
             </View>
+
+            {/* NEW: EXTRAS SECTION */}
+            <View style={[styles.metaRow, { marginTop: 20 }]}>
+              <View style={{ flex: 1, marginRight: 10 }}>
+                <Text style={styles.label}>Wides</Text>
+                <PaperTextInput
+                  mode="outlined"
+                  value={matchDetails.wides}
+                  onChangeText={(val) => setMatchDetails({ ...matchDetails, wides: val })}
+                  keyboardType="numeric"
+                  style={styles.miniInput}
+                  outlineColor="#334155"
+                  activeOutlineColor="#22c55e"
+                  textColor="#ffffff"
+                  dense
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>No-Balls</Text>
+                <PaperTextInput
+                  mode="outlined"
+                  value={matchDetails.noBalls}
+                  onChangeText={(val) => setMatchDetails({ ...matchDetails, noBalls: val })}
+                  keyboardType="numeric"
+                  style={styles.miniInput}
+                  outlineColor="#334155"
+                  activeOutlineColor="#22c55e"
+                  textColor="#ffffff"
+                  dense
+                />
+              </View>
+            </View>
           </Surface>
 
           {/* 2. PLAYER LINEUP SECTION */}
@@ -385,6 +421,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0f172a',
     height: 50,
+  },
+  miniInput: {
+    backgroundColor: '#0f172a',
+    height: 40,
   },
   metaRow: {
     flexDirection: 'row',

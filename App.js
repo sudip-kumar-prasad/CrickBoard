@@ -15,6 +15,7 @@ import AddPlayerScreen from './src/screens/AddPlayerScreen';
 import EditPlayerScreen from './src/screens/EditPlayerScreen';
 import PlayerDetailScreen from './src/screens/PlayerDetailScreen';
 import RecordMatchScreen from './src/screens/RecordMatchScreen';
+import MatchDetailScreen from './src/screens/MatchDetailScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
@@ -55,6 +56,7 @@ function MatchesStack() {
     <Stack.Navigator>
       <Stack.Screen name="MatchesList" component={MatchesScreen} options={{ title: 'Matches' }} />
       <Stack.Screen name="RecordMatch" component={RecordMatchScreen} options={{ title: 'Record Match' }} />
+      <Stack.Screen name="MatchDetail" component={MatchDetailScreen} options={{ title: 'Match Detail' }} />
     </Stack.Navigator>
   );
 }

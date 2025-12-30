@@ -122,7 +122,7 @@ export default function MatchesScreen({ navigation }) {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => { }} // Could link to a detail page later
+        onPress={() => navigation.navigate('MatchDetail', { match: item })}
       >
         <Surface style={styles.matchStrip} elevation={1}>
           {/* Date Column */}
