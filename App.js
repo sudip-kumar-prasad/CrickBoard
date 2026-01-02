@@ -18,6 +18,7 @@ import RecordMatchScreen from './src/screens/RecordMatchScreen';
 import MatchDetailScreen from './src/screens/MatchDetailScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import VictoryFeedScreen from './src/screens/VictoryFeedScreen';
 import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
 import { AuthService } from './src/utils/auth';
 
@@ -69,6 +70,7 @@ function MainTabs({ onLogout }) {
           const map = {
             Home: 'home-outline',
             Matches: 'list-outline',
+            Community: 'people-circle-outline',
             Insights: 'stats-chart-outline',
             Players: 'people-outline',
             Profile: 'person-outline',
@@ -80,6 +82,7 @@ function MainTabs({ onLogout }) {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Matches" component={MatchesStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Community" component={VictoryFeedScreen} />
       <Tab.Screen name="Insights" component={InsightsScreen} />
       <Tab.Screen name="Players" component={PlayersStack} options={{ headerShown: false }} />
       <Tab.Screen name="Profile">
