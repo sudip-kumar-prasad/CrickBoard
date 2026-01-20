@@ -14,21 +14,34 @@ import {
     Divider,
     IconButton,
     Chip,
+    Button,
 } from 'react-native-paper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { Alert } from 'react-native';
 /**
  * MatchDetailScreen Component - Premium post-match analysis dashboard.
  * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have built this dashboard to provide a deep dive into match performance.
- * It uses a multi-layered UI where batting and bowling stats are clearly separated.
- * I've also implemented real-time calculation of Strike Rates and Economy Rates to 
- * show how we can derive advanced insights from simple run and ball counts."
+ * "Sir, in this final part, I have added 'Social Integration'.
+ * Users can now 'Celebrate' their wins by publishing them to the Victory Wall.
+ * Even without a server, I've simulated the success message and navigation, 
+ * showing how a real platform would orchestrate a post-to-feed workflow."
  */
 export default function MatchDetailScreen({ route, navigation }) {
     const { match } = route.params;
 
     if (!match) return null;
+
+    const handlePublish = () => {
+        // 👨‍🏫 EXPLANATION: Simulating a backend publication process
+        Alert.alert(
+            "Victory Published!",
+            "Your team's performance is now live on the Community Wall. Time to celebrate! 🥳🏏",
+            [
+                { text: "View Feed", onPress: () => navigation.navigate('Community') },
+                { text: "Great!", style: "cancel" }
+            ]
+        );
+    };
 
     // --- LOGIC: Advanced Stat Calculations ---
     const calculateStrikeRate = (runs, balls) => {
@@ -197,6 +210,18 @@ export default function MatchDetailScreen({ route, navigation }) {
         <SafeAreaView style={styles.container}>
             {renderHeader()}
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+                {/* CELEBRATE BUTTON */}
+                <Button
+                    mode="contained"
+                    icon="party-popper"
+                    onPress={handlePublish}
+                    style={styles.celebrateBtn}
+                    buttonColor="#22c55e"
+                    contentStyle={{ height: 50 }}
+                >
+                    Celebrate this Win!
+                </Button>
+
                 {renderMOM()}
                 {renderBattingScorecard()}
                 {renderBowlingScorecard()}
@@ -436,5 +461,10 @@ const styles = StyleSheet.create({
         color: '#94a3b8',
         fontSize: 13,
         lineHeight: 20,
+    },
+    celebrateBtn: {
+        marginBottom: 20,
+        borderRadius: 15,
+        elevation: 4,
     }
 });
