@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const STORAGE_KEYS = {
   PLAYERS: 'crickboard_players',
   MATCHES: 'crickboard_matches',
+  VICTORY_POSTS: 'crickboard_victory_posts',
 };
 
 export class StorageService {
@@ -84,6 +85,37 @@ export class StorageService {
       await this.saveMatches(matches);
     } catch (error) {
       console.error('Error adding match:', error);
+    }
+  }
+
+  // Victory Post management
+  static async getVictoryPosts() {
+    try {
+      const postsJson = await AsyncStorage.getItem(STORAGE_KEYS.VICTORY_POSTS);
+      return postsJson ? JSON.parse(postsJson) : [];
+    } catch (error) {
+      console.error('Error getting victory posts:', error);
+      return [];
+    }
+  }
+
+  static async saveVictoryPosts(posts) {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.VICTORY_POSTS, JSON.stringify(posts));
+    } catch (error) {
+      console.error('Error saving victory posts:', error);
+    }
+  }
+
+  static async addVictoryPost(post) {
+    try {
+      const posts = await this.getVictoryPosts();
+      // Remove any existing post for the same match ID to avoid duplicates
+      const filteredPosts = posts.filter(p => p.matchId !== post.matchId);
+      filteredPosts.unshift(post); // Newest first
+      await this.saveVictoryPosts(filteredPosts);
+    } catch (error) {
+      console.error('Error adding victory post:', error);
     }
   }
 

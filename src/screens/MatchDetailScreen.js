@@ -15,9 +15,14 @@ import {
     IconButton,
     Chip,
     Button,
+    Modal,
+    Portal,
+    TextInput as PaperTextInput,
 } from 'react-native-paper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Alert } from 'react-native';
+import { Alert, Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { StorageService } from '../utils/storage';
 /**
  * MatchDetailScreen Component - Premium post-match analysis dashboard.
  * 👨‍🏫 EXPLANATION FOR SIR:
@@ -28,19 +33,61 @@ import { Alert } from 'react-native';
  */
 export default function MatchDetailScreen({ route, navigation }) {
     const { match } = route.params;
+    const [isCelebrating, setIsCelebrating] = useState(false);
+    const [caption, setCaption] = useState('');
+    const [victoryImage, setVictoryImage] = useState(null);
+    const [publishing, setPublishing] = useState(false);
 
     if (!match) return null;
 
-    const handlePublish = () => {
-        // 👨‍🏫 EXPLANATION: Simulating a backend publication process
-        Alert.alert(
-            "Victory Published!",
-            "Your team's performance is now live on the Community Wall. Time to celebrate! 🥳🏏",
-            [
-                { text: "View Feed", onPress: () => navigation.navigate('Community') },
-                { text: "Great!", style: "cancel" }
-            ]
-        );
+    const pickVictoryImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'We need permissions to pick a victory photo!');
+            return;
+        }
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaType.IMAGE,
+            allowsEditing: true,
+            aspect: [16, 9],
+            quality: 0.7,
+        });
+
+        if (!result.canceled) {
+            setVictoryImage(result.assets[0].uri);
+        }
+    };
+
+    const handleConfirmPublish = async () => {
+        setPublishing(true);
+        try {
+            const victoryPost = {
+                id: Date.now().toString(),
+                matchId: match.id,
+                opponent: `vs ${match.opponent}`,
+                result: match.result,
+                date: new Date().toLocaleDateString(),
+                caption: caption || 'Victory is ours! 🏆🏏',
+                imageUri: victoryImage,
+            };
+
+            await StorageService.addVictoryPost(victoryPost);
+            setIsCelebrating(false);
+
+            Alert.alert(
+                "Victory Published!",
+                "This win has been added to your personal Victory Wall. 🏆✨",
+                [
+                    { text: "View Wall", onPress: () => navigation.navigate('Community') },
+                    { text: "Close", style: "cancel" }
+                ]
+            );
+        } catch (error) {
+            Alert.alert("Error", "Failed to save your celebration.");
+        } finally {
+            setPublishing(false);
+        }
     };
 
     // --- LOGIC: Advanced Stat Calculations ---
@@ -107,6 +154,64 @@ export default function MatchDetailScreen({ route, navigation }) {
             </Surface>
         );
     };
+
+    const renderCelebrateModal = () => (
+        <Portal>
+            <Modal
+                visible={isCelebrating}
+                onDismiss={() => setIsCelebrating(false)}
+                contentContainerStyle={styles.modalContent}
+            >
+                <Surface style={styles.modalCard} elevation={5}>
+                    <Text style={styles.modalTitle}>Victory Wall</Text>
+
+                    <TouchableOpacity style={styles.imagePickerBtn} onPress={pickVictoryImage}>
+                        {victoryImage ? (
+                            <Image source={{ uri: victoryImage }} style={styles.previewImage} />
+                        ) : (
+                            <View style={styles.imagePlaceholder}>
+                                <Ionicons name="camera-outline" size={30} color="#94a3b8" />
+                                <Text style={styles.imagePlaceholderText}>Add Victory Photo</Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+
+                    <PaperTextInput
+                        mode="outlined"
+                        label="Write your caption..."
+                        value={caption}
+                        onChangeText={setCaption}
+                        multiline
+                        numberOfLines={3}
+                        style={styles.captionInput}
+                        outlineColor="#334155"
+                        activeOutlineColor="#22c55e"
+                        textColor="#ffffff"
+                    />
+
+                    <View style={styles.modalActions}>
+                        <Button
+                            mode="outlined"
+                            onPress={() => setIsCelebrating(false)}
+                            style={styles.cancelBtn}
+                            textColor="#94a3b8"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            mode="contained"
+                            onPress={handleConfirmPublish}
+                            style={styles.publishBtn}
+                            buttonColor="#22c55e"
+                            loading={publishing}
+                        >
+                            Publish
+                        </Button>
+                    </View>
+                </Surface>
+            </Modal>
+        </Portal>
+    );
 
     const renderMOM = () => {
         if (!mom) return null;
@@ -214,7 +319,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                 <Button
                     mode="contained"
                     icon="party-popper"
-                    onPress={handlePublish}
+                    onPress={() => setIsCelebrating(true)}
                     style={styles.celebrateBtn}
                     buttonColor="#22c55e"
                     contentStyle={{ height: 50 }}
@@ -238,9 +343,11 @@ export default function MatchDetailScreen({ route, navigation }) {
 
                 <View style={{ height: 40 }} />
             </ScrollView>
+            {renderCelebrateModal()}
         </SafeAreaView>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -466,5 +573,61 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderRadius: 15,
         elevation: 4,
+    },
+    modalContent: {
+        padding: 20,
+        justifyContent: 'center',
+    },
+    modalCard: {
+        backgroundColor: '#1e293b',
+        borderRadius: 25,
+        padding: 20,
+    },
+    modalTitle: {
+        color: '#ffffff',
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    imagePickerBtn: {
+        width: '100%',
+        height: 180,
+        backgroundColor: '#0f172a',
+        borderRadius: 15,
+        overflow: 'hidden',
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#334155',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    imagePlaceholder: {
+        alignItems: 'center',
+    },
+    imagePlaceholderText: {
+        color: '#94a3b8',
+        fontSize: 12,
+        marginTop: 8,
+    },
+    previewImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    captionInput: {
+        backgroundColor: '#0f172a',
+        marginBottom: 20,
+    },
+    modalActions: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    cancelBtn: {
+        flex: 1,
+        borderColor: '#334155',
+    },
+    publishBtn: {
+        flex: 1,
     }
 });
