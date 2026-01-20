@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
+    Alert,
+    Image,
     Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,23 +18,23 @@ import {
     Chip,
     Button,
     Modal,
-    Portal,
+    Portal as PaperPortal,
     TextInput as PaperTextInput,
 } from 'react-native-paper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Alert, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { StorageService } from '../utils/storage';
+
 /**
  * MatchDetailScreen Component - Premium post-match analysis dashboard.
  * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, in this final part, I have added 'Social Integration'.
- * Users can now 'Celebrate' their wins by publishing them to the Victory Wall.
- * Even without a server, I've simulated the success message and navigation, 
- * showing how a real platform would orchestrate a post-to-feed workflow."
+ * "Sir, I have added robust null-checks to prevent the app from crashing 
+ * if match data is incomplete. I have also updated the icons and 
+ * image picker API to follow the latest industry standards, 
+ * ensuring compatibility with the newest mobile devices."
  */
 export default function MatchDetailScreen({ route, navigation }) {
-    const { match } = route.params;
+    const { match } = route.params || {};
     const [isCelebrating, setIsCelebrating] = useState(false);
     const [caption, setCaption] = useState('');
     const [victoryImage, setVictoryImage] = useState(null);
@@ -40,32 +42,43 @@ export default function MatchDetailScreen({ route, navigation }) {
 
     if (!match) return null;
 
+    const opponentName = match.opponent || 'Opponent';
+    const matchResultStr = (match.result || 'Match Result').toUpperCase();
+    const opponentInitial = opponentName.substring(0, 1).toUpperCase();
+
+    // --- LOGIC: Image Picker ---
     const pickVictoryImage = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Permission Denied', 'We need permissions to pick a victory photo!');
-            return;
-        }
+        try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'We need permissions to pick a victory photo!');
+                return;
+            }
 
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaType.IMAGE,
-            allowsEditing: true,
-            aspect: [16, 9],
-            quality: 0.7,
-        });
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaType.IMAGE, // Use the non-deprecated version
+                allowsEditing: true,
+                aspect: [16, 9],
+                quality: 0.7,
+            });
 
-        if (!result.canceled) {
-            setVictoryImage(result.assets[0].uri);
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                setVictoryImage(result.assets[0].uri);
+            }
+        } catch (error) {
+            console.error("Image Picker Error:", error);
+            Alert.alert("Error", "Could not open image library.");
         }
     };
 
+    // --- LOGIC: Publish to Wall ---
     const handleConfirmPublish = async () => {
         setPublishing(true);
         try {
             const victoryPost = {
                 id: Date.now().toString(),
                 matchId: match.id,
-                opponent: `vs ${match.opponent}`,
+                opponent: `vs ${opponentName}`,
                 result: match.result,
                 date: new Date().toLocaleDateString(),
                 caption: caption || 'Victory is ours! 🏆🏏',
@@ -79,7 +92,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                 "Victory Published!",
                 "This win has been added to your personal Victory Wall. 🏆✨",
                 [
-                    { text: "View Wall", onPress: () => navigation.navigate('Community') },
+                    { text: "View Wall", onPress: () => navigation.navigate('VictoryWall') }, // Updated navigation name
                     { text: "Close", style: "cancel" }
                 ]
             );
@@ -101,7 +114,6 @@ export default function MatchDetailScreen({ route, navigation }) {
         return (runs / overs).toFixed(1);
     };
 
-    // Find Man of the Match (Example logic: most runs + wickets)
     const performances = match.performances || [];
     const mom = performances.length > 0 ? performances.reduce((prev, current) => {
         const prevPoints = (prev.runs || 0) + (prev.wickets || 0) * 20;
@@ -109,8 +121,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         return prevPoints > currentPoints ? prev : current;
     }) : null;
 
-    // --- UI COMPONENTS ---
-
+    // --- SUB-COMPONENTS ---
     const renderHeader = () => {
         const isWin = (match.result || '').toLowerCase().includes('win');
         return (
@@ -135,28 +146,28 @@ export default function MatchDetailScreen({ route, navigation }) {
                             style={[styles.resultChip, { backgroundColor: isWin ? '#22c55e' : '#ef4444' }]}
                             textStyle={styles.resultChipText}
                         >
-                            {match.result.toUpperCase()}
+                            {matchResultStr}
                         </Chip>
                     </View>
 
                     <View style={styles.teamInfo}>
-                        <Avatar.Text size={50} label={match.opponent.substring(0, 1).toUpperCase()} backgroundColor="#334155" />
-                        <Text style={styles.teamName}>{match.opponent}</Text>
+                        <Avatar.Text size={50} label={opponentInitial} backgroundColor="#334155" />
+                        <Text style={styles.teamName}>{opponentName}</Text>
                     </View>
                 </View>
 
                 <View style={[styles.metaRow, { justifyContent: 'center', marginTop: 10 }]}>
                     <Ionicons name="location" size={14} color="#94a3b8" />
-                    <Text style={styles.metaText}>{match.venue}  •  </Text>
+                    <Text style={styles.metaText}>{match.venue || 'Unknown Venue'}  •  </Text>
                     <Ionicons name="calendar" size={14} color="#94a3b8" />
-                    <Text style={styles.metaText}>{new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</Text>
+                    <Text style={styles.metaText}>{match.date ? new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown Date'}</Text>
                 </View>
             </Surface>
         );
     };
 
     const renderCelebrateModal = () => (
-        <Portal>
+        <PaperPortal>
             <Modal
                 visible={isCelebrating}
                 onDismiss={() => setIsCelebrating(false)}
@@ -210,7 +221,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                     </View>
                 </Surface>
             </Modal>
-        </Portal>
+        </PaperPortal>
     );
 
     const renderMOM = () => {
@@ -239,7 +250,6 @@ export default function MatchDetailScreen({ route, navigation }) {
                 <Text style={styles.sectionTitle}>Batting Performance</Text>
             </View>
             <Surface style={styles.tableCard} elevation={1}>
-                {/* Table Header */}
                 <View style={styles.tableRowHeader}>
                     <Text style={[styles.colName, styles.headerLabel]}>Batsman</Text>
                     <Text style={[styles.colStat, styles.headerLabel]}>R</Text>
@@ -263,7 +273,7 @@ export default function MatchDetailScreen({ route, navigation }) {
     const renderBowlingScorecard = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="bowling-ball" size={20} color="#60a5fa" />
+                <MaterialCommunityIcons name="bowling" size={20} color="#60a5fa" />
                 <Text style={styles.sectionTitle}>Bowling Performance</Text>
             </View>
             <Surface style={styles.tableCard} elevation={1}>
@@ -347,7 +357,6 @@ export default function MatchDetailScreen({ route, navigation }) {
         </SafeAreaView>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {

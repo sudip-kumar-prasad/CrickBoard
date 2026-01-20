@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { PaperProvider, MD3DarkTheme, Text, Avatar, Divider, useTheme } from 'react-native-paper';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
@@ -249,18 +250,20 @@ export default function App() {
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <NavigationContainer>
-          {isLoggedIn ? (
-            <MainDrawer onLogout={handleLogout} />
-          ) : (
-            <LoginScreen onLoginSuccess={handleLoginSuccess} />
-          )}
-        </NavigationContainer>
-        <StatusBar style="light" />
-      </View>
-    </PaperProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PaperProvider theme={theme}>
+        <View style={styles.container}>
+          <NavigationContainer>
+            {isLoggedIn ? (
+              <MainDrawer onLogout={handleLogout} />
+            ) : (
+              <LoginScreen onLoginSuccess={handleLoginSuccess} />
+            )}
+          </NavigationContainer>
+          <StatusBar style="light" />
+        </View>
+      </PaperProvider>
+    </GestureHandlerRootView>
   );
 }
 
