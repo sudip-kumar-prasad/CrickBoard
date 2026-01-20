@@ -33,6 +33,12 @@ export default function VictoryFeedScreen() {
     const [posts, setPosts] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
+    // Manual celebration state
+    const [isAddingPost, setIsAddingPost] = useState(false);
+    const [caption, setCaption] = useState('');
+    const [victoryImage, setVictoryImage] = useState(null);
+    const [publishing, setPublishing] = useState(false);
+
     const loadWall = async () => {
         setRefreshing(true);
         try {
@@ -50,6 +56,54 @@ export default function VictoryFeedScreen() {
             loadWall();
         }, [])
     );
+
+    // --- LOGIC: Manual Image Add ---
+    const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'We need permissions to pick a victory photo!');
+            return;
+        }
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [16, 9],
+            quality: 0.7,
+        });
+
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setVictoryImage(result.assets[0].uri);
+            setIsAddingPost(true); // Open modal after picking image
+        }
+    };
+
+    const handleConfirmManualPublish = async () => {
+        if (!victoryImage) return;
+        setPublishing(true);
+        try {
+            const newPost = {
+                id: Date.now().toString(),
+                matchId: `manual_${Date.now()}`,
+                opponent: 'Victory Moment 🏆',
+                result: 'CELEBRATION',
+                date: new Date().toLocaleDateString(),
+                caption: caption || 'Cherishing this win! 🏏✨',
+                imageUri: victoryImage,
+            };
+
+            await StorageService.addVictoryPost(newPost);
+            setVictoryImage(null);
+            setCaption('');
+            setIsAddingPost(false);
+            loadWall();
+            Alert.alert("Victory Saved!", "Your celebration has been added to the wall.");
+        } catch (error) {
+            Alert.alert("Error", "Failed to save post.");
+        } finally {
+            setPublishing(false);
+        }
+    };
 
     const renderPost = ({ item }) => {
         return (
@@ -102,11 +156,66 @@ export default function VictoryFeedScreen() {
         );
     };
 
+    const renderAddModal = () => (
+        <Portal>
+            <Modal
+                visible={isAddingPost}
+                onDismiss={() => setIsAddingPost(false)}
+                contentContainerStyle={styles.modalContent}
+            >
+                <Surface style={styles.modalCard} elevation={5}>
+                    <Text style={styles.modalTitle}>Add to Wall</Text>
+
+                    {victoryImage && (
+                        <Image source={{ uri: victoryImage }} style={styles.previewImage} />
+                    )}
+
+                    <PaperTextInput
+                        mode="outlined"
+                        label="Caption your victory..."
+                        value={caption}
+                        onChangeText={setCaption}
+                        multiline
+                        numberOfLines={3}
+                        style={styles.captionInput}
+                        outlineColor="#334155"
+                        activeOutlineColor="#22c55e"
+                        textColor="#ffffff"
+                    />
+
+                    <View style={styles.modalActions}>
+                        <Button
+                            mode="outlined"
+                            onPress={() => setIsAddingPost(false)}
+                            style={styles.cancelBtn}
+                            textColor="#94a3b8"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            mode="contained"
+                            onPress={handleConfirmManualPublish}
+                            style={styles.publishBtn}
+                            buttonColor="#22c55e"
+                            loading={publishing}
+                        >
+                            Publish
+                        </Button>
+                    </View>
+                </Surface>
+            </Modal>
+        </Portal>
+    );
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Victory Wall</Text>
-                <IconButton icon="camera-plus-outline" iconColor="#ffffff" />
+                <IconButton
+                    icon="camera-plus-outline"
+                    iconColor="#ffffff"
+                    onPress={pickImage}
+                />
             </View>
 
             {posts.length === 0 ? (
@@ -126,6 +235,7 @@ export default function VictoryFeedScreen() {
                     onRefresh={loadWall}
                 />
             )}
+            {renderAddModal()}
         </SafeAreaView>
     );
 }
