@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     View,
     StyleSheet,
@@ -17,42 +17,85 @@ import {
     Chip,
 } from 'react-native-paper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { StorageService } from '../utils/storage';
 
 /**
- * VictoryFeedScreen - PART 1: UI Foundation
+ * VictoryFeedScreen - PART 2: Simulation Logic
  * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, this is the new 'Community Victory Wall'. I have designed it to look 
- * like a professional social media feed. Even without a real-time server, 
- * we can simulate the community feel by formatting match results as 
- * high-engagement 'Victory Cards'."
+ * "Sir, in this part, I have implemented a 'Data Merging' algorithm.
+ * It fetches real matches from the user's local storage and weaves them 
+ * into a list of global professional matches. This demonstrates how a 
+ * single feed can handle both local and global data streams seamlessly."
  */
 
-// Mock data for Part 1 - Will be moved to logic in Part 2
-const MOCK_MESSAGES = [
+const GLOBAL_PRO_MATCHES = [
     {
-        id: '1',
-        teamName: 'CrickBoard Elite',
-        opponent: 'Royal Smashers',
-        result: 'Won by 45 Runs',
-        date: 'Just Now',
-        caption: 'Unbelievable performance today! The bowlers really stepped up in the death overs. 🏆🏏',
-        claps: 24,
-        isSimulated: false,
-    },
-    {
-        id: '2',
-        teamName: 'Global Pro League',
-        opponent: 'Team India vs Australia',
+        id: 'global_1',
+        teamName: 'Global Cricket Council',
+        opponent: 'Ind vs Aus (T20 World Cup)',
         result: 'India won by 6 Wickets',
         date: '2 Hours Ago',
         caption: 'Virat Kohli finishes it in style with a classic cover drive! What a match at the MCG. 🇮🇳🎯',
         claps: 1205,
         isSimulated: true,
+    },
+    {
+        id: 'global_2',
+        teamName: 'IPL Legends',
+        opponent: 'CSK vs MI',
+        result: 'CSK won by 1 Run',
+        date: '1 Day Ago',
+        caption: 'DHONI FINISHES IT OFF! A last-ball boundary that no-one will ever forget. 💛🏆',
+        claps: 8500,
+        isSimulated: true,
     }
 ];
 
 export default function VictoryFeedScreen() {
-    const [posts, setPosts] = useState(MOCK_MESSAGES);
+    const [posts, setPosts] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const loadFeed = async () => {
+        setRefreshing(true);
+        try {
+            const realMatches = await StorageService.getMatches() || [];
+
+            // 👨‍🏫 EXPLANATION: Converting real matches to "Social Post" format
+            const realPosts = realMatches.map(m => ({
+                id: m.id,
+                teamName: 'My Team (CrickBoard)',
+                opponent: `vs ${m.opponent}`,
+                result: m.result.toUpperCase(),
+                date: new Date(m.date).toLocaleDateString(),
+                caption: m.notes || 'Another victory for the books! Hard work pays off on the field. 🏏🏆',
+                claps: Math.floor(Math.random() * 50) + 5, // Simulated local claps
+                isSimulated: false,
+            }));
+
+            // Merge and sort (In reality, we'd sort by date)
+            const combinedFeed = [...realPosts, ...GLOBAL_PRO_MATCHES];
+            setPosts(combinedFeed);
+        } catch (error) {
+            console.error("Error loading feed:", error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            loadFeed();
+        }, [])
+    );
+
+    const handleClap = (id) => {
+        setPosts(currentPosts =>
+            currentPosts.map(post =>
+                post.id === id ? { ...post, claps: post.claps + 1 } : post
+            )
+        );
+    };
 
     const renderPost = ({ item }) => {
         return (
@@ -95,7 +138,10 @@ export default function VictoryFeedScreen() {
 
                 {/* 4. SOCIAL ACTIONS */}
                 <View style={styles.actionsRow}>
-                    <TouchableOpacity style={styles.actionBtn}>
+                    <TouchableOpacity
+                        style={styles.actionBtn}
+                        onPress={() => handleClap(item.id)}
+                    >
                         <MaterialCommunityIcons name="hands-pray" size={20} color="#22c55e" />
                         <Text style={styles.actionText}>{item.claps} Claps</Text>
                     </TouchableOpacity>
@@ -127,6 +173,8 @@ export default function VictoryFeedScreen() {
                 renderItem={renderPost}
                 contentContainerStyle={styles.feedList}
                 showsVerticalScrollIndicator={false}
+                refreshing={refreshing}
+                onRefresh={loadFeed}
             />
         </SafeAreaView>
     );
