@@ -66,7 +66,7 @@ export default function VictoryFeedScreen() {
                 id: m.id,
                 teamName: 'My Team (CrickBoard)',
                 opponent: `vs ${m.opponent}`,
-                result: m.result.toUpperCase(),
+                result: (m.result || 'PLAYED').toUpperCase(),
                 date: new Date(m.date).toLocaleDateString(),
                 caption: m.notes || 'Another victory for the books! Hard work pays off on the field. 🏏🏆',
                 claps: Math.floor(Math.random() * 50) + 5, // Simulated local claps
