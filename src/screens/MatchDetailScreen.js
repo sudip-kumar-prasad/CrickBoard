@@ -18,7 +18,7 @@ import {
     Chip,
     Button,
     Modal,
-    Portal as PaperPortal,
+    Portal,
     TextInput as PaperTextInput,
 } from 'react-native-paper';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -48,6 +48,50 @@ export default function MatchDetailScreen({ route, navigation }) {
 
     // --- LOGIC: Image Picker ---
     const pickVictoryImage = async () => {
+        Alert.alert(
+            'Add Victory Photo',
+            'Choose an option',
+            [
+                {
+                    text: 'Take Photo',
+                    onPress: () => launchCamera(),
+                },
+                {
+                    text: 'Choose from Gallery',
+                    onPress: () => launchGallery(),
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ]
+        );
+    };
+
+    const launchCamera = async () => {
+        try {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'We need camera permissions to take a photo!');
+                return;
+            }
+
+            let result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [16, 9],
+                quality: 0.7,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                setVictoryImage(result.assets[0].uri);
+            }
+        } catch (error) {
+            console.error("Camera Error:", error);
+            Alert.alert("Error", "Could not open camera.");
+        }
+    };
+
+    const launchGallery = async () => {
         try {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
@@ -56,7 +100,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             }
 
             let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaType.IMAGE, // Use the non-deprecated version
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 aspect: [16, 9],
                 quality: 0.7,
@@ -167,7 +211,7 @@ export default function MatchDetailScreen({ route, navigation }) {
     };
 
     const renderCelebrateModal = () => (
-        <PaperPortal>
+        <Portal>
             <Modal
                 visible={isCelebrating}
                 onDismiss={() => setIsCelebrating(false)}
@@ -221,7 +265,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                     </View>
                 </Surface>
             </Modal>
-        </PaperPortal>
+        </Portal>
     );
 
     const renderMOM = () => {

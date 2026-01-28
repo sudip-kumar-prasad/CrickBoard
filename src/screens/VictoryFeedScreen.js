@@ -16,7 +16,7 @@ import {
     Divider,
     IconButton,
     Modal,
-    Portal as PaperPortal,
+    Portal,
     Button,
     TextInput as PaperTextInput,
 } from 'react-native-paper';
@@ -65,6 +65,51 @@ export default function VictoryFeedScreen() {
 
     // --- LOGIC: Manual Image Add ---
     const pickImage = async () => {
+        Alert.alert(
+            'Add Victory Photo',
+            'Choose an option',
+            [
+                {
+                    text: 'Take Photo',
+                    onPress: () => launchCamera(),
+                },
+                {
+                    text: 'Choose from Gallery',
+                    onPress: () => launchGallery(),
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ]
+        );
+    };
+
+    const launchCamera = async () => {
+        try {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'We need camera permissions to take a photo!');
+                return;
+            }
+
+            let result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [16, 9],
+                quality: 0.7,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                setVictoryImage(result.assets[0].uri);
+                setIsAddingPost(true); // Open modal after taking photo
+            }
+        } catch (error) {
+            console.error("Camera Error:", error);
+            Alert.alert("Error", "Could not open camera.");
+        }
+    };
+
+    const launchGallery = async () => {
         try {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
@@ -73,7 +118,7 @@ export default function VictoryFeedScreen() {
             }
 
             let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaType.IMAGE, // Using non-deprecated type
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 aspect: [16, 9],
                 quality: 0.7,
@@ -168,7 +213,7 @@ export default function VictoryFeedScreen() {
     };
 
     const renderAddModal = () => (
-        <PaperPortal>
+        <Portal>
             <Modal
                 visible={isAddingPost}
                 onDismiss={() => setIsAddingPost(false)}
@@ -215,7 +260,7 @@ export default function VictoryFeedScreen() {
                     </View>
                 </Surface>
             </Modal>
-        </PaperPortal>
+        </Portal>
     );
 
     return (

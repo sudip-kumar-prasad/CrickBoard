@@ -61,32 +61,89 @@ export default function ProfileScreen({ navigation, onLogout }) {
     // --- LOGIC ---
 
     const pickImage = async () => {
-        // 👨‍🏫 EXPLANATION: Requesting permission to access the media library
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        Alert.alert(
+            'Update Profile Picture',
+            'Choose an option',
+            [
+                {
+                    text: 'Take Photo',
+                    onPress: () => launchCamera(),
+                },
+                {
+                    text: 'Choose from Gallery',
+                    onPress: () => launchGallery(),
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ]
+        );
+    };
 
-        if (status !== 'granted') {
-            Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
-            return;
-        }
-
-        // 👨‍🏫 EXPLANATION: Launching the image picker
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaType.IMAGE,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 0.5,
-        });
-
-        if (!result.canceled) {
-            const imageUri = result.assets[0].uri;
-            setProfileImage(imageUri);
-
-            // 👨‍🏫 EXPLANATION: Direct update to our AuthService to save the image path
-            try {
-                await AuthService.updateUser({ profileImage: imageUri });
-            } catch (error) {
-                console.error('Error saving profile image:', error);
+    const launchCamera = async () => {
+        try {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'We need camera permissions to take a photo!');
+                return;
             }
+
+            let result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.5,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const imageUri = result.assets[0].uri;
+                setProfileImage(imageUri);
+
+                // 👨‍🏫 EXPLANATION: Direct update to our AuthService to save the image path
+                try {
+                    await AuthService.updateUser({ profileImage: imageUri });
+                } catch (error) {
+                    console.error('Error saving profile image:', error);
+                }
+            }
+        } catch (error) {
+            console.error("Camera Error:", error);
+            Alert.alert("Error", "Could not open camera.");
+        }
+    };
+
+    const launchGallery = async () => {
+        try {
+            // 👨‍🏫 EXPLANATION: Requesting permission to access the media library
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+                return;
+            }
+
+            // 👨‍🏫 EXPLANATION: Launching the image picker
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.5,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const imageUri = result.assets[0].uri;
+                setProfileImage(imageUri);
+
+                // 👨‍🏫 EXPLANATION: Direct update to our AuthService to save the image path
+                try {
+                    await AuthService.updateUser({ profileImage: imageUri });
+                } catch (error) {
+                    console.error('Error saving profile image:', error);
+                }
+            }
+        } catch (error) {
+            console.error("Image Picker Error:", error);
+            Alert.alert("Error", "Could not open gallery.");
         }
     };
 
