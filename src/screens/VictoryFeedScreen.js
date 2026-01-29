@@ -161,6 +161,32 @@ export default function VictoryFeedScreen() {
         }
     };
 
+    const handleDeletePost = (postId) => {
+        Alert.alert(
+            'Delete Victory Post',
+            'Are you sure you want to remove this celebration from your wall?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await StorageService.deleteVictoryPost(postId);
+                            loadWall();
+                            Alert.alert('Deleted', 'Post removed from your Victory Wall.');
+                        } catch (error) {
+                            Alert.alert('Error', 'Failed to delete post.');
+                        }
+                    },
+                },
+            ]
+        );
+    };
+
     const renderPost = ({ item }) => {
         return (
             <Surface style={styles.postCard} elevation={2}>
@@ -177,7 +203,12 @@ export default function VictoryFeedScreen() {
                             <Text style={styles.postTime}>{item.date || 'Today'}</Text>
                         </View>
                     </View>
-                    <IconButton icon="trophy-outline" iconColor="#f59e0b" size={20} />
+                    <IconButton
+                        icon="trash-can-outline"
+                        iconColor="#ef4444"
+                        size={20}
+                        onPress={() => handleDeletePost(item.id)}
+                    />
                 </View>
 
                 {/* 2. VICTORY IMAGE / BANNER */}

@@ -119,6 +119,20 @@ export class StorageService {
     }
   }
 
+  static async deleteVictoryPost(postId) {
+    try {
+      const posts = await this.getVictoryPosts();
+      const filteredPosts = posts.filter(p => p.id !== postId);
+      await this.saveVictoryPosts(filteredPosts);
+    } catch (error) {
+      console.error('Error deleting victory post:', error);
+    }
+  }
+
+  static async recordMatch(match) {
+    await this.addMatch(match);
+  }
+
   // Utility functions
   static async clearAllData() {
     try {
