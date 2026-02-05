@@ -100,7 +100,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             }
 
             let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                mediaTypes: 'images',
                 allowsEditing: true,
                 aspect: [16, 9],
                 quality: 0.7,

@@ -9,7 +9,8 @@ import {
   Surface,
   Avatar,
   Divider,
-  IconButton
+  IconButton,
+  Chip
 } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 

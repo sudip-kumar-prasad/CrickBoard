@@ -1,14 +1,11 @@
-import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { PaperProvider, MD3DarkTheme, Text, Avatar, Divider, useTheme } from 'react-native-paper';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
@@ -28,182 +25,72 @@ import { AuthService } from './src/utils/auth';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-const Drawer = createDrawerNavigator();
 
 const theme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: '#22c55e', // Consistent Green
+    primary: '#1e40af',
     secondary: '#10b981',
     background: '#0f172a',
-    surface: '#1e293b',
-    surfaceVariant: '#334155',
+    surface: '#0b1223',
+    surfaceVariant: '#132144',
     outline: '#334155',
     onPrimary: '#ffffff',
     onSurface: '#e2e8f0',
   },
 };
 
-// --- STACK NAVIGATORS ---
-
 function PlayersStack() {
   return (
-    <Stack.Navigator screenOptions={{
-      headerStyle: { backgroundColor: '#1e293b' },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: 'bold' }
-    }}>
-      <Stack.Screen name="PlayersList" component={PlayersScreen} options={{ title: 'Squad Management' }} />
-      <Stack.Screen name="AddPlayer" component={AddPlayerScreen} options={{ title: 'Add New Player' }} />
-      <Stack.Screen name="EditPlayer" component={EditPlayerScreen} options={{ title: 'Update Player' }} />
-      <Stack.Screen name="PlayerDetail" component={PlayerDetailScreen} options={{ title: 'Player Analytics' }} />
+    <Stack.Navigator>
+      <Stack.Screen name="PlayersList" component={PlayersScreen} options={{ title: 'Players' }} />
+      <Stack.Screen name="AddPlayer" component={AddPlayerScreen} options={{ title: 'Add Player' }} />
+      <Stack.Screen name="EditPlayer" component={EditPlayerScreen} options={{ title: 'Edit Player' }} />
+      <Stack.Screen name="PlayerDetail" component={PlayerDetailScreen} options={{ title: 'Player Details' }} />
     </Stack.Navigator>
   );
 }
 
 function MatchesStack() {
   return (
-    <Stack.Navigator screenOptions={{
-      headerStyle: { backgroundColor: '#1e293b' },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: 'bold' }
-    }}>
-      <Stack.Screen name="MatchesList" component={MatchesScreen} options={{ title: 'Match History' }} />
-      <Stack.Screen name="RecordMatch" component={RecordMatchScreen} options={{ title: 'New Match Room' }} />
-      <Stack.Screen name="MatchDetail" component={MatchDetailScreen} options={{ title: 'Performance Report' }} />
+    <Stack.Navigator>
+      <Stack.Screen name="MatchesList" component={MatchesScreen} options={{ title: 'Matches' }} />
+      <Stack.Screen name="RecordMatch" component={RecordMatchScreen} options={{ title: 'Record Match' }} />
+      <Stack.Screen name="MatchDetail" component={MatchDetailScreen} options={{ title: 'Match Detail' }} />
     </Stack.Navigator>
   );
 }
 
-// --- BOTTOM TAB NAVIGATOR ---
-
 function MainTabs({ onLogout }) {
-  const paperTheme = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerStyle: { backgroundColor: '#1e293b' },
-        headerTintColor: '#ffffff',
-        tabBarStyle: {
-          backgroundColor: '#1e293b',
-          borderTopColor: '#334155',
-          height: 60,
-          paddingBottom: 8
-        },
-        tabBarActiveTintColor: '#22c55e',
-        tabBarInactiveTintColor: '#94a3b8',
         tabBarIcon: ({ color, size }) => {
           const map = {
-            Home: 'home',
-            VictoryWall: 'trophy',
-            Profile: 'person-circle',
+            Home: 'home-outline',
+            Matches: 'list-outline',
+            Community: 'people-circle-outline',
+            Insights: 'stats-chart-outline',
+            Players: 'people-outline',
+            Profile: 'person-outline',
           };
-          const name = map[route.name] || 'ellipse';
+          const name = map[route.name] || 'ellipse-outline';
           return <Ionicons name={name} size={size} color={color} />;
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Dashboard' }} />
-      <Tab.Screen name="VictoryWall" component={VictoryFeedScreen} options={{ title: 'Victory Wall' }} />
-      <Tab.Screen name="Profile" options={{ title: 'My Profile' }}>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Matches" component={MatchesStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Community" component={VictoryFeedScreen} />
+      <Tab.Screen name="Insights" component={InsightsScreen} />
+      <Tab.Screen name="Players" component={PlayersStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Profile">
         {props => <ProfileScreen {...props} onLogout={onLogout} />}
       </Tab.Screen>
     </Tab.Navigator>
   );
 }
-
-// --- CUSTOM DRAWER CONTENT ---
-
-function CustomDrawerContent(props) {
-  const { onLogout } = props;
-  return (
-    <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1, backgroundColor: '#0f172a' }}>
-      <View style={styles.drawerHeader}>
-        <Avatar.Icon size={60} icon="cricket" backgroundColor="#22c55e" />
-        <Text style={styles.drawerBrand}>CrickBoard</Text>
-        <Text style={styles.drawerTagline}>Professional Scorer</Text>
-      </View>
-      <Divider style={{ backgroundColor: '#334155', marginVertical: 10 }} />
-
-      <DrawerItemList {...props} />
-
-      <View style={{ flex: 1 }} />
-
-      <Divider style={{ backgroundColor: '#334155' }} />
-      <DrawerItem
-        label="Logout"
-        labelStyle={{ color: '#ef4444', fontWeight: 'bold' }}
-        onPress={() => {
-          Alert.alert("Logout", "Are you sure you want to exit?", [
-            { text: "Cancel", style: "cancel" },
-            { text: "Logout", onPress: onLogout }
-          ]);
-        }}
-        icon={({ color, size }) => <Ionicons name="log-out-outline" size={size} color="#ef4444" />}
-      />
-    </DrawerContentScrollView>
-  );
-}
-
-// --- MAIN DRAWER NAVIGATOR ---
-
-function MainDrawer({ onLogout }) {
-  return (
-    <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} onLogout={onLogout} />}
-      screenOptions={{
-        headerShown: false, // Header is handled by stacks inside
-        drawerStyle: { backgroundColor: '#1e293b', width: 280 },
-        drawerActiveTintColor: '#22c55e',
-        drawerInactiveTintColor: '#94a3b8',
-        drawerLabelStyle: { fontWeight: '600' },
-      }}
-    >
-      <Drawer.Screen
-        name="MainTabs"
-        options={{
-          drawerLabel: 'Home Dashboard',
-          drawerIcon: ({ color, size }) => <Ionicons name="apps-outline" size={size} color={color} />
-        }}
-      >
-        {props => <MainTabs {...props} onLogout={onLogout} />}
-      </Drawer.Screen>
-
-      <Drawer.Screen
-        name="Matches"
-        component={MatchesStack}
-        options={{
-          drawerLabel: 'Match History',
-          drawerIcon: ({ color, size }) => <MaterialCommunityIcons name="cricket" size={size} color={color} />
-        }}
-      />
-
-      <Drawer.Screen
-        name="Players"
-        component={PlayersStack}
-        options={{
-          drawerLabel: 'Squad Management',
-          drawerIcon: ({ color, size }) => <Ionicons name="people-outline" size={size} color={color} />
-        }}
-      />
-
-      <Drawer.Screen
-        name="Insights"
-        component={InsightsScreen}
-        options={{
-          headerShown: true, // Insights is a single screen, needs a header
-          headerStyle: { backgroundColor: '#1e293b' },
-          headerTintColor: '#fff',
-          drawerLabel: 'Performance Insights',
-          drawerIcon: ({ color, size }) => <Ionicons name="analytics-outline" size={size} color={color} />
-        }}
-      />
-    </Drawer.Navigator>
-  );
-}
-
-// --- ROOT APP COMPONENT ---
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -242,7 +129,7 @@ export default function App() {
     return (
       <PaperProvider theme={theme}>
         <View style={[styles.container, styles.loadingContainer]}>
-          <ActivityIndicator size="large" color="#22c55e" />
+          <ActivityIndicator size="large" color="#3b82f6" />
         </View>
         <StatusBar style="light" />
       </PaperProvider>
@@ -250,20 +137,18 @@ export default function App() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <PaperProvider theme={theme}>
-        <View style={styles.container}>
-          <NavigationContainer>
-            {isLoggedIn ? (
-              <MainDrawer onLogout={handleLogout} />
-            ) : (
-              <LoginScreen onLoginSuccess={handleLoginSuccess} />
-            )}
-          </NavigationContainer>
-          <StatusBar style="light" />
-        </View>
-      </PaperProvider>
-    </GestureHandlerRootView>
+    <PaperProvider theme={theme}>
+      <View style={styles.container}>
+        <NavigationContainer>
+          {isLoggedIn ? (
+            <MainTabs onLogout={handleLogout} />
+          ) : (
+            <LoginScreen onLoginSuccess={handleLoginSuccess} />
+          )}
+        </NavigationContainer>
+        <StatusBar style="light" />
+      </View>
+    </PaperProvider>
   );
 }
 
@@ -276,22 +161,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  drawerHeader: {
-    padding: 20,
-    paddingTop: 40,
-    alignItems: 'center',
-  },
-  drawerBrand: {
-    color: '#ffffff',
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  drawerTagline: {
-    color: '#22c55e',
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  }
 });
