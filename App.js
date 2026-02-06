@@ -3,9 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
+import CustomDrawer from './src/components/CustomDrawer';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
@@ -20,6 +21,10 @@ import MatchDetailScreen from './src/screens/MatchDetailScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import VictoryFeedScreen from './src/screens/VictoryFeedScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import TournamentScreen from './src/screens/TournamentScreen';
+import CreateTournamentScreen from './src/screens/CreateTournamentScreen';
+import TournamentDetailScreen from './src/screens/TournamentDetailScreen';
 
 import { AuthService } from './src/utils/auth';
 
@@ -41,9 +46,19 @@ const theme = {
   },
 };
 
-function PlayersStack() {
+function PlayersStack({ onOpenDrawer }) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerLeft: () => onOpenDrawer ? (
+          <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
+            <Ionicons name="menu" size={28} color="#e2e8f0" />
+          </TouchableOpacity>
+        ) : null,
+        headerStyle: { backgroundColor: '#0b1223' },
+        headerTintColor: '#e2e8f0',
+      }}
+    >
       <Stack.Screen name="PlayersList" component={PlayersScreen} options={{ title: 'Players' }} />
       <Stack.Screen name="AddPlayer" component={AddPlayerScreen} options={{ title: 'Add Player' }} />
       <Stack.Screen name="EditPlayer" component={EditPlayerScreen} options={{ title: 'Edit Player' }} />
@@ -62,7 +77,8 @@ function MatchesStack() {
   );
 }
 
-function MainTabs({ onLogout }) {
+// Bottom Tab Navigator - Core features
+function MainTabs({ onLogout, onOpenDrawer }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -71,24 +87,146 @@ function MainTabs({ onLogout }) {
             Home: 'home-outline',
             Matches: 'list-outline',
             Community: 'people-circle-outline',
-            Insights: 'stats-chart-outline',
-            Players: 'people-outline',
-            Profile: 'person-outline',
           };
           const name = map[route.name] || 'ellipse-outline';
           return <Ionicons name={name} size={size} color={color} />;
         },
+        headerLeft: () => (
+          <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
+            <Ionicons name="menu" size={28} color="#e2e8f0" />
+          </TouchableOpacity>
+        ),
+        headerStyle: {
+          backgroundColor: '#0b1223',
+        },
+        headerTintColor: '#e2e8f0',
+        tabBarStyle: {
+          backgroundColor: '#0b1223',
+          borderTopColor: '#334155',
+        },
+        tabBarActiveTintColor: '#1e40af',
+        tabBarInactiveTintColor: '#64748b',
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Matches" component={MatchesStack} options={{ headerShown: false }} />
       <Tab.Screen name="Community" component={VictoryFeedScreen} />
-      <Tab.Screen name="Insights" component={InsightsScreen} />
-      <Tab.Screen name="Players" component={PlayersStack} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile">
-        {props => <ProfileScreen {...props} onLogout={onLogout} />}
-      </Tab.Screen>
     </Tab.Navigator>
+  );
+}
+
+// Stack navigators for drawer items
+function InsightsStack({ onOpenDrawer }) {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerLeft: () => (
+          <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
+            <Ionicons name="menu" size={28} color="#e2e8f0" />
+          </TouchableOpacity>
+        ),
+        headerStyle: { backgroundColor: '#0b1223' },
+        headerTintColor: '#e2e8f0',
+      }}
+    >
+      <Stack.Screen name="InsightsScreen" component={InsightsScreen} options={{ title: 'Insights' }} />
+    </Stack.Navigator>
+  );
+}
+
+function ProfileStack({ onOpenDrawer, onLogout }) {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerLeft: () => (
+          <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
+            <Ionicons name="menu" size={28} color="#e2e8f0" />
+          </TouchableOpacity>
+        ),
+        headerStyle: { backgroundColor: '#0b1223' },
+        headerTintColor: '#e2e8f0',
+      }}
+    >
+      <Stack.Screen name="ProfileScreen" options={{ title: 'Profile' }}>
+        {props => <ProfileScreen {...props} onLogout={onLogout} />}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
+}
+
+function SettingsStack({ onOpenDrawer }) {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerLeft: () => (
+          <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
+            <Ionicons name="menu" size={28} color="#e2e8f0" />
+          </TouchableOpacity>
+        ),
+        headerStyle: { backgroundColor: '#0b1223' },
+        headerTintColor: '#e2e8f0',
+      }}
+    >
+      <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Settings' }} />
+    </Stack.Navigator>
+  );
+}
+
+function TournamentStack({ onOpenDrawer }) {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerLeft: () => (
+          <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
+            <Ionicons name="menu" size={28} color="#e2e8f0" />
+          </TouchableOpacity>
+        ),
+        headerStyle: { backgroundColor: '#0b1223' },
+        headerTintColor: '#e2e8f0',
+      }}
+    >
+      <Stack.Screen name="TournamentScreen" component={TournamentScreen} options={{ title: 'Tournaments' }} />
+      <Stack.Screen name="CreateTournament" component={CreateTournamentScreen} options={{ title: 'Create Tournament' }} />
+      <Stack.Screen name="TournamentDetail" component={TournamentDetailScreen} options={{ title: 'Tournament Details' }} />
+    </Stack.Navigator>
+  );
+}
+
+function MainNavigator({ onLogout }) {
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const navigationRef = React.useRef(null);
+
+  return (
+    <>
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Tabs">
+            {props => <MainTabs {...props} onLogout={onLogout} onOpenDrawer={() => setDrawerVisible(true)} />}
+          </Stack.Screen>
+          <Stack.Screen name="Insights">
+            {props => <InsightsStack {...props} onOpenDrawer={() => setDrawerVisible(true)} />}
+          </Stack.Screen>
+          <Stack.Screen name="Players">
+            {props => <PlayersStack {...props} onOpenDrawer={() => setDrawerVisible(true)} />}
+          </Stack.Screen>
+          <Stack.Screen name="Settings">
+            {props => <SettingsStack {...props} onOpenDrawer={() => setDrawerVisible(true)} />}
+          </Stack.Screen>
+          <Stack.Screen name="Tournament">
+            {props => <TournamentStack {...props} onOpenDrawer={() => setDrawerVisible(true)} />}
+          </Stack.Screen>
+          <Stack.Screen name="Profile">
+            {props => <ProfileStack {...props} onOpenDrawer={() => setDrawerVisible(true)} onLogout={onLogout} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+      <CustomDrawer
+        visible={drawerVisible}
+        onClose={() => setDrawerVisible(false)}
+        navigation={navigationRef.current}
+        onLogout={onLogout}
+      />
+    </>
   );
 }
 
@@ -139,13 +277,13 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        <NavigationContainer>
-          {isLoggedIn ? (
-            <MainTabs onLogout={handleLogout} />
-          ) : (
+        {isLoggedIn ? (
+          <MainNavigator onLogout={handleLogout} />
+        ) : (
+          <NavigationContainer>
             <LoginScreen onLoginSuccess={handleLoginSuccess} />
-          )}
-        </NavigationContainer>
+          </NavigationContainer>
+        )}
         <StatusBar style="light" />
       </View>
     </PaperProvider>
