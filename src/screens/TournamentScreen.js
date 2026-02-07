@@ -1,34 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
+    ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { StorageService } from '../utils/storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const TournamentScreen = ({ navigation }) => {
     const { theme } = useTheme();
-    const [tournaments] = useState([
-        {
-            id: 1,
-            name: 'Summer League 2024',
-            teams: 8,
-            matches: 12,
-            status: 'ongoing',
-            progress: 60,
-        },
-        {
-            id: 2,
-            name: 'Weekend Cup',
-            teams: 4,
-            matches: 6,
-            status: 'completed',
-            progress: 100,
-        },
-    ]);
+    const [tournaments, setTournaments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const loadTournaments = async () => {
+        try {
+            setLoading(true);
+            const data = await StorageService.getTournaments();
+            setTournaments(data);
+        } catch (error) {
+            console.error('Error loading tournaments:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            loadTournaments();
+        }, [])
+    );
 
     const TournamentCard = ({ tournament }) => (
         <TouchableOpacity
@@ -163,6 +168,14 @@ const TournamentScreen = ({ navigation }) => {
             elevation: 8,
         },
     });
+
+    if (loading) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
