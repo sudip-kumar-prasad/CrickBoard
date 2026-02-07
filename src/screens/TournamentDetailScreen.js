@@ -177,11 +177,11 @@ const TournamentDetailScreen = ({ route }) => {
                 <Text style={styles.tournamentName}>{tournament.name}</Text>
                 <View style={styles.headerStats}>
                     <View style={styles.headerStat}>
-                        <Ionicons name="people-outline" size={20} color=theme.textTertiary />
+                        <Ionicons name="people-outline" size={20} color={theme.textTertiary} />
                         <Text style={styles.headerStatText}>{tournament.teams} Teams</Text>
                     </View>
                     <View style={styles.headerStat}>
-                        <Ionicons name="list-outline" size={20} color=theme.textTertiary />
+                        <Ionicons name="list-outline" size={20} color={theme.textTertiary} />
                         <Text style={styles.headerStatText}>{tournament.matches} Matches</Text>
                     </View>
                 </View>

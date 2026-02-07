@@ -200,7 +200,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
           {/* 1. HERO BRANDING SECTION */}
           <View style={styles.heroSection}>
             <View style={styles.logoBadge}>
-              <MaterialCommunityIcons name="cricket" size={80} color=theme.success />
+              <MaterialCommunityIcons name="cricket" size={80} color={theme.success} />
             </View>
             <Text style={styles.brandTitle}>CRICKBOARD</Text>
             <Text style={styles.brandTagline}>Your Digital Team Manager</Text>
@@ -223,10 +223,10 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                   value={name}
                   onChangeText={setName}
                   style={styles.input}
-                  outlineColor=theme.borderLight
-                  activeOutlineColor=theme.success
+                  outlineColor={theme.borderLight}
+                  activeOutlineColor={theme.success}
                   textColor="#ffffff"
-                  left={<PaperTextInput.Icon icon="account" color=theme.textSecondary />}
+                  left={<PaperTextInput.Icon icon="account" color={theme.textSecondary} />}
                 />
               )}
 
@@ -238,10 +238,10 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 style={styles.input}
-                outlineColor=theme.borderLight
-                activeOutlineColor=theme.success
+                outlineColor={theme.borderLight}
+                activeOutlineColor={theme.success}
                 textColor="#ffffff"
-                left={<PaperTextInput.Icon icon="email" color=theme.textSecondary />}
+                left={<PaperTextInput.Icon icon="email" color={theme.textSecondary} />}
               />
 
               <PaperTextInput
@@ -251,14 +251,14 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 style={styles.input}
-                outlineColor=theme.borderLight
-                activeOutlineColor=theme.success
+                outlineColor={theme.borderLight}
+                activeOutlineColor={theme.success}
                 textColor="#ffffff"
-                left={<PaperTextInput.Icon icon="lock" color=theme.textSecondary />}
+                left={<PaperTextInput.Icon icon="lock" color={theme.textSecondary} />}
                 right={
                   <PaperTextInput.Icon
                     icon={showPassword ? "eye-off" : "eye"}
-                    color=theme.textTertiary
+                    color={theme.textTertiary}
                     onPress={() => setShowPassword(!showPassword)}
                   />
                 }

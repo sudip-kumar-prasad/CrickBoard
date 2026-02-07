@@ -148,11 +148,11 @@ export default function RecordMatchScreen({ navigation }) {
     <Surface key={perf.playerId} style={styles.perfCard} elevation={2}>
       <View style={styles.perfHeader}>
         <View style={styles.avatarMini}>
-          <Avatar.Text size={30} label={perf.playerName.substring(0, 1).toUpperCase()} backgroundColor=theme.background labelStyle={{ fontSize: 12, color: theme.success }} />
+          <Avatar.Text size={30} label={perf.playerName.substring(0, 1).toUpperCase()} backgroundColor={theme.background} labelStyle={{ fontSize: 12, color: theme.success }} />
           <Text style={styles.perfPlayerName}>{perf.playerName}</Text>
         </View>
         <TouchableOpacity onPress={() => removePlayerFromMatch(perf.playerId)}>
-          <Ionicons name="trash-outline" size={18} color=theme.error />
+          <Ionicons name="trash-outline" size={18} color={theme.error} />
         </TouchableOpacity>
       </View>
 
@@ -182,7 +182,7 @@ export default function RecordMatchScreen({ navigation }) {
         keyboardType="numeric"
         style={styles.miniStatInput}
         textColor="#ffffff"
-        activeUnderlineColor=theme.success
+        activeUnderlineColor={theme.success}
       />
     </View>
   );
@@ -440,7 +440,7 @@ export default function RecordMatchScreen({ navigation }) {
           {/* 1. MATCH DETAILS SECTION */}
           <Surface style={styles.sectionCard} elevation={1}>
             <View style={styles.sectionHeader}>
-              <Ionicons name="information-circle-outline" size={20} color=theme.success />
+              <Ionicons name="information-circle-outline" size={20} color={theme.success} />
               <Text style={styles.sectionTitle}>Match Details</Text>
             </View>
 
@@ -451,8 +451,8 @@ export default function RecordMatchScreen({ navigation }) {
                 value={matchDetails.opponent}
                 onChangeText={(val) => setMatchDetails({ ...matchDetails, opponent: val })}
                 style={styles.mainInput}
-                outlineColor=theme.borderLight
-                activeOutlineColor=theme.success
+                outlineColor={theme.borderLight}
+                activeOutlineColor={theme.success}
                 textColor="#ffffff"
               />
               <PaperTextInput
@@ -461,8 +461,8 @@ export default function RecordMatchScreen({ navigation }) {
                 value={matchDetails.venue}
                 onChangeText={(val) => setMatchDetails({ ...matchDetails, venue: val })}
                 style={styles.mainInput}
-                outlineColor=theme.borderLight
-                activeOutlineColor=theme.success
+                outlineColor={theme.borderLight}
+                activeOutlineColor={theme.success}
                 textColor="#ffffff"
               />
             </View>
@@ -489,7 +489,7 @@ export default function RecordMatchScreen({ navigation }) {
                   value={matchDetails.date}
                   onChangeText={(val) => setMatchDetails({ ...matchDetails, date: val })}
                   style={[styles.mainInput, { height: 40 }]}
-                  outlineColor=theme.borderLight
+                  outlineColor={theme.borderLight}
                   activeOutlineColor="#60a5fa"
                   textColor="#ffffff"
                   dense
@@ -507,8 +507,8 @@ export default function RecordMatchScreen({ navigation }) {
                   onChangeText={(val) => setMatchDetails({ ...matchDetails, wides: val })}
                   keyboardType="numeric"
                   style={styles.miniInput}
-                  outlineColor=theme.borderLight
-                  activeOutlineColor=theme.success
+                  outlineColor={theme.borderLight}
+                  activeOutlineColor={theme.success}
                   textColor="#ffffff"
                   dense
                 />
@@ -521,8 +521,8 @@ export default function RecordMatchScreen({ navigation }) {
                   onChangeText={(val) => setMatchDetails({ ...matchDetails, noBalls: val })}
                   keyboardType="numeric"
                   style={styles.miniInput}
-                  outlineColor=theme.borderLight
-                  activeOutlineColor=theme.success
+                  outlineColor={theme.borderLight}
+                  activeOutlineColor={theme.success}
                   textColor="#ffffff"
                   dense
                 />
@@ -541,7 +541,7 @@ export default function RecordMatchScreen({ navigation }) {
 
           {performances.length === 0 ? (
             <View style={styles.emptyLineup}>
-              <Ionicons name="people-outline" size={50} color=theme.border />
+              <Ionicons name="people-outline" size={50} color={theme.border} />
               <Text style={styles.emptyNote}>Add players to start recording their match performance</Text>
             </View>
           ) : (
@@ -567,7 +567,7 @@ export default function RecordMatchScreen({ navigation }) {
               keyExtractor={item => item.id}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.playerPickItem} onPress={() => addPlayerToMatch(item)}>
-                  <Avatar.Text size={35} label={item.name.substring(0, 1).toUpperCase()} backgroundColor=theme.border labelStyle={{ color: theme.success }} />
+                  <Avatar.Text size={35} label={item.name.substring(0, 1).toUpperCase()} backgroundColor={theme.border} labelStyle={{ color: theme.success }} />
                   <View style={{ marginLeft: 15 }}>
                     <Text style={styles.pickName}>{item.name}</Text>
                     <Text style={styles.pickRole}>{item.role}</Text>

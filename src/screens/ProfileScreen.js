@@ -395,7 +395,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                             <Avatar.Text
                                 size={110}
                                 label={getInitials(user.name)}
-                                backgroundColor=theme.success
+                                backgroundColor={theme.success}
                                 labelStyle={styles.avatarLabel}
                             />
                         )}
@@ -424,7 +424,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                                 onChangeText={setName}
                                 style={styles.editInput}
                                 textColor="#ffffff"
-                                activeUnderlineColor=theme.success
+                                activeUnderlineColor={theme.success}
                             />
                             <Button
                                 mode="contained"
@@ -478,7 +478,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
 
                 {/* 4. LOGOUT BUTTON */}
                 <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-                    <Ionicons name="log-out-outline" size={24} color=theme.error />
+                    <Ionicons name="log-out-outline" size={24} color={theme.error} />
                     <Text style={styles.logoutText}>Logout from Account</Text>
                 </TouchableOpacity>
 
@@ -492,7 +492,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
 const renderInfoRow = (label, value, icon) => (
     <View style={styles.infoRow}>
         <View style={styles.infoLabelLeft}>
-            <Ionicons name={icon} size={20} color=theme.success />
+            <Ionicons name={icon} size={20} color={theme.success} />
             <Text style={styles.rowLabelText}>{label}</Text>
         </View>
         <Text style={styles.rowValueText}>{value}</Text>

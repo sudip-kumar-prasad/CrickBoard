@@ -98,7 +98,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
           <Avatar.Text
             size={100}
             label={player.name.substring(0, 1).toUpperCase()}
-            backgroundColor=theme.success
+            backgroundColor={theme.success}
             labelStyle={{ fontWeight: 'bold' }}
           />
 
@@ -153,7 +153,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
           </Button>
 
           <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
-            <Ionicons name="trash-outline" size={20} color=theme.error />
+            <Ionicons name="trash-outline" size={20} color={theme.error} />
             <Text style={styles.deleteText}>Remove Player</Text>
           </TouchableOpacity>
         </View>

@@ -114,7 +114,7 @@ export default function EditPlayerScreen({ navigation, route }) {
         keyboardType="numeric"
         style={styles.miniInput}
         textColor="#ffffff"
-        activeUnderlineColor=theme.success
+        activeUnderlineColor={theme.success}
       />
     </View>
   );
@@ -130,7 +130,7 @@ export default function EditPlayerScreen({ navigation, route }) {
           {/* HEADER */}
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="close-circle" size={28} color=theme.textSecondary />
+              <Ionicons name="close-circle" size={28} color={theme.textSecondary} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Edit Profile</Text>
             <View style={{ width: 28 }} />
@@ -139,7 +139,7 @@ export default function EditPlayerScreen({ navigation, route }) {
           {/* BASIC INFO */}
           <Surface style={styles.sectionCard} elevation={2}>
             <View style={styles.sectionTitleRow}>
-              <Ionicons name="create-outline" size={20} color=theme.success />
+              <Ionicons name="create-outline" size={20} color={theme.success} />
               <Text style={styles.sectionTitle}>Profile Details</Text>
             </View>
 
@@ -149,8 +149,8 @@ export default function EditPlayerScreen({ navigation, route }) {
               value={name}
               onChangeText={setName}
               style={styles.mainInput}
-              outlineColor=theme.borderLight
-              activeOutlineColor=theme.success
+              outlineColor={theme.borderLight}
+              activeOutlineColor={theme.success}
               textColor="#ffffff"
             />
 
@@ -160,8 +160,8 @@ export default function EditPlayerScreen({ navigation, route }) {
               value={team}
               onChangeText={setTeam}
               style={styles.mainInput}
-              outlineColor=theme.borderLight
-              activeOutlineColor=theme.success
+              outlineColor={theme.borderLight}
+              activeOutlineColor={theme.success}
               textColor="#ffffff"
             />
 

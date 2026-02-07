@@ -434,8 +434,8 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.sectionTitle}>Season Performance</Text>
           <View style={styles.statsGrid}>
             <PerformanceBox label="Total Runs" value={stats.runs} icon="flash" color="#eab308" />
-            <PerformanceBox label="Total Wickets" value={stats.wickets} icon="disc" color=theme.error />
-            <PerformanceBox label="Total Catches" value={stats.catches} icon="hand-left" color=theme.primary />
+            <PerformanceBox label="Total Wickets" value={stats.wickets} icon="disc" color={theme.error} />
+            <PerformanceBox label="Total Catches" value={stats.catches} icon="hand-left" color={theme.primary} />
             <PerformanceBox label="Total Players" value={players.length} icon="people" color="#8b5cf6" />
           </View>
         </View>
@@ -447,19 +447,19 @@ export default function HomeScreen({ navigation }) {
             <ActionItem
               label="New Match"
               icon="add-circle"
-              color=theme.success
+              color={theme.success}
               onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}
             />
             <ActionItem
               label="Add Player"
               icon="person-add"
-              color=theme.primary
+              color={theme.primary}
               onPress={() => navigation.navigate('Players', { screen: 'AddPlayer' })}
             />
             <ActionItem
               label="Rankings"
               icon="stats-chart"
-              color=theme.warning
+              color={theme.warning}
               onPress={() => navigation.navigate('Insights')}
             />
           </View>

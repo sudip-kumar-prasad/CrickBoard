@@ -176,12 +176,12 @@ export default function MatchDetailScreen({ route, navigation }) {
                         <Ionicons name="chevron-back" size={24} color="#ffffff" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Match Report</Text>
-                    <IconButton icon="share-variant" iconColor=theme.success size={20} />
+                    <IconButton icon="share-variant" iconColor={theme.success} size={20} />
                 </View>
 
                 <View style={styles.matchHero}>
                     <View style={styles.teamInfo}>
-                        <Avatar.Text size={50} label="CB" backgroundColor=theme.success labelStyle={{ fontWeight: 'bold' }} />
+                        <Avatar.Text size={50} label="CB" backgroundColor={theme.success} labelStyle={{ fontWeight: 'bold' }} />
                         <Text style={styles.teamName}>CrickBoard</Text>
                     </View>
 
@@ -196,15 +196,15 @@ export default function MatchDetailScreen({ route, navigation }) {
                     </View>
 
                     <View style={styles.teamInfo}>
-                        <Avatar.Text size={50} label={opponentInitial} backgroundColor=theme.borderLight />
+                        <Avatar.Text size={50} label={opponentInitial} backgroundColor={theme.borderLight} />
                         <Text style={styles.teamName}>{opponentName}</Text>
                     </View>
                 </View>
 
                 <View style={[styles.metaRow, { justifyContent: 'center', marginTop: 10 }]}>
-                    <Ionicons name="location" size={14} color=theme.textSecondary />
+                    <Ionicons name="location" size={14} color={theme.textSecondary} />
                     <Text style={styles.metaText}>{match.venue || 'Unknown Venue'}  •  </Text>
-                    <Ionicons name="calendar" size={14} color=theme.textSecondary />
+                    <Ionicons name="calendar" size={14} color={theme.textSecondary} />
                     <Text style={styles.metaText}>{match.date ? new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown Date'}</Text>
                 </View>
             </Surface>
@@ -226,7 +226,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                             <Image source={{ uri: victoryImage }} style={styles.previewImage} />
                         ) : (
                             <View style={styles.imagePlaceholder}>
-                                <Ionicons name="camera-outline" size={30} color=theme.textSecondary />
+                                <Ionicons name="camera-outline" size={30} color={theme.textSecondary} />
                                 <Text style={styles.imagePlaceholderText}>Add Victory Photo</Text>
                             </View>
                         )}
@@ -240,8 +240,8 @@ export default function MatchDetailScreen({ route, navigation }) {
                         multiline
                         numberOfLines={3}
                         style={styles.captionInput}
-                        outlineColor=theme.borderLight
-                        activeOutlineColor=theme.success
+                        outlineColor={theme.borderLight}
+                        activeOutlineColor={theme.success}
                         textColor="#ffffff"
                     />
 
@@ -250,7 +250,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                             mode="outlined"
                             onPress={() => setIsCelebrating(false)}
                             style={styles.cancelBtn}
-                            textColor=theme.textSecondary
+                            textColor={theme.textSecondary}
                         >
                             Cancel
                         </Button>
@@ -274,7 +274,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         return (
             <Surface style={styles.momCard} elevation={2}>
                 <View style={styles.momLeft}>
-                    <MaterialCommunityIcons name="trophy-variant" size={40} color=theme.warning />
+                    <MaterialCommunityIcons name="trophy-variant" size={40} color={theme.warning} />
                     <View style={{ marginLeft: 15 }}>
                         <Text style={styles.momLabel}>PLAYER OF THE MATCH</Text>
                         <Text style={styles.momName}>{mom.playerName}</Text>
@@ -291,7 +291,7 @@ export default function MatchDetailScreen({ route, navigation }) {
     const renderBattingScorecard = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="cricket" size={20} color=theme.success />
+                <MaterialCommunityIcons name="cricket" size={20} color={theme.success} />
                 <Text style={styles.sectionTitle}>Batting Performance</Text>
             </View>
             <Surface style={styles.tableCard} elevation={1}>

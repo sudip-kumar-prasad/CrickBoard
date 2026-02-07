@@ -136,7 +136,7 @@ export default function MatchesScreen({ navigation }) {
           <View style={styles.matchInfo}>
             <Text style={styles.opponentText} numberOfLines={1}>vs {item.opponent || 'Friendly Fixture'}</Text>
             <View style={styles.venueRow}>
-              <Ionicons name="location" size={12} color=theme.textSecondary />
+              <Ionicons name="location" size={12} color={theme.textSecondary} />
               <Text style={styles.venueText} numberOfLines={1}>{item.venue || 'Home Ground'}</Text>
             </View>
 
@@ -190,7 +190,7 @@ export default function MatchesScreen({ navigation }) {
           style={styles.addButton}
           onPress={() => navigation.navigate('RecordMatch')}
         >
-          <Ionicons name="add-circle" size={32} color=theme.success />
+          <Ionicons name="add-circle" size={32} color={theme.success} />
         </TouchableOpacity>
       </View>
 
@@ -198,7 +198,7 @@ export default function MatchesScreen({ navigation }) {
       {filteredMatches.length === 0 ? (
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIconCircle}>
-            <Ionicons name="trophy-outline" size={60} color=theme.borderLight />
+            <Ionicons name="trophy-outline" size={60} color={theme.borderLight} />
           </View>
           <Text style={styles.emptyTitle}>No matches found</Text>
           <Text style={styles.emptySub}>Start recording your team's matches to see them here.</Text>

@@ -107,7 +107,7 @@ export default function AddPlayerScreen({ navigation }) {
         keyboardType="numeric"
         style={styles.miniInput}
         textColor="#ffffff"
-        activeUnderlineColor=theme.success
+        activeUnderlineColor={theme.success}
       />
     </View>
   );
@@ -132,7 +132,7 @@ export default function AddPlayerScreen({ navigation }) {
           {/* 2. BASIC INFO SECTION */}
           <Surface style={styles.sectionCard} elevation={2}>
             <View style={styles.sectionTitleRow}>
-              <Ionicons name="person-circle-outline" size={20} color=theme.success />
+              <Ionicons name="person-circle-outline" size={20} color={theme.success} />
               <Text style={styles.sectionTitle}>Basic Information</Text>
             </View>
 
@@ -142,8 +142,8 @@ export default function AddPlayerScreen({ navigation }) {
               value={name}
               onChangeText={setName}
               style={styles.mainInput}
-              outlineColor=theme.borderLight
-              activeOutlineColor=theme.success
+              outlineColor={theme.borderLight}
+              activeOutlineColor={theme.success}
               textColor="#ffffff"
             />
 
@@ -153,8 +153,8 @@ export default function AddPlayerScreen({ navigation }) {
               value={team}
               onChangeText={setTeam}
               style={styles.mainInput}
-              outlineColor=theme.borderLight
-              activeOutlineColor=theme.success
+              outlineColor={theme.borderLight}
+              activeOutlineColor={theme.success}
               textColor="#ffffff"
               placeholder="Optional"
             />
@@ -187,7 +187,7 @@ export default function AddPlayerScreen({ navigation }) {
               <Ionicons
                 name={showStats ? "chevron-up" : "chevron-down"}
                 size={20}
-                color=theme.textSecondary
+                color={theme.textSecondary}
                 style={{ marginLeft: 'auto' }}
               />
             </TouchableOpacity>

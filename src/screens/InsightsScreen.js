@@ -189,7 +189,7 @@ export default function InsightsScreen({ navigation }) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.emptyContainer}>
-          <Ionicons name="bar-chart-outline" size={80} color=theme.border />
+          <Ionicons name="bar-chart-outline" size={80} color={theme.border} />
           <Text style={styles.emptyText}>Record matches to see data insights</Text>
           <Button mode="contained" onPress={() => navigation.navigate('RecordMatch')} style={styles.emptyBtn}>
             Record Match
@@ -269,7 +269,7 @@ export default function InsightsScreen({ navigation }) {
           <Card.Title
             title="Extras Discipline"
             titleStyle={styles.cardTitle}
-            left={(props) => <Ionicons name="shield-checkmark-outline" size={20} color=theme.warning />}
+            left={(props) => <Ionicons name="shield-checkmark-outline" size={20} color={theme.warning} />}
           />
           <Card.Content style={styles.progressRow}>
             <ProgressChart

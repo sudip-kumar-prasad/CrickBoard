@@ -102,7 +102,7 @@ export default function PlayersScreen({ navigation }) {
         <Surface style={styles.playerStrip} elevation={1}>
           {/* Avatar / Icon */}
           <View style={styles.profileCircle}>
-            <Avatar.Text size={45} label={item.name.substring(0, 1).toUpperCase()} backgroundColor=theme.background labelStyle={{ color: theme.success }} />
+            <Avatar.Text size={45} label={item.name.substring(0, 1).toUpperCase()} backgroundColor={theme.background} labelStyle={{ color: theme.success }} />
           </View>
 
           {/* Info */}
@@ -126,7 +126,7 @@ export default function PlayersScreen({ navigation }) {
             </View>
           </View>
 
-          <Ionicons name="chevron-forward" size={18} color=theme.borderLight style={{ marginLeft: 10 }} />
+          <Ionicons name="chevron-forward" size={18} color={theme.borderLight} style={{ marginLeft: 10 }} />
         </Surface>
       </TouchableOpacity>
     );
@@ -157,7 +157,7 @@ export default function PlayersScreen({ navigation }) {
           value={searchQuery}
           style={styles.searchBar}
           inputStyle={styles.searchBarInput}
-          iconColor=theme.success
+          iconColor={theme.success}
         />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.roleScroll}>
           {ROLES.map(role => (
@@ -177,7 +177,7 @@ export default function PlayersScreen({ navigation }) {
       {/* 3. PLAYER LIST */}
       {displayPlayers.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="people-outline" size={60} color=theme.border />
+          <Ionicons name="people-outline" size={60} color={theme.border} />
           <Text style={styles.emptyText}>No players found in squad</Text>
           <Button mode="contained" onPress={() => navigation.navigate('AddPlayer')} style={styles.emptyMainBtn}>
             Add Player

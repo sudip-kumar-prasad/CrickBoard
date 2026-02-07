@@ -197,7 +197,7 @@ export default function VictoryFeedScreen() {
                         <Avatar.Text
                             size={40}
                             label="MY"
-                            backgroundColor=theme.success
+                            backgroundColor={theme.success}
                         />
                         <View style={{ marginLeft: 12 }}>
                             <Text style={styles.posterName}>My Victory</Text>
@@ -206,7 +206,7 @@ export default function VictoryFeedScreen() {
                     </View>
                     <IconButton
                         icon="trash-can-outline"
-                        iconColor=theme.error
+                        iconColor={theme.error}
                         size={20}
                         onPress={() => handleDeletePost(item.id)}
                     />
@@ -218,7 +218,7 @@ export default function VictoryFeedScreen() {
                         <Image source={{ uri: item.imageUri }} style={styles.victoryImage} />
                     ) : (
                         <View style={styles.placeholderBanner}>
-                            <MaterialCommunityIcons name="trophy" size={50} color=theme.warning />
+                            <MaterialCommunityIcons name="trophy" size={50} color={theme.warning} />
                             <Text style={styles.placeholderText}>VICTORY!</Text>
                         </View>
                     )}
@@ -237,7 +237,7 @@ export default function VictoryFeedScreen() {
 
                 {/* 4. FOOTER (Simple tag) */}
                 <View style={styles.footer}>
-                    <MaterialCommunityIcons name="cricket" size={16} color=theme.success />
+                    <MaterialCommunityIcons name="cricket" size={16} color={theme.success} />
                     <Text style={styles.footerText}>Celebrated on CrickBoard</Text>
                 </View>
             </Surface>
@@ -266,8 +266,8 @@ export default function VictoryFeedScreen() {
                         multiline
                         numberOfLines={3}
                         style={styles.captionInput}
-                        outlineColor=theme.borderLight
-                        activeOutlineColor=theme.success
+                        outlineColor={theme.borderLight}
+                        activeOutlineColor={theme.success}
                         textColor="#ffffff"
                     />
 
@@ -276,7 +276,7 @@ export default function VictoryFeedScreen() {
                             mode="outlined"
                             onPress={() => setIsAddingPost(false)}
                             style={styles.cancelBtn}
-                            textColor=theme.textSecondary
+                            textColor={theme.textSecondary}
                         >
                             Cancel
                         </Button>
@@ -481,7 +481,7 @@ export default function VictoryFeedScreen() {
 
             {posts.length === 0 ? (
                 <View style={styles.emptyState}>
-                    <MaterialCommunityIcons name="trophy-variant-outline" size={80} color=theme.borderLight />
+                    <MaterialCommunityIcons name="trophy-variant-outline" size={80} color={theme.borderLight} />
                     <Text style={styles.emptyTitle}>Your Wall is Empty</Text>
                     <Text style={styles.emptySub}>Record a match and 'Celebrate' it to see your wins here!</Text>
                 </View>
