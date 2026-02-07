@@ -33,19 +33,22 @@ import { StorageService } from '../utils/storage';
  * batch data capture for player performances, optimizing the database 
  * write-throughput and ensuring an intuitive data-entry flow.
  */
-export default function RecordMatchScreen({ navigation }) {
+export default function RecordMatchScreen({ navigation, route }) {
   const { theme } = useTheme();
+  const params = route?.params || {};
+  const { tournamentId, tournamentName } = params;
   // --- STATE ---
   const [players, setPlayers] = useState([]); // List of all players in squad
   const [performances, setPerformances] = useState([]); // Players playing in this match
   const [matchDetails, setMatchDetails] = useState({
     opponent: '',
-    venue: '',
+    venue: tournamentName ? `Tournament: ${tournamentName}` : '',
     result: 'Win', // Win, Loss, Draw
     date: new Date().toISOString().substring(0, 10),
     wides: '0',
     noBalls: '0',
-    notes: ''
+    notes: '',
+    tournamentId: tournamentId || null,
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [saving, setSaving] = useState(false);

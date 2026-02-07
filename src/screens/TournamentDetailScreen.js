@@ -1,49 +1,109 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
+    ActivityIndicator,
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
+import { StorageService } from '../utils/storage';
+import { useFocusEffect } from '@react-navigation/native';
 
-const TournamentDetailScreen = ({ route }) => {
+const TournamentDetailScreen = ({ route, navigation }) => {
     const { theme } = useTheme();
-    const { tournament } = route.params;
+    const { tournament: initialTournament } = route.params;
+    const [tournament, setTournament] = useState(initialTournament);
+    const [matches, setMatches] = useState([]);
+    const [standings, setStandings] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const matches = [
-        { id: 1, team1: 'Team A', team2: 'Team B', score1: '150/8', score2: '145/10', status: 'completed', winner: 'Team A' },
-        { id: 2, team1: 'Team C', team2: 'Team D', status: 'upcoming', time: 'Tomorrow, 2:00 PM' },
-    ];
+    const loadData = async () => {
+        try {
+            setLoading(true);
+            const allMatches = await StorageService.getMatches();
+            const tournamentMatches = allMatches.filter(m => m.tournamentId === tournament.id);
+            setMatches(tournamentMatches);
 
-    const standings = [
-        { position: 1, team: 'Team A', played: 3, won: 3, lost: 0, points: 6 },
-        { position: 2, team: 'Team C', played: 3, won: 2, lost: 1, points: 4 },
-        { position: 3, team: 'Team B', played: 3, won: 1, lost: 2, points: 2 },
-        { position: 4, team: 'Team D', played: 3, won: 0, lost: 3, points: 0 },
-    ];
+            // Calculate Standings
+            const teamStats = {};
+            // Initialize teams from the matches or predefined teams if we had them
+            // For now, we extract teams from matches
+            tournamentMatches.forEach(match => {
+                const teams = [match.team1 || 'Team A', match.opponent || 'Opponent']; // Use opponent from match
+                teams.forEach(team => {
+                    if (!teamStats[team]) {
+                        teamStats[team] = { team, played: 0, won: 0, lost: 0, draw: 0, points: 0 };
+                    }
+                });
+
+                const t1 = match.team1 || 'Team A';
+                const t2 = match.opponent || 'Opponent';
+
+                teamStats[t1].played += 1;
+                teamStats[t2].played += 1;
+
+                if (match.result === 'Win') {
+                    teamStats[t1].won += 1;
+                    teamStats[t1].points += 2;
+                    teamStats[t2].lost += 1;
+                } else if (match.result === 'Loss') {
+                    teamStats[t2].won += 1;
+                    teamStats[t2].points += 2;
+                    teamStats[t1].lost += 1;
+                } else {
+                    teamStats[t1].draw += 1;
+                    teamStats[t2].draw += 1;
+                    teamStats[t1].points += 1;
+                    teamStats[t2].points += 1;
+                }
+            });
+
+            const sortedStandings = Object.values(teamStats)
+                .sort((a, b) => b.points - a.points || (b.won - a.won))
+                .map((stat, index) => ({ ...stat, position: index + 1 }));
+
+            setStandings(sortedStandings);
+        } catch (error) {
+            console.error('Error loading tournament details:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            loadData();
+        }, [])
+    );
 
     const MatchCard = ({ match }) => (
         <View style={styles.matchCard}>
             <View style={styles.matchTeams}>
-                <Text style={styles.teamName}>{match.team1}</Text>
-                {match.score1 && <Text style={styles.score}>{match.score1}</Text>}
+                <Text style={styles.teamName}>{match.team1 || 'Our Team'}</Text>
+                {match.performances && (
+                    <Text style={styles.score}>
+                        {match.performances.reduce((sum, p) => sum + (p.runs || 0), 0)}/
+                        {match.performances.reduce((sum, p) => sum + (p.wickets || 0), 0)}
+                    </Text>
+                )}
             </View>
             <Text style={styles.vs}>vs</Text>
             <View style={styles.matchTeams}>
-                <Text style={styles.teamName}>{match.team2}</Text>
-                {match.score2 && <Text style={styles.score}>{match.score2}</Text>}
+                <Text style={styles.teamName}>{match.opponent}</Text>
+                <Text style={styles.score}>-</Text>
             </View>
-            {match.status === 'completed' && (
-                <View style={styles.resultBadge}>
-                    <Text style={styles.resultText}>{match.winner} won</Text>
-                </View>
-            )}
-            {match.status === 'upcoming' && (
-                <Text style={styles.upcomingTime}>{match.time}</Text>
-            )}
+            <View style={[
+                styles.resultBadge,
+                { backgroundColor: match.result === 'Win' ? theme.success : theme.error }
+            ]}>
+                <Text style={styles.resultText}>
+                    {match.result === 'Win' ? `${match.team1 || 'Our Team'} Won` : `${match.opponent} Won`}
+                </Text>
+            </View>
+            <Text style={styles.upcomingTime}>{new Date(match.date).toLocaleDateString()}</Text>
         </View>
     );
 
@@ -169,48 +229,96 @@ const TournamentDetailScreen = ({ route }) => {
             color: theme.textTertiary,
             marginTop: 8,
         },
+        addMatchBtn: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: theme.backgroundCard,
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: theme.primary,
+        },
     });
 
+    if (loading) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
+            </View>
+        );
+    }
+
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.tournamentName}>{tournament.name}</Text>
-                <View style={styles.headerStats}>
-                    <View style={styles.headerStat}>
-                        <Ionicons name="people-outline" size={20} color={theme.textTertiary} />
-                        <Text style={styles.headerStatText}>{tournament.teams} Teams</Text>
-                    </View>
-                    <View style={styles.headerStat}>
-                        <Ionicons name="list-outline" size={20} color={theme.textTertiary} />
-                        <Text style={styles.headerStatText}>{tournament.matches} Matches</Text>
+        <View style={styles.container}>
+            <ScrollView style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.tournamentName}>{tournament.name}</Text>
+                    <View style={styles.headerStats}>
+                        <View style={styles.headerStat}>
+                            <Ionicons name="people-outline" size={20} color={theme.textTertiary} />
+                            <Text style={styles.headerStatText}>{tournament.teams} Teams</Text>
+                        </View>
+                        <View style={styles.headerStat}>
+                            <Ionicons name="list-outline" size={20} color={theme.textTertiary} />
+                            <Text style={styles.headerStatText}>{matches.length} Matches</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Standings</Text>
-                <View style={styles.standingsTable}>
-                    <View style={styles.standingHeader}>
-                        <Text style={styles.headerPos}>#</Text>
-                        <Text style={styles.headerTeam}>Team</Text>
-                        <Text style={styles.headerCol}>P</Text>
-                        <Text style={styles.headerCol}>W</Text>
-                        <Text style={styles.headerCol}>L</Text>
-                        <Text style={styles.headerColPoints}>Pts</Text>
-                    </View>
-                    {standings.map(standing => (
-                        <StandingRow key={standing.position} standing={standing} />
-                    ))}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Standings</Text>
+                    {standings.length > 0 ? (
+                        <View style={styles.standingsTable}>
+                            <View style={styles.standingHeader}>
+                                <Text style={styles.headerPos}>#</Text>
+                                <Text style={styles.headerTeam}>Team</Text>
+                                <Text style={styles.headerCol}>P</Text>
+                                <Text style={styles.headerCol}>W</Text>
+                                <Text style={styles.headerCol}>L</Text>
+                                <Text style={styles.headerColPoints}>Pts</Text>
+                            </View>
+                            {standings.map(standing => (
+                                <StandingRow key={standing.team} standing={standing} />
+                            ))}
+                        </View>
+                    ) : (
+                        <View style={[styles.matchCard, { alignItems: 'center', padding: 30 }]}>
+                            <Ionicons name="podium-outline" size={40} color={theme.textTertiary} />
+                            <Text style={{ color: theme.textSecondary, marginTop: 10 }}>No standings available yet</Text>
+                        </View>
+                    )}
                 </View>
-            </View>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Matches</Text>
-                {matches.map(match => (
-                    <MatchCard key={match.id} match={match} />
-                ))}
-            </View>
-        </ScrollView>
+                <View style={styles.section}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                        <Text style={styles.sectionTitle}>Matches</Text>
+                        <TouchableOpacity
+                            style={styles.addMatchBtn}
+                            onPress={() => navigation.navigate('Matches', {
+                                screen: 'RecordMatch',
+                                params: { tournamentId: tournament.id, tournamentName: tournament.name }
+                            })}
+                        >
+                            <Ionicons name="add-circle" size={20} color={theme.primary} />
+                            <Text style={{ color: theme.primary, fontWeight: 'bold', marginLeft: 4 }}>Add Match</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {matches.length > 0 ? (
+                        matches.map(match => (
+                            <MatchCard key={match.id} match={match} />
+                        ))
+                    ) : (
+                        <View style={[styles.matchCard, { alignItems: 'center', padding: 30 }]}>
+                            <Ionicons name="calendar-outline" size={40} color={theme.textTertiary} />
+                            <Text style={{ color: theme.textSecondary, marginTop: 10 }}>No matches recorded</Text>
+                        </View>
+                    )}
+                </View>
+                <View style={{ height: 40 }} />
+            </ScrollView>
+        </View>
     );
 };
 
