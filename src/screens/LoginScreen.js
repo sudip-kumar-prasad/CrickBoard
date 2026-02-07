@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+  Image,
   ImageBackground,
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
@@ -99,7 +100,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
     logoBadge: {
       width: 120,
       height: 120,
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 60,
       justifyContent: 'center',
       alignItems: 'center',
@@ -107,12 +108,17 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
       borderWidth: 2,
       borderColor: theme.success,
       elevation: 10,
+      overflow: 'hidden',
+    },
+    logoImage: {
+      width: '100%',
+      height: '100%',
     },
     brandTitle: {
-      fontSize: 28,
-      fontWeight: 'bold',
+      fontSize: 32,
+      fontWeight: '900',
       color: '#ffffff',
-      letterSpacing: 4,
+      letterSpacing: 2,
     },
     brandTagline: {
       fontSize: 14,
@@ -201,10 +207,13 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
           {/* 1. HERO BRANDING SECTION */}
           <View style={styles.heroSection}>
             <View style={styles.logoBadge}>
-              <MaterialCommunityIcons name="cricket" size={80} color={theme.success} />
+              <Image
+                source={require('../../assets/logo/logo.png')}
+                style={styles.logoImage}
+              />
             </View>
             <Text style={styles.brandTitle}>CRICKBOARD</Text>
-            <Text style={styles.brandTagline}>Your Digital Team Manager</Text>
+            <Text style={styles.brandTagline}>Professional Team Manager</Text>
           </View>
 
           {/* 2. AUTH CARD */}
@@ -226,7 +235,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                   style={styles.input}
                   outlineColor={theme.borderLight}
                   activeOutlineColor={theme.success}
-                  textColor="#ffffff"
+                  textColor={theme.text}
                   left={<PaperTextInput.Icon icon="account" color={theme.textSecondary} />}
                 />
               )}
@@ -241,7 +250,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                 style={styles.input}
                 outlineColor={theme.borderLight}
                 activeOutlineColor={theme.success}
-                textColor="#ffffff"
+                textColor={theme.text}
                 left={<PaperTextInput.Icon icon="email" color={theme.textSecondary} />}
               />
 
@@ -254,7 +263,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                 style={styles.input}
                 outlineColor={theme.borderLight}
                 activeOutlineColor={theme.success}
-                textColor="#ffffff"
+                textColor={theme.text}
                 left={<PaperTextInput.Icon icon="lock" color={theme.textSecondary} />}
                 right={
                   <PaperTextInput.Icon
