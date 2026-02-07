@@ -4,6 +4,7 @@ const STORAGE_KEYS = {
   PLAYERS: 'crickboard_players',
   MATCHES: 'crickboard_matches',
   VICTORY_POSTS: 'crickboard_victory_posts',
+  TOURNAMENTS: 'crickboard_tournaments',
 };
 
 export class StorageService {
@@ -129,6 +130,35 @@ export class StorageService {
     }
   }
 
+  // Tournament management
+  static async getTournaments() {
+    try {
+      const tournamentsJson = await AsyncStorage.getItem(STORAGE_KEYS.TOURNAMENTS);
+      return tournamentsJson ? JSON.parse(tournamentsJson) : [];
+    } catch (error) {
+      console.error('Error getting tournaments:', error);
+      return [];
+    }
+  }
+
+  static async saveTournaments(tournaments) {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.TOURNAMENTS, JSON.stringify(tournaments));
+    } catch (error) {
+      console.error('Error saving tournaments:', error);
+    }
+  }
+
+  static async addTournament(tournament) {
+    try {
+      const tournaments = await this.getTournaments();
+      tournaments.unshift(tournament); // Newest first
+      await this.saveTournaments(tournaments);
+    } catch (error) {
+      console.error('Error adding tournament:', error);
+    }
+  }
+
   static async recordMatch(match) {
     await this.addMatch(match);
   }
@@ -136,7 +166,11 @@ export class StorageService {
   // Utility functions
   static async clearAllData() {
     try {
-      await AsyncStorage.multiRemove([STORAGE_KEYS.PLAYERS, STORAGE_KEYS.MATCHES]);
+      await AsyncStorage.multiRemove([
+        STORAGE_KEYS.PLAYERS,
+        STORAGE_KEYS.MATCHES,
+        STORAGE_KEYS.TOURNAMENTS
+      ]);
     } catch (error) {
       console.error('Error clearing data:', error);
     }

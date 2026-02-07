@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { StorageService } from '../utils/storage';
 
 const CreateTournamentScreen = ({ navigation }) => {
     const { theme } = useTheme();
@@ -25,14 +26,31 @@ const CreateTournamentScreen = ({ navigation }) => {
 
     const teamOptions = [4, 6, 8, 12, 16];
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
         if (!tournamentName.trim()) {
             Alert.alert('Error', 'Please enter a tournament name');
             return;
         }
-        Alert.alert('Success', 'Tournament created!', [
-            { text: 'OK', onPress: () => navigation.goBack() }
-        ]);
+
+        const newTournament = {
+            id: Date.now().toString(),
+            name: tournamentName.trim(),
+            format: selectedFormat,
+            teams: selectedTeams,
+            matches: 0,
+            status: 'ongoing',
+            progress: 0,
+            createdAt: new Date().toISOString(),
+        };
+
+        try {
+            await StorageService.addTournament(newTournament);
+            Alert.alert('Success', 'Tournament created!', [
+                { text: 'OK', onPress: () => navigation.goBack() }
+            ]);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to create tournament');
+        }
     };
 
     const styles = StyleSheet.create({
