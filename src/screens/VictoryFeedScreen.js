@@ -8,6 +8,7 @@ import {
     Dimensions,
     Alert,
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Text,
@@ -294,40 +295,7 @@ export default function VictoryFeedScreen() {
         </Portal>
     );
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Victory Wall</Text>
-                <IconButton
-                    icon="camera-plus-outline"
-                    iconColor="#ffffff"
-                    onPress={pickImage}
-                />
-            </View>
-
-            {posts.length === 0 ? (
-                <View style={styles.emptyState}>
-                    <MaterialCommunityIcons name="trophy-variant-outline" size={80} color="#334155" />
-                    <Text style={styles.emptyTitle}>Your Wall is Empty</Text>
-                    <Text style={styles.emptySub}>Record a match and 'Celebrate' it to see your wins here!</Text>
-                </View>
-            ) : (
-                <FlatList
-                    data={posts}
-                    keyExtractor={item => item.id}
-                    renderItem={renderPost}
-                    contentContainerStyle={styles.feedList}
-                    showsVerticalScrollIndicator={false}
-                    refreshing={refreshing}
-                    onRefresh={loadWall}
-                />
-            )}
-            {renderAddModal()}
-        </SafeAreaView>
-    );
-}
-
-const styles = StyleSheet.create({
+    const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#0f172a',
@@ -499,3 +467,38 @@ const styles = StyleSheet.create({
         flex: 1,
     }
 });
+
+  return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>Victory Wall</Text>
+                <IconButton
+                    icon="camera-plus-outline"
+                    iconColor="#ffffff"
+                    onPress={pickImage}
+                />
+            </View>
+
+            {posts.length === 0 ? (
+                <View style={styles.emptyState}>
+                    <MaterialCommunityIcons name="trophy-variant-outline" size={80} color="#334155" />
+                    <Text style={styles.emptyTitle}>Your Wall is Empty</Text>
+                    <Text style={styles.emptySub}>Record a match and 'Celebrate' it to see your wins here!</Text>
+                </View>
+            ) : (
+                <FlatList
+                    data={posts}
+                    keyExtractor={item => item.id}
+                    renderItem={renderPost}
+                    contentContainerStyle={styles.feedList}
+                    showsVerticalScrollIndicator={false}
+                    refreshing={refreshing}
+                    onRefresh={loadWall}
+                />
+            )}
+            {renderAddModal()}
+        </SafeAreaView>
+    );
+}
+
+

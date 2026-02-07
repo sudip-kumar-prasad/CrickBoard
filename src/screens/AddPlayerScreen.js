@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Text,

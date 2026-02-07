@@ -10,6 +10,7 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Text,
@@ -186,187 +187,7 @@ export default function RecordMatchScreen({ navigation }) {
     </View>
   );
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-          {/* HEADER */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="chevron-back" size={24} color="#ffffff" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Match Recording</Text>
-            <TouchableOpacity onPress={handleSaveMatch} disabled={saving}>
-              <Text style={[styles.headerAction, { opacity: saving ? 0.5 : 1 }]}>Save</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* 1. MATCH DETAILS SECTION */}
-          <Surface style={styles.sectionCard} elevation={1}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="information-circle-outline" size={20} color="#22c55e" />
-              <Text style={styles.sectionTitle}>Match Details</Text>
-            </View>
-
-            <View style={styles.detailRow}>
-              <PaperTextInput
-                label="Opponent Team"
-                mode="outlined"
-                value={matchDetails.opponent}
-                onChangeText={(val) => setMatchDetails({ ...matchDetails, opponent: val })}
-                style={styles.mainInput}
-                outlineColor="#334155"
-                activeOutlineColor="#22c55e"
-                textColor="#ffffff"
-              />
-              <PaperTextInput
-                label="Venue"
-                mode="outlined"
-                value={matchDetails.venue}
-                onChangeText={(val) => setMatchDetails({ ...matchDetails, venue: val })}
-                style={styles.mainInput}
-                outlineColor="#334155"
-                activeOutlineColor="#22c55e"
-                textColor="#ffffff"
-              />
-            </View>
-
-            <View style={styles.metaRow}>
-              <View style={{ flex: 1, marginRight: 10 }}>
-                <Text style={styles.label}>Result</Text>
-                <View style={styles.resultPicker}>
-                  {['Win', 'Loss', 'Draw'].map(res => (
-                    <TouchableOpacity
-                      key={res}
-                      style={[styles.resBtn, matchDetails.result === res && styles.resBtnActive]}
-                      onPress={() => setMatchDetails({ ...matchDetails, result: res })}
-                    >
-                      <Text style={[styles.resText, matchDetails.result === res && styles.resTextActive]}>{res}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.label}>Date</Text>
-                <PaperTextInput
-                  mode="outlined"
-                  value={matchDetails.date}
-                  onChangeText={(val) => setMatchDetails({ ...matchDetails, date: val })}
-                  style={[styles.mainInput, { height: 40 }]}
-                  outlineColor="#334155"
-                  activeOutlineColor="#60a5fa"
-                  textColor="#ffffff"
-                  dense
-                />
-              </View>
-            </View>
-
-            {/* NEW: EXTRAS SECTION */}
-            <View style={[styles.metaRow, { marginTop: 20 }]}>
-              <View style={{ flex: 1, marginRight: 10 }}>
-                <Text style={styles.label}>Wides</Text>
-                <PaperTextInput
-                  mode="outlined"
-                  value={matchDetails.wides}
-                  onChangeText={(val) => setMatchDetails({ ...matchDetails, wides: val })}
-                  keyboardType="numeric"
-                  style={styles.miniInput}
-                  outlineColor="#334155"
-                  activeOutlineColor="#22c55e"
-                  textColor="#ffffff"
-                  dense
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.label}>No-Balls</Text>
-                <PaperTextInput
-                  mode="outlined"
-                  value={matchDetails.noBalls}
-                  onChangeText={(val) => setMatchDetails({ ...matchDetails, noBalls: val })}
-                  keyboardType="numeric"
-                  style={styles.miniInput}
-                  outlineColor="#334155"
-                  activeOutlineColor="#22c55e"
-                  textColor="#ffffff"
-                  dense
-                />
-              </View>
-            </View>
-          </Surface>
-
-          {/* 2. PLAYER LINEUP SECTION */}
-          <View style={styles.sectionHeaderLine}>
-            <Text style={styles.sectionTitle}>Player Performances</Text>
-            <TouchableOpacity style={styles.addPlayerBtn} onPress={() => setModalVisible(true)}>
-              <Ionicons name="person-add" size={16} color="#ffffff" />
-              <Text style={styles.addBtnText}>Add Player</Text>
-            </TouchableOpacity>
-          </View>
-
-          {performances.length === 0 ? (
-            <View style={styles.emptyLineup}>
-              <Ionicons name="people-outline" size={50} color="#1e293b" />
-              <Text style={styles.emptyNote}>Add players to start recording their match performance</Text>
-            </View>
-          ) : (
-            performances.map(renderPerformanceCard)
-          )}
-
-          <View style={{ height: 100 }} />
-        </ScrollView>
-      </KeyboardAvoidingView>
-
-      {/* PLAYER SELECTION MODAL */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <Surface style={styles.modalContent} elevation={5}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Player</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#ffffff" />
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={players.filter(p => !performances.some(perf => perf.playerId === p.id))}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.playerPickItem} onPress={() => addPlayerToMatch(item)}>
-                  <Avatar.Text size={35} label={item.name.substring(0, 1).toUpperCase()} backgroundColor="#1e293b" labelStyle={{ color: '#22c55e' }} />
-                  <View style={{ marginLeft: 15 }}>
-                    <Text style={styles.pickName}>{item.name}</Text>
-                    <Text style={styles.pickRole}>{item.role}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={<Text style={styles.emptyPickerNote}>All squad members already added!</Text>}
-              contentContainerStyle={{ padding: 20 }}
-            />
-          </Surface>
-        </View>
-      </Modal>
-
-      {/* FLOAT SAVE BUTTON */}
-      <View style={styles.absoluteSave}>
-        <Button
-          mode="contained"
-          onPress={handleSaveMatch}
-          loading={saving}
-          disabled={saving || performances.length === 0}
-          style={styles.mainSaveBtn}
-          contentStyle={{ height: 55 }}
-        >
-          Finish & Record Match
-        </Button>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0f172a',
@@ -596,3 +417,185 @@ const styles = StyleSheet.create({
     elevation: 10,
   }
 });
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+          {/* HEADER */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="chevron-back" size={24} color="#ffffff" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Match Recording</Text>
+            <TouchableOpacity onPress={handleSaveMatch} disabled={saving}>
+              <Text style={[styles.headerAction, { opacity: saving ? 0.5 : 1 }]}>Save</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* 1. MATCH DETAILS SECTION */}
+          <Surface style={styles.sectionCard} elevation={1}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="information-circle-outline" size={20} color="#22c55e" />
+              <Text style={styles.sectionTitle}>Match Details</Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <PaperTextInput
+                label="Opponent Team"
+                mode="outlined"
+                value={matchDetails.opponent}
+                onChangeText={(val) => setMatchDetails({ ...matchDetails, opponent: val })}
+                style={styles.mainInput}
+                outlineColor="#334155"
+                activeOutlineColor="#22c55e"
+                textColor="#ffffff"
+              />
+              <PaperTextInput
+                label="Venue"
+                mode="outlined"
+                value={matchDetails.venue}
+                onChangeText={(val) => setMatchDetails({ ...matchDetails, venue: val })}
+                style={styles.mainInput}
+                outlineColor="#334155"
+                activeOutlineColor="#22c55e"
+                textColor="#ffffff"
+              />
+            </View>
+
+            <View style={styles.metaRow}>
+              <View style={{ flex: 1, marginRight: 10 }}>
+                <Text style={styles.label}>Result</Text>
+                <View style={styles.resultPicker}>
+                  {['Win', 'Loss', 'Draw'].map(res => (
+                    <TouchableOpacity
+                      key={res}
+                      style={[styles.resBtn, matchDetails.result === res && styles.resBtnActive]}
+                      onPress={() => setMatchDetails({ ...matchDetails, result: res })}
+                    >
+                      <Text style={[styles.resText, matchDetails.result === res && styles.resTextActive]}>{res}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>Date</Text>
+                <PaperTextInput
+                  mode="outlined"
+                  value={matchDetails.date}
+                  onChangeText={(val) => setMatchDetails({ ...matchDetails, date: val })}
+                  style={[styles.mainInput, { height: 40 }]}
+                  outlineColor="#334155"
+                  activeOutlineColor="#60a5fa"
+                  textColor="#ffffff"
+                  dense
+                />
+              </View>
+            </View>
+
+            {/* NEW: EXTRAS SECTION */}
+            <View style={[styles.metaRow, { marginTop: 20 }]}>
+              <View style={{ flex: 1, marginRight: 10 }}>
+                <Text style={styles.label}>Wides</Text>
+                <PaperTextInput
+                  mode="outlined"
+                  value={matchDetails.wides}
+                  onChangeText={(val) => setMatchDetails({ ...matchDetails, wides: val })}
+                  keyboardType="numeric"
+                  style={styles.miniInput}
+                  outlineColor="#334155"
+                  activeOutlineColor="#22c55e"
+                  textColor="#ffffff"
+                  dense
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>No-Balls</Text>
+                <PaperTextInput
+                  mode="outlined"
+                  value={matchDetails.noBalls}
+                  onChangeText={(val) => setMatchDetails({ ...matchDetails, noBalls: val })}
+                  keyboardType="numeric"
+                  style={styles.miniInput}
+                  outlineColor="#334155"
+                  activeOutlineColor="#22c55e"
+                  textColor="#ffffff"
+                  dense
+                />
+              </View>
+            </View>
+          </Surface>
+
+          {/* 2. PLAYER LINEUP SECTION */}
+          <View style={styles.sectionHeaderLine}>
+            <Text style={styles.sectionTitle}>Player Performances</Text>
+            <TouchableOpacity style={styles.addPlayerBtn} onPress={() => setModalVisible(true)}>
+              <Ionicons name="person-add" size={16} color="#ffffff" />
+              <Text style={styles.addBtnText}>Add Player</Text>
+            </TouchableOpacity>
+          </View>
+
+          {performances.length === 0 ? (
+            <View style={styles.emptyLineup}>
+              <Ionicons name="people-outline" size={50} color="#1e293b" />
+              <Text style={styles.emptyNote}>Add players to start recording their match performance</Text>
+            </View>
+          ) : (
+            performances.map(renderPerformanceCard)
+          )}
+
+          <View style={{ height: 100 }} />
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      {/* PLAYER SELECTION MODAL */}
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <Surface style={styles.modalContent} elevation={5}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Player</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={players.filter(p => !performances.some(perf => perf.playerId === p.id))}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.playerPickItem} onPress={() => addPlayerToMatch(item)}>
+                  <Avatar.Text size={35} label={item.name.substring(0, 1).toUpperCase()} backgroundColor="#1e293b" labelStyle={{ color: '#22c55e' }} />
+                  <View style={{ marginLeft: 15 }}>
+                    <Text style={styles.pickName}>{item.name}</Text>
+                    <Text style={styles.pickRole}>{item.role}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={<Text style={styles.emptyPickerNote}>All squad members already added!</Text>}
+              contentContainerStyle={{ padding: 20 }}
+            />
+          </Surface>
+        </View>
+      </Modal>
+
+      {/* FLOAT SAVE BUTTON */}
+      <View style={styles.absoluteSave}>
+        <Button
+          mode="contained"
+          onPress={handleSaveMatch}
+          loading={saving}
+          disabled={saving || performances.length === 0}
+          style={styles.mainSaveBtn}
+          contentStyle={{ height: 55 }}
+        >
+          Finish & Record Match
+        </Button>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+

@@ -9,8 +9,10 @@ import {
     Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
 
 const CreateTournamentScreen = ({ navigation }) => {
+    const { theme } = useTheme();
     const [tournamentName, setTournamentName] = useState('');
     const [selectedFormat, setSelectedFormat] = useState('round-robin');
     const [selectedTeams, setSelectedTeams] = useState(4);
@@ -33,6 +35,96 @@ const CreateTournamentScreen = ({ navigation }) => {
         ]);
     };
 
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.background,
+            padding: 16,
+        },
+        section: {
+            marginBottom: 24,
+        },
+        sectionTitle: {
+            fontSize: 16,
+            fontWeight: '600',
+            color: theme.text,
+            marginBottom: 12,
+        },
+        input: {
+            backgroundColor: theme.backgroundCard,
+            borderWidth: 1,
+            borderColor: theme.borderLight,
+            borderRadius: 8,
+            padding: 16,
+            fontSize: 16,
+            color: theme.text,
+        },
+        optionCard: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: theme.backgroundCard,
+            borderWidth: 1,
+            borderColor: theme.borderLight,
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 8,
+        },
+        optionCardSelected: {
+            borderColor: theme.primary,
+            backgroundColor: theme.border,
+        },
+        optionText: {
+            fontSize: 16,
+            color: theme.text,
+            marginLeft: 12,
+            flex: 1,
+        },
+        optionTextSelected: {
+            color: theme.primary,
+            fontWeight: '600',
+        },
+        teamOptions: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 12,
+        },
+        teamOption: {
+            width: 60,
+            height: 60,
+            backgroundColor: theme.backgroundCard,
+            borderWidth: 1,
+            borderColor: theme.borderLight,
+            borderRadius: 8,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        teamOptionSelected: {
+            borderColor: theme.primary,
+            backgroundColor: theme.border,
+        },
+        teamOptionText: {
+            fontSize: 18,
+            fontWeight: '600',
+            color: theme.text,
+        },
+        teamOptionTextSelected: {
+            color: theme.primary,
+        },
+        createButton: {
+            backgroundColor: theme.primary,
+            borderRadius: 8,
+            padding: 16,
+            alignItems: 'center',
+            marginTop: 16,
+            marginBottom: 32,
+        },
+        createButtonText: {
+            fontSize: 16,
+            fontWeight: '600',
+            color: '#ffffff',
+        },
+    });
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.section}>
@@ -40,7 +132,7 @@ const CreateTournamentScreen = ({ navigation }) => {
                 <TextInput
                     style={styles.input}
                     placeholder="Enter tournament name"
-                    placeholderTextColor="#64748b"
+                    placeholderTextColor={theme.textTertiary}
                     value={tournamentName}
                     onChangeText={setTournamentName}
                 />
@@ -60,7 +152,7 @@ const CreateTournamentScreen = ({ navigation }) => {
                         <Ionicons
                             name={format.icon}
                             size={24}
-                            color={selectedFormat === format.id ? '#3b82f6' : '#64748b'}
+                            color={selectedFormat === format.id ? theme.primary : theme.textTertiary}
                         />
                         <Text style={[
                             styles.optionText,
@@ -69,7 +161,7 @@ const CreateTournamentScreen = ({ navigation }) => {
                             {format.name}
                         </Text>
                         {selectedFormat === format.id && (
-                            <Ionicons name="checkmark-circle" size={24} color="#3b82f6" />
+                            <Ionicons name="checkmark-circle" size={24} color={theme.primary} />
                         )}
                     </TouchableOpacity>
                 ))}
@@ -104,95 +196,5 @@ const CreateTournamentScreen = ({ navigation }) => {
         </ScrollView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#0f172a',
-        padding: 16,
-    },
-    section: {
-        marginBottom: 24,
-    },
-    sectionTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#e2e8f0',
-        marginBottom: 12,
-    },
-    input: {
-        backgroundColor: '#0b1223',
-        borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 8,
-        padding: 16,
-        fontSize: 16,
-        color: '#e2e8f0',
-    },
-    optionCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#0b1223',
-        borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 8,
-    },
-    optionCardSelected: {
-        borderColor: '#3b82f6',
-        backgroundColor: '#1e293b',
-    },
-    optionText: {
-        fontSize: 16,
-        color: '#e2e8f0',
-        marginLeft: 12,
-        flex: 1,
-    },
-    optionTextSelected: {
-        color: '#3b82f6',
-        fontWeight: '600',
-    },
-    teamOptions: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 12,
-    },
-    teamOption: {
-        width: 60,
-        height: 60,
-        backgroundColor: '#0b1223',
-        borderWidth: 1,
-        borderColor: '#334155',
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    teamOptionSelected: {
-        borderColor: '#3b82f6',
-        backgroundColor: '#1e293b',
-    },
-    teamOptionText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#e2e8f0',
-    },
-    teamOptionTextSelected: {
-        color: '#3b82f6',
-    },
-    createButton: {
-        backgroundColor: '#3b82f6',
-        borderRadius: 8,
-        padding: 16,
-        alignItems: 'center',
-        marginTop: 16,
-        marginBottom: 32,
-    },
-    createButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#ffffff',
-    },
-});
 
 export default CreateTournamentScreen;

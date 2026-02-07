@@ -9,6 +9,7 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import {
   Text,
   TextInput as PaperTextInput,
@@ -78,6 +79,111 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
     setPassword('');
     setName('');
   };
+
+  const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0f172a', // Deep Navy
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 40,
+    justifyContent: 'center',
+  },
+  heroSection: {
+    alignItems: 'center',
+    marginBottom: 40,
+    marginTop: 60,
+  },
+  logoBadge: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#1e293b',
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#22c55e',
+    elevation: 10,
+  },
+  brandTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    letterSpacing: 4,
+  },
+  brandTagline: {
+    fontSize: 14,
+    color: '#22c55e',
+    fontWeight: '600',
+    marginTop: 5,
+  },
+  authCard: {
+    backgroundColor: '#1e293b',
+    marginHorizontal: 24,
+    borderRadius: 30,
+    padding: 30,
+    elevation: 8,
+  },
+  formTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textAlign: 'center',
+  },
+  formSubtitle: {
+    fontSize: 14,
+    color: '#94a3b8',
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 25,
+  },
+  form: {
+    gap: 15,
+  },
+  input: {
+    backgroundColor: '#0f172a',
+  },
+  submitBtn: {
+    marginTop: 10,
+    backgroundColor: '#22c55e',
+    borderRadius: 15,
+  },
+  submitBtnText: {
+    fontWeight: 'bold',
+    letterSpacing: 1,
+    fontSize: 16,
+  },
+  divider: {
+    marginVertical: 25,
+    backgroundColor: '#334155',
+  },
+  toggleBtn: {
+    alignItems: 'center',
+  },
+  toggleText: {
+    color: '#94a3b8',
+    fontSize: 14,
+  },
+  toggleLink: {
+    color: '#22c55e',
+    fontWeight: 'bold',
+  },
+  footerInfo: {
+    marginTop: 40,
+    alignItems: 'center',
+  },
+  footerText: {
+    color: '#475569',
+    fontSize: 12,
+  },
+  versionText: {
+    color: '#334155',
+    fontSize: 10,
+    marginTop: 5,
+  }
+});
 
   return (
     <View style={styles.container}>
@@ -193,107 +299,4 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f172a', // Deep Navy
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 40,
-    justifyContent: 'center',
-  },
-  heroSection: {
-    alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 60,
-  },
-  logoBadge: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#1e293b',
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: '#22c55e',
-    elevation: 10,
-  },
-  brandTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    letterSpacing: 4,
-  },
-  brandTagline: {
-    fontSize: 14,
-    color: '#22c55e',
-    fontWeight: '600',
-    marginTop: 5,
-  },
-  authCard: {
-    backgroundColor: '#1e293b',
-    marginHorizontal: 24,
-    borderRadius: 30,
-    padding: 30,
-    elevation: 8,
-  },
-  formTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
-  },
-  formSubtitle: {
-    fontSize: 14,
-    color: '#94a3b8',
-    textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 25,
-  },
-  form: {
-    gap: 15,
-  },
-  input: {
-    backgroundColor: '#0f172a',
-  },
-  submitBtn: {
-    marginTop: 10,
-    backgroundColor: '#22c55e',
-    borderRadius: 15,
-  },
-  submitBtnText: {
-    fontWeight: 'bold',
-    letterSpacing: 1,
-    fontSize: 16,
-  },
-  divider: {
-    marginVertical: 25,
-    backgroundColor: '#334155',
-  },
-  toggleBtn: {
-    alignItems: 'center',
-  },
-  toggleText: {
-    color: '#94a3b8',
-    fontSize: 14,
-  },
-  toggleLink: {
-    color: '#22c55e',
-    fontWeight: 'bold',
-  },
-  footerInfo: {
-    marginTop: 40,
-    alignItems: 'center',
-  },
-  footerText: {
-    color: '#475569',
-    fontSize: 12,
-  },
-  versionText: {
-    color: '#334155',
-    fontSize: 10,
-    marginTop: 5,
-  }
-});
+

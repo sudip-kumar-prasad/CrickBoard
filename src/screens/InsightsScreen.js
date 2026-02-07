@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import {

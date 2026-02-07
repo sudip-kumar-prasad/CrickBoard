@@ -7,6 +7,7 @@ import {
     Alert,
     Platform,
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import {
     Text,
     Surface,
@@ -205,127 +206,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
 
     if (!user) return <SafeAreaView style={styles.loadingContainer}><Text style={styles.loadingText}>Loading Profile...</Text></SafeAreaView>;
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-
-                {/* 1. HERO PROFILE SECTION */}
-                <Surface style={styles.heroSection} elevation={4}>
-                    <View style={styles.avatarWrapper}>
-                        {profileImage ? (
-                            <Avatar.Image
-                                size={110}
-                                source={{ uri: profileImage }}
-                            />
-                        ) : (
-                            <Avatar.Text
-                                size={110}
-                                label={getInitials(user.name)}
-                                backgroundColor="#22c55e"
-                                labelStyle={styles.avatarLabel}
-                            />
-                        )}
-
-                        {/* Camera Control Badge */}
-                        <TouchableOpacity
-                            style={styles.cameraBadge}
-                            onPress={pickImage}
-                        >
-                            <Ionicons name="camera" size={18} color="#ffffff" />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.editBadge}
-                            onPress={() => setIsEditing(!isEditing)}
-                        >
-                            <Ionicons name={isEditing ? "close" : "pencil"} size={16} color="#ffffff" />
-                        </TouchableOpacity>
-                    </View>
-
-                    {isEditing ? (
-                        <View style={styles.editContainer}>
-                            <PaperTextInput
-                                mode="flat"
-                                label="Your Full Name"
-                                value={name}
-                                onChangeText={setName}
-                                style={styles.editInput}
-                                textColor="#ffffff"
-                                activeUnderlineColor="#22c55e"
-                            />
-                            <Button
-                                mode="contained"
-                                onPress={handleSaveProfile}
-                                loading={loading}
-                                style={styles.miniSaveBtn}
-                                labelStyle={{ fontSize: 12 }}
-                            >
-                                Save Changes
-                            </Button>
-                        </View>
-                    ) : (
-                        <View style={styles.profileInfo}>
-                            <Text style={styles.userName}>{user.name}</Text>
-                            <Text style={styles.userEmail}>{user.email}</Text>
-                            <Chip icon="shield-check" style={styles.statusChip} textStyle={styles.statusText}>
-                                Active Manager
-                            </Chip>
-                        </View>
-                    )}
-                </Surface>
-
-                {/* 2. ACCOUNT DETAILS */}
-                <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Account Details</Text>
-                </View>
-
-                <Surface style={styles.infoCard} elevation={2}>
-                    {renderInfoRow("User ID", user.id?.substring(0, 12) + "...", "finger-print-outline")}
-                    <Divider style={styles.divider} />
-                    {renderInfoRow("Member Since", formatDate(user.createdAt), "calendar-outline")}
-                    <Divider style={styles.divider} />
-                    {renderInfoRow("Access Level", "Full Pro Access", "star-outline")}
-                </Surface>
-
-                {/* 3. APP INFORMATION */}
-                <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Application</Text>
-                </View>
-
-                <Surface style={styles.infoCard} elevation={2}>
-                    <View style={styles.aboutBox}>
-                        <Text style={styles.aboutText}>
-                            CrickBoard is your complete digital ecosystem for tracking matches,
-                            managing player stats, and analyzing deep insights of your squad.
-                        </Text>
-                    </View>
-                    <Divider style={styles.divider} />
-                    {renderInfoRow("App Version", "1.2.0 (Premium)", "information-circle-outline")}
-                </Surface>
-
-                {/* 4. LOGOUT BUTTON */}
-                <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-                    <Ionicons name="log-out-outline" size={24} color="#ef4444" />
-                    <Text style={styles.logoutText}>Logout from Account</Text>
-                </TouchableOpacity>
-
-                <View style={styles.bottomSpacer} />
-            </ScrollView>
-        </SafeAreaView>
-    );
-}
-
-// Helper component for info rows
-const renderInfoRow = (label, value, icon) => (
-    <View style={styles.infoRow}>
-        <View style={styles.infoLabelLeft}>
-            <Ionicons name={icon} size={20} color="#22c55e" />
-            <Text style={styles.rowLabelText}>{label}</Text>
-        </View>
-        <Text style={styles.rowValueText}>{value}</Text>
-    </View>
-);
-
-const styles = StyleSheet.create({
+    const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#0f172a',
@@ -497,3 +378,125 @@ const styles = StyleSheet.create({
         height: 50,
     },
 });
+
+  return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+
+                {/* 1. HERO PROFILE SECTION */}
+                <Surface style={styles.heroSection} elevation={4}>
+                    <View style={styles.avatarWrapper}>
+                        {profileImage ? (
+                            <Avatar.Image
+                                size={110}
+                                source={{ uri: profileImage }}
+                            />
+                        ) : (
+                            <Avatar.Text
+                                size={110}
+                                label={getInitials(user.name)}
+                                backgroundColor="#22c55e"
+                                labelStyle={styles.avatarLabel}
+                            />
+                        )}
+
+                        {/* Camera Control Badge */}
+                        <TouchableOpacity
+                            style={styles.cameraBadge}
+                            onPress={pickImage}
+                        >
+                            <Ionicons name="camera" size={18} color="#ffffff" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.editBadge}
+                            onPress={() => setIsEditing(!isEditing)}
+                        >
+                            <Ionicons name={isEditing ? "close" : "pencil"} size={16} color="#ffffff" />
+                        </TouchableOpacity>
+                    </View>
+
+                    {isEditing ? (
+                        <View style={styles.editContainer}>
+                            <PaperTextInput
+                                mode="flat"
+                                label="Your Full Name"
+                                value={name}
+                                onChangeText={setName}
+                                style={styles.editInput}
+                                textColor="#ffffff"
+                                activeUnderlineColor="#22c55e"
+                            />
+                            <Button
+                                mode="contained"
+                                onPress={handleSaveProfile}
+                                loading={loading}
+                                style={styles.miniSaveBtn}
+                                labelStyle={{ fontSize: 12 }}
+                            >
+                                Save Changes
+                            </Button>
+                        </View>
+                    ) : (
+                        <View style={styles.profileInfo}>
+                            <Text style={styles.userName}>{user.name}</Text>
+                            <Text style={styles.userEmail}>{user.email}</Text>
+                            <Chip icon="shield-check" style={styles.statusChip} textStyle={styles.statusText}>
+                                Active Manager
+                            </Chip>
+                        </View>
+                    )}
+                </Surface>
+
+                {/* 2. ACCOUNT DETAILS */}
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Account Details</Text>
+                </View>
+
+                <Surface style={styles.infoCard} elevation={2}>
+                    {renderInfoRow("User ID", user.id?.substring(0, 12) + "...", "finger-print-outline")}
+                    <Divider style={styles.divider} />
+                    {renderInfoRow("Member Since", formatDate(user.createdAt), "calendar-outline")}
+                    <Divider style={styles.divider} />
+                    {renderInfoRow("Access Level", "Full Pro Access", "star-outline")}
+                </Surface>
+
+                {/* 3. APP INFORMATION */}
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Application</Text>
+                </View>
+
+                <Surface style={styles.infoCard} elevation={2}>
+                    <View style={styles.aboutBox}>
+                        <Text style={styles.aboutText}>
+                            CrickBoard is your complete digital ecosystem for tracking matches,
+                            managing player stats, and analyzing deep insights of your squad.
+                        </Text>
+                    </View>
+                    <Divider style={styles.divider} />
+                    {renderInfoRow("App Version", "1.2.0 (Premium)", "information-circle-outline")}
+                </Surface>
+
+                {/* 4. LOGOUT BUTTON */}
+                <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+                    <Ionicons name="log-out-outline" size={24} color="#ef4444" />
+                    <Text style={styles.logoutText}>Logout from Account</Text>
+                </TouchableOpacity>
+
+                <View style={styles.bottomSpacer} />
+            </ScrollView>
+        </SafeAreaView>
+    );
+}
+
+// Helper component for info rows
+const renderInfoRow = (label, value, icon) => (
+    <View style={styles.infoRow}>
+        <View style={styles.infoLabelLeft}>
+            <Ionicons name={icon} size={20} color="#22c55e" />
+            <Text style={styles.rowLabelText}>{label}</Text>
+        </View>
+        <Text style={styles.rowValueText}>{value}</Text>
+    </View>
+);
+
+

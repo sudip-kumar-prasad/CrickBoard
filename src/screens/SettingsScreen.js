@@ -9,10 +9,11 @@ import {
     Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
 
 const SettingsScreen = () => {
+    const { theme, isDark, toggleTheme } = useTheme();
     const [notifications, setNotifications] = useState(true);
-    const [darkMode, setDarkMode] = useState(true);
     const [autoSave, setAutoSave] = useState(true);
 
     const handleExportData = () => {
@@ -33,7 +34,7 @@ const SettingsScreen = () => {
     const SettingItem = ({ icon, title, subtitle, value, onValueChange, type = 'switch' }) => (
         <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
-                <Ionicons name={icon} size={24} color="#64748b" />
+                <Ionicons name={icon} size={24} color={theme.textTertiary} />
                 <View style={styles.settingText}>
                     <Text style={styles.settingTitle}>{title}</Text>
                     {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
@@ -43,12 +44,12 @@ const SettingsScreen = () => {
                 <Switch
                     value={value}
                     onValueChange={onValueChange}
-                    trackColor={{ false: '#334155', true: '#1e40af' }}
-                    thumbColor={value ? '#3b82f6' : '#64748b'}
+                    trackColor={{ false: theme.borderLight, true: theme.primaryDark }}
+                    thumbColor={value ? theme.primary : theme.textTertiary}
                 />
             )}
             {type === 'button' && (
-                <Ionicons name="chevron-forward" size={24} color="#64748b" />
+                <Ionicons name="chevron-forward" size={24} color={theme.textTertiary} />
             )}
         </View>
     );
@@ -59,6 +60,53 @@ const SettingsScreen = () => {
             {children}
         </View>
     );
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.background,
+        },
+        section: {
+            marginTop: 24,
+        },
+        sectionTitle: {
+            fontSize: 14,
+            fontWeight: '600',
+            color: theme.textTertiary,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            marginLeft: 16,
+            marginBottom: 12,
+        },
+        settingItem: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: theme.backgroundCard,
+            padding: 16,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.border,
+        },
+        settingLeft: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            flex: 1,
+        },
+        settingText: {
+            marginLeft: 16,
+            flex: 1,
+        },
+        settingTitle: {
+            fontSize: 16,
+            color: theme.text,
+            fontWeight: '500',
+        },
+        settingSubtitle: {
+            fontSize: 13,
+            color: theme.textTertiary,
+            marginTop: 2,
+        },
+    });
 
     return (
         <ScrollView style={styles.container}>
@@ -74,8 +122,8 @@ const SettingsScreen = () => {
                     icon="moon-outline"
                     title="Dark Mode"
                     subtitle="Use dark theme"
-                    value={darkMode}
-                    onValueChange={setDarkMode}
+                    value={isDark}
+                    onValueChange={toggleTheme}
                 />
                 <SettingItem
                     icon="save-outline"
@@ -108,7 +156,7 @@ const SettingsScreen = () => {
             <SettingSection title="About">
                 <View style={styles.settingItem}>
                     <View style={styles.settingLeft}>
-                        <Ionicons name="information-circle-outline" size={24} color="#64748b" />
+                        <Ionicons name="information-circle-outline" size={24} color={theme.textTertiary} />
                         <View style={styles.settingText}>
                             <Text style={styles.settingTitle}>Version</Text>
                             <Text style={styles.settingSubtitle}>1.0.0</Text>
@@ -117,7 +165,7 @@ const SettingsScreen = () => {
                 </View>
                 <View style={styles.settingItem}>
                     <View style={styles.settingLeft}>
-                        <Ionicons name="code-outline" size={24} color="#64748b" />
+                        <Ionicons name="code-outline" size={24} color={theme.textTertiary} />
                         <View style={styles.settingText}>
                             <Text style={styles.settingTitle}>Developer</Text>
                             <Text style={styles.settingSubtitle}>CrickBoard Team</Text>
@@ -128,52 +176,5 @@ const SettingsScreen = () => {
         </ScrollView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#0f172a',
-    },
-    section: {
-        marginTop: 24,
-    },
-    sectionTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#64748b',
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
-        marginLeft: 16,
-        marginBottom: 12,
-    },
-    settingItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#0b1223',
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#1e293b',
-    },
-    settingLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-    },
-    settingText: {
-        marginLeft: 16,
-        flex: 1,
-    },
-    settingTitle: {
-        fontSize: 16,
-        color: '#e2e8f0',
-        fontWeight: '500',
-    },
-    settingSubtitle: {
-        fontSize: 13,
-        color: '#64748b',
-        marginTop: 2,
-    },
-});
 
 export default SettingsScreen;

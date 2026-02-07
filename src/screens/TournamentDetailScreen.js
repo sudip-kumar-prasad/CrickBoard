@@ -6,9 +6,11 @@ import {
     ScrollView,
     TouchableOpacity,
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const TournamentDetailScreen = ({ route }) => {
+  const { theme } = useTheme();
     const { tournament } = route.params;
 
     const matches = [
@@ -56,50 +58,7 @@ const TournamentDetailScreen = ({ route }) => {
         </View>
     );
 
-    return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.tournamentName}>{tournament.name}</Text>
-                <View style={styles.headerStats}>
-                    <View style={styles.headerStat}>
-                        <Ionicons name="people-outline" size={20} color="#64748b" />
-                        <Text style={styles.headerStatText}>{tournament.teams} Teams</Text>
-                    </View>
-                    <View style={styles.headerStat}>
-                        <Ionicons name="list-outline" size={20} color="#64748b" />
-                        <Text style={styles.headerStatText}>{tournament.matches} Matches</Text>
-                    </View>
-                </View>
-            </View>
-
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Standings</Text>
-                <View style={styles.standingsTable}>
-                    <View style={styles.standingHeader}>
-                        <Text style={styles.headerPos}>#</Text>
-                        <Text style={styles.headerTeam}>Team</Text>
-                        <Text style={styles.headerCol}>P</Text>
-                        <Text style={styles.headerCol}>W</Text>
-                        <Text style={styles.headerCol}>L</Text>
-                        <Text style={styles.headerColPoints}>Pts</Text>
-                    </View>
-                    {standings.map(standing => (
-                        <StandingRow key={standing.position} standing={standing} />
-                    ))}
-                </View>
-            </View>
-
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Matches</Text>
-                {matches.map(match => (
-                    <MatchCard key={match.id} match={match} />
-                ))}
-            </View>
-        </ScrollView>
-    );
-};
-
-const styles = StyleSheet.create({
+    const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#0f172a',
@@ -211,5 +170,50 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
 });
+
+  return (
+        <ScrollView style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.tournamentName}>{tournament.name}</Text>
+                <View style={styles.headerStats}>
+                    <View style={styles.headerStat}>
+                        <Ionicons name="people-outline" size={20} color="#64748b" />
+                        <Text style={styles.headerStatText}>{tournament.teams} Teams</Text>
+                    </View>
+                    <View style={styles.headerStat}>
+                        <Ionicons name="list-outline" size={20} color="#64748b" />
+                        <Text style={styles.headerStatText}>{tournament.matches} Matches</Text>
+                    </View>
+                </View>
+            </View>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Standings</Text>
+                <View style={styles.standingsTable}>
+                    <View style={styles.standingHeader}>
+                        <Text style={styles.headerPos}>#</Text>
+                        <Text style={styles.headerTeam}>Team</Text>
+                        <Text style={styles.headerCol}>P</Text>
+                        <Text style={styles.headerCol}>W</Text>
+                        <Text style={styles.headerCol}>L</Text>
+                        <Text style={styles.headerColPoints}>Pts</Text>
+                    </View>
+                    {standings.map(standing => (
+                        <StandingRow key={standing.position} standing={standing} />
+                    ))}
+                </View>
+            </View>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Matches</Text>
+                {matches.map(match => (
+                    <MatchCard key={match.id} match={match} />
+                ))}
+            </View>
+        </ScrollView>
+    );
+};
+
+
 
 export default TournamentDetailScreen;

@@ -7,6 +7,7 @@ import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-nat
 import { Ionicons } from '@expo/vector-icons';
 import { PaperProvider, MD3DarkTheme } from 'react-native-paper';
 import CustomDrawer from './src/components/CustomDrawer';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 
 // Screens
 import HomeScreen from './src/screens/HomeScreen';
@@ -36,27 +37,41 @@ const theme = {
   colors: {
     ...MD3DarkTheme.colors,
     primary: '#1e40af',
-    secondary: '#10b981',
     background: '#0f172a',
     surface: '#0b1223',
-    surfaceVariant: '#132144',
-    outline: '#334155',
-    onPrimary: '#ffffff',
-    onSurface: '#e2e8f0',
   },
 };
 
+// Matches Stack Navigator
+function MatchesStack() {
+  const { theme } = useTheme();
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.backgroundCard },
+        headerTintColor: theme.text,
+      }}
+    >
+      <Stack.Screen name="MatchesList" component={MatchesScreen} options={{ title: 'Matches' }} />
+      <Stack.Screen name="RecordMatch" component={RecordMatchScreen} options={{ title: 'Record Match' }} />
+      <Stack.Screen name="MatchDetail" component={MatchDetailScreen} options={{ title: 'Match Details' }} />
+    </Stack.Navigator>
+  );
+}
+
+// Players Stack Navigator
 function PlayersStack({ onOpenDrawer }) {
+  const { theme } = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
         headerLeft: () => onOpenDrawer ? (
           <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
-            <Ionicons name="menu" size={28} color="#e2e8f0" />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </TouchableOpacity>
         ) : null,
-        headerStyle: { backgroundColor: '#0b1223' },
-        headerTintColor: '#e2e8f0',
+        headerStyle: { backgroundColor: theme.backgroundCard },
+        headerTintColor: theme.text,
       }}
     >
       <Stack.Screen name="PlayersList" component={PlayersScreen} options={{ title: 'Players' }} />
@@ -67,18 +82,9 @@ function PlayersStack({ onOpenDrawer }) {
   );
 }
 
-function MatchesStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="MatchesList" component={MatchesScreen} options={{ title: 'Matches' }} />
-      <Stack.Screen name="RecordMatch" component={RecordMatchScreen} options={{ title: 'Record Match' }} />
-      <Stack.Screen name="MatchDetail" component={MatchDetailScreen} options={{ title: 'Match Detail' }} />
-    </Stack.Navigator>
-  );
-}
-
-// Bottom Tab Navigator - Core features
+// Bottom Tab Navigator
 function MainTabs({ onLogout, onOpenDrawer }) {
+  const { theme } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -93,19 +99,19 @@ function MainTabs({ onLogout, onOpenDrawer }) {
         },
         headerLeft: () => (
           <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
-            <Ionicons name="menu" size={28} color="#e2e8f0" />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </TouchableOpacity>
         ),
         headerStyle: {
-          backgroundColor: '#0b1223',
+          backgroundColor: theme.backgroundCard,
         },
-        headerTintColor: '#e2e8f0',
+        headerTintColor: theme.text,
         tabBarStyle: {
-          backgroundColor: '#0b1223',
-          borderTopColor: '#334155',
+          backgroundColor: theme.backgroundCard,
+          borderTopColor: theme.border,
         },
-        tabBarActiveTintColor: '#1e40af',
-        tabBarInactiveTintColor: '#64748b',
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.textTertiary,
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -117,16 +123,17 @@ function MainTabs({ onLogout, onOpenDrawer }) {
 
 // Stack navigators for drawer items
 function InsightsStack({ onOpenDrawer }) {
+  const { theme } = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
         headerLeft: () => (
           <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
-            <Ionicons name="menu" size={28} color="#e2e8f0" />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </TouchableOpacity>
         ),
-        headerStyle: { backgroundColor: '#0b1223' },
-        headerTintColor: '#e2e8f0',
+        headerStyle: { backgroundColor: theme.backgroundCard },
+        headerTintColor: theme.text,
       }}
     >
       <Stack.Screen name="InsightsScreen" component={InsightsScreen} options={{ title: 'Insights' }} />
@@ -135,16 +142,17 @@ function InsightsStack({ onOpenDrawer }) {
 }
 
 function ProfileStack({ onOpenDrawer, onLogout }) {
+  const { theme } = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
         headerLeft: () => (
           <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
-            <Ionicons name="menu" size={28} color="#e2e8f0" />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </TouchableOpacity>
         ),
-        headerStyle: { backgroundColor: '#0b1223' },
-        headerTintColor: '#e2e8f0',
+        headerStyle: { backgroundColor: theme.backgroundCard },
+        headerTintColor: theme.text,
       }}
     >
       <Stack.Screen name="ProfileScreen" options={{ title: 'Profile' }}>
@@ -155,16 +163,17 @@ function ProfileStack({ onOpenDrawer, onLogout }) {
 }
 
 function SettingsStack({ onOpenDrawer }) {
+  const { theme } = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
         headerLeft: () => (
           <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
-            <Ionicons name="menu" size={28} color="#e2e8f0" />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </TouchableOpacity>
         ),
-        headerStyle: { backgroundColor: '#0b1223' },
-        headerTintColor: '#e2e8f0',
+        headerStyle: { backgroundColor: theme.backgroundCard },
+        headerTintColor: theme.text,
       }}
     >
       <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: 'Settings' }} />
@@ -173,16 +182,17 @@ function SettingsStack({ onOpenDrawer }) {
 }
 
 function TournamentStack({ onOpenDrawer }) {
+  const { theme } = useTheme();
   return (
     <Stack.Navigator
       screenOptions={{
         headerLeft: () => (
           <TouchableOpacity onPress={onOpenDrawer} style={{ marginLeft: 16 }}>
-            <Ionicons name="menu" size={28} color="#e2e8f0" />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </TouchableOpacity>
         ),
-        headerStyle: { backgroundColor: '#0b1223' },
-        headerTintColor: '#e2e8f0',
+        headerStyle: { backgroundColor: theme.backgroundCard },
+        headerTintColor: theme.text,
       }}
     >
       <Stack.Screen name="TournamentScreen" component={TournamentScreen} options={{ title: 'Tournaments' }} />
@@ -195,6 +205,7 @@ function TournamentStack({ onOpenDrawer }) {
 function MainNavigator({ onLogout }) {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const navigationRef = React.useRef(null);
+  const { theme } = useTheme();
 
   return (
     <>
@@ -259,44 +270,44 @@ export default function App() {
       await AuthService.logout();
       setIsLoggedIn(false);
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Error logging out:', error);
     }
   };
 
   if (isLoading) {
     return (
-      <PaperProvider theme={theme}>
-        <View style={[styles.container, styles.loadingContainer]}>
-          <ActivityIndicator size="large" color="#3b82f6" />
-        </View>
-        <StatusBar style="light" />
-      </PaperProvider>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1e40af" />
+      </View>
     );
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        {isLoggedIn ? (
-          <MainNavigator onLogout={handleLogout} />
-        ) : (
-          <NavigationContainer>
-            <LoginScreen onLoginSuccess={handleLoginSuccess} />
-          </NavigationContainer>
-        )}
-        <StatusBar style="light" />
-      </View>
-    </PaperProvider>
+    <ThemeProvider>
+      <PaperProvider theme={theme}>
+        <View style={styles.container}>
+          {isLoggedIn ? (
+            <MainNavigator onLogout={handleLogout} />
+          ) : (
+            <NavigationContainer>
+              <LoginScreen onLoginSuccess={handleLoginSuccess} />
+            </NavigationContainer>
+          )}
+          <StatusBar style="auto" />
+        </View>
+      </PaperProvider>
+    </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
   },
   loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#0f172a',
   },
 });

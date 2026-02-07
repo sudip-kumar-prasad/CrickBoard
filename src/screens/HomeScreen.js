@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Platform
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Card, Button, Avatar, Divider, IconButton, Surface } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
@@ -154,138 +155,7 @@ export default function HomeScreen({ navigation }) {
     </TouchableOpacity>
   );
 
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* HERO SECTION */}
-        <ImageBackground
-          source={require('../../assets/home_banner.png')}
-          style={styles.heroBackground}
-          imageStyle={styles.heroImage}
-        >
-          <SafeAreaView style={styles.heroOverlay}>
-            <View style={styles.headerRow}>
-              <View>
-                <Text style={styles.greetingText}>Welcome back,</Text>
-                <Text style={styles.userNameText}>{currentUser ? currentUser.name : 'Champion'}</Text>
-              </View>
-              <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                <Avatar.Text
-                  size={50}
-                  label={currentUser ? currentUser.name.substring(0, 2).toUpperCase() : 'CB'}
-                  style={styles.avatarBorder}
-                />
-              </TouchableOpacity>
-            </View>
-
-            {/* HIGH-LEVEL PERFORMANCE CARD */}
-            <View style={styles.summaryCard}>
-              <View style={styles.summaryRow}>
-                <View style={styles.summaryItem}>
-                  <Text style={styles.summaryLabel}>Total Matches</Text>
-                  <Text style={styles.summaryValue}>{stats.matches}</Text>
-                </View>
-                <View style={styles.summarySeparator} />
-                <View style={styles.summaryItem}>
-                  <Text style={styles.summaryLabel}>Win Rate</Text>
-                  <Text style={[styles.summaryValue, { color: '#22c55e' }]}>{stats.winPercentage}%</Text>
-                </View>
-              </View>
-            </View>
-          </SafeAreaView>
-        </ImageBackground>
-
-        {/* QUICK STATS CLOSET */}
-        <View style={styles.statsSection}>
-          <Text style={styles.sectionTitle}>Season Performance</Text>
-          <View style={styles.statsGrid}>
-            <PerformanceBox label="Total Runs" value={stats.runs} icon="flash" color="#eab308" />
-            <PerformanceBox label="Total Wickets" value={stats.wickets} icon="disc" color="#ef4444" />
-            <PerformanceBox label="Total Catches" value={stats.catches} icon="hand-left" color="#3b82f6" />
-            <PerformanceBox label="Total Players" value={players.length} icon="people" color="#8b5cf6" />
-          </View>
-        </View>
-
-        {/* QUICK ACTIONS SECTION */}
-        <Surface style={styles.actionsSection} elevation={2}>
-          <Text style={styles.sectionTitleAction}>Quick Shortcuts</Text>
-          <View style={styles.actionsRow}>
-            <ActionItem
-              label="New Match"
-              icon="add-circle"
-              color="#22c55e"
-              onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}
-            />
-            <ActionItem
-              label="Add Player"
-              icon="person-add"
-              color="#3b82f6"
-              onPress={() => navigation.navigate('Players', { screen: 'AddPlayer' })}
-            />
-            <ActionItem
-              label="Rankings"
-              icon="stats-chart"
-              color="#f59e0b"
-              onPress={() => navigation.navigate('Insights')}
-            />
-          </View>
-        </Surface>
-
-        {/* RECENT MATCHES PREVIEW */}
-        <View style={styles.activitySection}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Matches')}>
-              <Text style={styles.seeAllLink}>View All</Text>
-            </TouchableOpacity>
-          </View>
-
-          {matches.length === 0 ? (
-            <Card style={styles.emptyActivityCard}>
-              <Card.Content>
-                <Text style={styles.emptyActivityMessage}>No matches recorded this season. Time to play!</Text>
-                <Button mode="contained" compact style={styles.emptyActionBtn} onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}>
-                  Record First Match
-                </Button>
-              </Card.Content>
-            </Card>
-          ) : (
-            matches.slice(0, 3).map((match, idx) => (
-              <Surface key={idx} style={styles.matchStrip} elevation={1}>
-                <View style={styles.matchDateColumn}>
-                  <Text style={styles.matchDateDay}>{new Date(match.date).getDate()}</Text>
-                  <Text style={styles.matchDateMonth}>{new Date(match.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</Text>
-                </View>
-                <View style={styles.matchInfoMain}>
-                  <Text style={styles.matchOpponentText}>vs {match.opponent || 'Opponent'}</Text>
-                  <Text style={styles.matchVenueText}>{match.venue || 'Stadium'}</Text>
-                </View>
-                <View style={[
-                  styles.resultBadge,
-                  { backgroundColor: (match.result || '').toLowerCase().includes('win') ? '#22c55e20' : '#ef444420' }
-                ]}>
-                  <Text style={[
-                    styles.resultText,
-                    { color: (match.result || '').toLowerCase().includes('win') ? '#22c55e' : '#ef4444' }
-                  ]}>
-                    {(match.result || 'PLAYED').toUpperCase()}
-                  </Text>
-                </View>
-              </Surface>
-            ))
-          )}
-        </View>
-
-        <View style={{ height: 100 }} />
-      </ScrollView>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0f172a', // Deep Navy theme
@@ -514,3 +384,136 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   }
 });
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* HERO SECTION */}
+        <ImageBackground
+          source={require('../../assets/home_banner.png')}
+          style={styles.heroBackground}
+          imageStyle={styles.heroImage}
+        >
+          <SafeAreaView style={styles.heroOverlay}>
+            <View style={styles.headerRow}>
+              <View>
+                <Text style={styles.greetingText}>Welcome back,</Text>
+                <Text style={styles.userNameText}>{currentUser ? currentUser.name : 'Champion'}</Text>
+              </View>
+              <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <Avatar.Text
+                  size={50}
+                  label={currentUser ? currentUser.name.substring(0, 2).toUpperCase() : 'CB'}
+                  style={styles.avatarBorder}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* HIGH-LEVEL PERFORMANCE CARD */}
+            <View style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryLabel}>Total Matches</Text>
+                  <Text style={styles.summaryValue}>{stats.matches}</Text>
+                </View>
+                <View style={styles.summarySeparator} />
+                <View style={styles.summaryItem}>
+                  <Text style={styles.summaryLabel}>Win Rate</Text>
+                  <Text style={[styles.summaryValue, { color: '#22c55e' }]}>{stats.winPercentage}%</Text>
+                </View>
+              </View>
+            </View>
+          </SafeAreaView>
+        </ImageBackground>
+
+        {/* QUICK STATS CLOSET */}
+        <View style={styles.statsSection}>
+          <Text style={styles.sectionTitle}>Season Performance</Text>
+          <View style={styles.statsGrid}>
+            <PerformanceBox label="Total Runs" value={stats.runs} icon="flash" color="#eab308" />
+            <PerformanceBox label="Total Wickets" value={stats.wickets} icon="disc" color="#ef4444" />
+            <PerformanceBox label="Total Catches" value={stats.catches} icon="hand-left" color="#3b82f6" />
+            <PerformanceBox label="Total Players" value={players.length} icon="people" color="#8b5cf6" />
+          </View>
+        </View>
+
+        {/* QUICK ACTIONS SECTION */}
+        <Surface style={styles.actionsSection} elevation={2}>
+          <Text style={styles.sectionTitleAction}>Quick Shortcuts</Text>
+          <View style={styles.actionsRow}>
+            <ActionItem
+              label="New Match"
+              icon="add-circle"
+              color="#22c55e"
+              onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}
+            />
+            <ActionItem
+              label="Add Player"
+              icon="person-add"
+              color="#3b82f6"
+              onPress={() => navigation.navigate('Players', { screen: 'AddPlayer' })}
+            />
+            <ActionItem
+              label="Rankings"
+              icon="stats-chart"
+              color="#f59e0b"
+              onPress={() => navigation.navigate('Insights')}
+            />
+          </View>
+        </Surface>
+
+        {/* RECENT MATCHES PREVIEW */}
+        <View style={styles.activitySection}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Matches')}>
+              <Text style={styles.seeAllLink}>View All</Text>
+            </TouchableOpacity>
+          </View>
+
+          {matches.length === 0 ? (
+            <Card style={styles.emptyActivityCard}>
+              <Card.Content>
+                <Text style={styles.emptyActivityMessage}>No matches recorded this season. Time to play!</Text>
+                <Button mode="contained" compact style={styles.emptyActionBtn} onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}>
+                  Record First Match
+                </Button>
+              </Card.Content>
+            </Card>
+          ) : (
+            matches.slice(0, 3).map((match, idx) => (
+              <Surface key={idx} style={styles.matchStrip} elevation={1}>
+                <View style={styles.matchDateColumn}>
+                  <Text style={styles.matchDateDay}>{new Date(match.date).getDate()}</Text>
+                  <Text style={styles.matchDateMonth}>{new Date(match.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</Text>
+                </View>
+                <View style={styles.matchInfoMain}>
+                  <Text style={styles.matchOpponentText}>vs {match.opponent || 'Opponent'}</Text>
+                  <Text style={styles.matchVenueText}>{match.venue || 'Stadium'}</Text>
+                </View>
+                <View style={[
+                  styles.resultBadge,
+                  { backgroundColor: (match.result || '').toLowerCase().includes('win') ? '#22c55e20' : '#ef444420' }
+                ]}>
+                  <Text style={[
+                    styles.resultText,
+                    { color: (match.result || '').toLowerCase().includes('win') ? '#22c55e' : '#ef4444' }
+                  ]}>
+                    {(match.result || 'PLAYED').toUpperCase()}
+                  </Text>
+                </View>
+              </Surface>
+            ))
+          )}
+        </View>
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+    </View>
+  );
+}
+
+

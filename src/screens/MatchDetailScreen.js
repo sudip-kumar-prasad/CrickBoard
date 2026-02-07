@@ -8,6 +8,7 @@ import {
     Image,
     Dimensions,
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Text,
@@ -365,44 +366,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         </Surface>
     );
 
-    return (
-        <SafeAreaView style={styles.container}>
-            {renderHeader()}
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                {/* CELEBRATE BUTTON */}
-                <Button
-                    mode="contained"
-                    icon="party-popper"
-                    onPress={() => setIsCelebrating(true)}
-                    style={styles.celebrateBtn}
-                    buttonColor="#22c55e"
-                    contentStyle={{ height: 50 }}
-                >
-                    Celebrate this Win!
-                </Button>
-
-                {renderMOM()}
-                {renderBattingScorecard()}
-                {renderBowlingScorecard()}
-                {renderExtras()}
-
-                {match.notes ? (
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Match Notes</Text>
-                        <Surface style={styles.notesCard} elevation={1}>
-                            <Text style={styles.notesText}>{match.notes}</Text>
-                        </Surface>
-                    </View>
-                ) : null}
-
-                <View style={{ height: 40 }} />
-            </ScrollView>
-            {renderCelebrateModal()}
-        </SafeAreaView>
-    );
-}
-
-const styles = StyleSheet.create({
+    const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#0f172a',
@@ -684,3 +648,42 @@ const styles = StyleSheet.create({
         flex: 1,
     }
 });
+
+  return (
+        <SafeAreaView style={styles.container}>
+            {renderHeader()}
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+                {/* CELEBRATE BUTTON */}
+                <Button
+                    mode="contained"
+                    icon="party-popper"
+                    onPress={() => setIsCelebrating(true)}
+                    style={styles.celebrateBtn}
+                    buttonColor="#22c55e"
+                    contentStyle={{ height: 50 }}
+                >
+                    Celebrate this Win!
+                </Button>
+
+                {renderMOM()}
+                {renderBattingScorecard()}
+                {renderBowlingScorecard()}
+                {renderExtras()}
+
+                {match.notes ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Match Notes</Text>
+                        <Surface style={styles.notesCard} elevation={1}>
+                            <Text style={styles.notesText}>{match.notes}</Text>
+                        </Surface>
+                    </View>
+                ) : null}
+
+                <View style={{ height: 40 }} />
+            </ScrollView>
+            {renderCelebrateModal()}
+        </SafeAreaView>
+    );
+}
+
+
