@@ -284,7 +284,7 @@ export default function VictoryFeedScreen() {
                             mode="contained"
                             onPress={handleConfirmManualPublish}
                             style={styles.publishBtn}
-                            buttonColor=theme.success
+                            buttonColor={theme.success}
                             loading={publishing}
                         >
                             Publish

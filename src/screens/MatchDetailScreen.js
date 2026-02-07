@@ -258,7 +258,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                             mode="contained"
                             onPress={handleConfirmPublish}
                             style={styles.publishBtn}
-                            buttonColor=theme.success
+                            buttonColor={theme.success}
                             loading={publishing}
                         >
                             Publish
@@ -659,7 +659,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                     icon="party-popper"
                     onPress={() => setIsCelebrating(true)}
                     style={styles.celebrateBtn}
-                    buttonColor=theme.success
+                    buttonColor={theme.success}
                     contentStyle={{ height: 50 }}
                 >
                     Celebrate this Win!
