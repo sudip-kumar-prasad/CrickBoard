@@ -18,7 +18,7 @@ const CustomDrawer = ({ visible, onClose, navigation, onLogout }) => {
         {
             name: 'Home',
             icon: 'home-outline',
-            route: 'Home',
+            route: 'Tabs',
         },
         {
             name: 'Tournament',
