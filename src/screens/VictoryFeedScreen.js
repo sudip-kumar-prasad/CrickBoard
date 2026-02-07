@@ -37,6 +37,7 @@ import { StorageService } from '../utils/storage';
  */
 
 export default function VictoryFeedScreen() {
+  const { theme } = useTheme();
     const [posts, setPosts] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 

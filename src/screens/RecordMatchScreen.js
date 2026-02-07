@@ -35,6 +35,7 @@ import { StorageService } from '../utils/storage';
  * and other match data for multiple players at once."
  */
 export default function RecordMatchScreen({ navigation }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const [players, setPlayers] = useState([]); // List of all players in squad
   const [performances, setPerformances] = useState([]); // Players playing in this match
@@ -188,235 +189,235 @@ export default function RecordMatchScreen({ navigation }) {
   );
 
   const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: theme.border,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    marginBottom: 20,
-  },
-  headerTitle: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  headerAction: {
-    color: theme.success,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  sectionCard: {
-    backgroundColor: theme.border,
-    marginHorizontal: 16,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 25,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  detailRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 10,
-  },
-  mainInput: {
-    flex: 1,
-    backgroundColor: theme.background,
-    height: 50,
-  },
-  miniInput: {
-    backgroundColor: theme.background,
-    height: 40,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-  label: {
-    color: theme.textSecondary,
-    fontSize: 12,
-    marginBottom: 8,
-    fontWeight: 'bold',
-  },
-  resultPicker: {
-    flexDirection: 'row',
-    backgroundColor: theme.background,
-    borderRadius: 10,
-    padding: 4,
-  },
-  resBtn: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  resBtnActive: {
-    backgroundColor: theme.success,
-  },
-  resText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  resTextActive: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-  sectionHeaderLine: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    marginBottom: 15,
-  },
-  addPlayerBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#60a5fa',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-    gap: 5,
-  },
-  addBtnText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  emptyLineup: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 40,
-    paddingHorizontal: 40,
-  },
-  emptyNote: {
-    color: theme.textTertiary,
-    fontSize: 13,
-    textAlign: 'center',
-    marginTop: 15,
-    lineHeight: 18,
-  },
-  perfCard: {
-    backgroundColor: theme.border,
-    marginHorizontal: 16,
-    borderRadius: 20,
-    padding: 15,
-    marginBottom: 12,
-  },
-  perfHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  avatarMini: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  perfPlayerName: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  statGrid: {
-    gap: 12,
-  },
-  statInputRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  statBox: {
-    width: '31%',
-  },
-  statLabel: {
-    color: theme.textSecondary,
-    fontSize: 9,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  miniStatInput: {
-    backgroundColor: theme.background,
-    height: 35,
-    fontSize: 14,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: theme.border,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    height: '70%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.borderLight,
-  },
-  modalTitle: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  playerPickItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 0.5,
-    borderBottomColor: theme.borderLight,
-  },
-  pickName: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  pickRole: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  emptyPickerNote: {
-    color: theme.textSecondary,
-    textAlign: 'center',
-    marginTop: 50,
-  },
-  absoluteSave: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-  },
-  mainSaveBtn: {
-    backgroundColor: theme.success,
-    borderRadius: 18,
-    elevation: 10,
-  }
-});
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    scrollContent: {
+      paddingBottom: 40,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: theme.border,
+      borderBottomLeftRadius: 30,
+      borderBottomRightRadius: 30,
+      marginBottom: 20,
+    },
+    headerTitle: {
+      color: '#ffffff',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    headerAction: {
+      color: theme.success,
+      fontWeight: 'bold',
+      fontSize: 16,
+    },
+    sectionCard: {
+      backgroundColor: theme.border,
+      marginHorizontal: 16,
+      borderRadius: 20,
+      padding: 20,
+      marginBottom: 25,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 20,
+    },
+    sectionTitle: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    detailRow: {
+      flexDirection: 'row',
+      gap: 10,
+      marginBottom: 10,
+    },
+    mainInput: {
+      flex: 1,
+      backgroundColor: theme.background,
+      height: 50,
+    },
+    miniInput: {
+      backgroundColor: theme.background,
+      height: 40,
+    },
+    metaRow: {
+      flexDirection: 'row',
+      marginTop: 10,
+    },
+    label: {
+      color: theme.textSecondary,
+      fontSize: 12,
+      marginBottom: 8,
+      fontWeight: 'bold',
+    },
+    resultPicker: {
+      flexDirection: 'row',
+      backgroundColor: theme.background,
+      borderRadius: 10,
+      padding: 4,
+    },
+    resBtn: {
+      flex: 1,
+      paddingVertical: 8,
+      alignItems: 'center',
+      borderRadius: 8,
+    },
+    resBtnActive: {
+      backgroundColor: theme.success,
+    },
+    resText: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    resTextActive: {
+      color: '#ffffff',
+      fontWeight: 'bold',
+    },
+    sectionHeaderLine: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      marginBottom: 15,
+    },
+    addPlayerBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#60a5fa',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 15,
+      gap: 5,
+    },
+    addBtnText: {
+      color: '#ffffff',
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+    emptyLineup: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 40,
+      paddingHorizontal: 40,
+    },
+    emptyNote: {
+      color: theme.textTertiary,
+      fontSize: 13,
+      textAlign: 'center',
+      marginTop: 15,
+      lineHeight: 18,
+    },
+    perfCard: {
+      backgroundColor: theme.border,
+      marginHorizontal: 16,
+      borderRadius: 20,
+      padding: 15,
+      marginBottom: 12,
+    },
+    perfHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 15,
+    },
+    avatarMini: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    perfPlayerName: {
+      color: '#ffffff',
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    statGrid: {
+      gap: 12,
+    },
+    statInputRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    statBox: {
+      width: '31%',
+    },
+    statLabel: {
+      color: theme.textSecondary,
+      fontSize: 9,
+      textTransform: 'uppercase',
+      marginBottom: 4,
+    },
+    miniStatInput: {
+      backgroundColor: theme.background,
+      height: 35,
+      fontSize: 14,
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: theme.border,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      height: '70%',
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.borderLight,
+    },
+    modalTitle: {
+      color: '#ffffff',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    playerPickItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 15,
+      borderBottomWidth: 0.5,
+      borderBottomColor: theme.borderLight,
+    },
+    pickName: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    pickRole: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    emptyPickerNote: {
+      color: theme.textSecondary,
+      textAlign: 'center',
+      marginTop: 50,
+    },
+    absoluteSave: {
+      position: 'absolute',
+      bottom: 20,
+      left: 20,
+      right: 20,
+    },
+    mainSaveBtn: {
+      backgroundColor: theme.success,
+      borderRadius: 18,
+      elevation: 10,
+    }
+  });
 
   return (
     <SafeAreaView style={styles.container}>

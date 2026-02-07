@@ -25,6 +25,7 @@ import { StorageService } from '../utils/storage';
  * basic state management that is easy to follow."
  */
 export default function AddPlayerScreen({ navigation }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const [name, setName] = useState('');
   const [role, setRole] = useState('Batsman');

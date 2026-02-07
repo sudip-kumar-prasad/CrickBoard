@@ -24,6 +24,7 @@ import { StorageService } from '../utils/storage';
  * the new updates, making it much easier to trace and explain during a demo."
  */
 export default function EditPlayerScreen({ navigation, route }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const { player } = route.params;
   const [name, setName] = useState(player.name);

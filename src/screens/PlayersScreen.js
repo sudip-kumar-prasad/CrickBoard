@@ -27,6 +27,7 @@ import { StorageService } from '../utils/storage';
  * with their role and key stats clearly visible."
  */
 export default function PlayersScreen({ navigation }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const [allPlayers, setAllPlayers] = useState([]);
   const [displayPlayers, setDisplayPlayers] = useState([]);

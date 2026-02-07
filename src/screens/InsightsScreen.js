@@ -29,6 +29,7 @@ import { StatsCalculator } from '../utils/calculations';
  * and performance trends, ensuring the app is both fast and easy to understand."
  */
 export default function InsightsScreen({ navigation }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const [players, setPlayers] = useState([]);
   const [matches, setMatches] = useState([]);

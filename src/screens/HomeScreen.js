@@ -30,6 +30,7 @@ const { width } = Dimensions.get('window');
  * I also prioritized 'Null-Safety' in the code to ensure the app never crashes even if data is missing."
  */
 export default function HomeScreen({ navigation }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const [players, setPlayers] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -156,234 +157,234 @@ export default function HomeScreen({ navigation }) {
   );
 
   const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background, // Deep Navy theme
-  },
-  heroBackground: {
-    width: '100%',
-    height: 300,
-  },
-  heroImage: {
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    opacity: 0.8,
-  },
-  heroOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.4)',
-    padding: 20,
-    justifyContent: 'space-between',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: Platform.OS === 'android' ? 30 : 10,
-  },
-  greetingText: {
-    color: theme.text,
-    fontSize: 16,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
-  },
-  userNameText: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  avatarBorder: {
-    backgroundColor: theme.success,
-    borderWidth: 2,
-    borderColor: '#ffffff',
-  },
-  summaryCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: -50, // Floating effect
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  summaryItem: {
-    alignItems: 'center',
-  },
-  summaryLabel: {
-    color: theme.textTertiary,
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 5,
-  },
-  summaryValue: {
-    color: theme.border,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  summarySeparator: {
-    width: 1,
-    height: 40,
-    backgroundColor: theme.text,
-  },
-  statsSection: {
-    marginTop: 70, // Adjust for floating card
-    padding: 20,
-  },
-  sectionTitle: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  sectionTitleAction: {
-    color: theme.border,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  statBox: {
-    width: '48%',
-    backgroundColor: theme.border,
-    borderRadius: 16,
-    padding: 15,
-    marginBottom: 15,
-    alignItems: 'center',
-  },
-  statIconBadge: {
-    width: 45,
-    height: 45,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  statBoxValue: {
-    color: '#ffffff',
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  statBoxLabel: {
-    color: theme.textSecondary,
-    fontSize: 11,
-    textTransform: 'uppercase',
-  },
-  actionsSection: {
-    backgroundColor: '#ffffff',
-    marginHorizontal: 20,
-    borderRadius: 24,
-    padding: 25,
-    marginVertical: 10,
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  actionCircleItem: {
-    alignItems: 'center',
-  },
-  actionIconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-  },
-  actionLabel: {
-    color: theme.border,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  activitySection: {
-    padding: 20,
-  },
-  sectionHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  seeAllLink: {
-    color: theme.success,
-    fontWeight: '600',
-  },
-  matchStrip: {
-    backgroundColor: theme.border,
-    borderRadius: 16,
-    padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  matchDateColumn: {
-    alignItems: 'center',
-    paddingRight: 15,
-    borderRightWidth: 1,
-    borderRightColor: theme.borderLight,
-  },
-  matchDateDay: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  matchDateMonth: {
-    color: theme.textSecondary,
-    fontSize: 10,
-  },
-  matchInfoMain: {
-    flex: 1,
-    paddingHorizontal: 15,
-  },
-  matchOpponentText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  matchVenueText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  resultBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  resultText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  emptyActivityCard: {
-    backgroundColor: theme.border,
-    borderRadius: 16,
-    padding: 10,
-    alignItems: 'center',
-  },
-  emptyActivityMessage: {
-    color: theme.textSecondary,
-    textAlign: 'center',
-    marginBottom: 15,
-  },
-  emptyActionBtn: {
-    backgroundColor: theme.success,
-    alignSelf: 'center',
-  }
-});
+    container: {
+      flex: 1,
+      backgroundColor: theme.background, // Deep Navy theme
+    },
+    heroBackground: {
+      width: '100%',
+      height: 300,
+    },
+    heroImage: {
+      borderBottomLeftRadius: 30,
+      borderBottomRightRadius: 30,
+      opacity: 0.8,
+    },
+    heroOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(15, 23, 42, 0.4)',
+      padding: 20,
+      justifyContent: 'space-between',
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: Platform.OS === 'android' ? 30 : 10,
+    },
+    greetingText: {
+      color: theme.text,
+      fontSize: 16,
+      fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    },
+    userNameText: {
+      color: '#ffffff',
+      fontSize: 28,
+      fontWeight: 'bold',
+    },
+    avatarBorder: {
+      backgroundColor: theme.success,
+      borderWidth: 2,
+      borderColor: '#ffffff',
+    },
+    summaryCard: {
+      backgroundColor: '#ffffff',
+      borderRadius: 20,
+      padding: 20,
+      marginBottom: -50, // Floating effect
+      elevation: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 10,
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+    },
+    summaryItem: {
+      alignItems: 'center',
+    },
+    summaryLabel: {
+      color: theme.textTertiary,
+      fontSize: 12,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      marginBottom: 5,
+    },
+    summaryValue: {
+      color: theme.border,
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    summarySeparator: {
+      width: 1,
+      height: 40,
+      backgroundColor: theme.text,
+    },
+    statsSection: {
+      marginTop: 70, // Adjust for floating card
+      padding: 20,
+    },
+    sectionTitle: {
+      color: '#ffffff',
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 15,
+    },
+    sectionTitleAction: {
+      color: theme.border,
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    },
+    statsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    statBox: {
+      width: '48%',
+      backgroundColor: theme.border,
+      borderRadius: 16,
+      padding: 15,
+      marginBottom: 15,
+      alignItems: 'center',
+    },
+    statIconBadge: {
+      width: 45,
+      height: 45,
+      borderRadius: 22,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    statBoxValue: {
+      color: '#ffffff',
+      fontSize: 22,
+      fontWeight: 'bold',
+    },
+    statBoxLabel: {
+      color: theme.textSecondary,
+      fontSize: 11,
+      textTransform: 'uppercase',
+    },
+    actionsSection: {
+      backgroundColor: '#ffffff',
+      marginHorizontal: 20,
+      borderRadius: 24,
+      padding: 25,
+      marginVertical: 10,
+    },
+    actionsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+    actionCircleItem: {
+      alignItems: 'center',
+    },
+    actionIconContainer: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 8,
+      elevation: 4,
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 5,
+    },
+    actionLabel: {
+      color: theme.border,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    activitySection: {
+      padding: 20,
+    },
+    sectionHeaderRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 15,
+    },
+    seeAllLink: {
+      color: theme.success,
+      fontWeight: '600',
+    },
+    matchStrip: {
+      backgroundColor: theme.border,
+      borderRadius: 16,
+      padding: 15,
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    matchDateColumn: {
+      alignItems: 'center',
+      paddingRight: 15,
+      borderRightWidth: 1,
+      borderRightColor: theme.borderLight,
+    },
+    matchDateDay: {
+      color: '#ffffff',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    matchDateMonth: {
+      color: theme.textSecondary,
+      fontSize: 10,
+    },
+    matchInfoMain: {
+      flex: 1,
+      paddingHorizontal: 15,
+    },
+    matchOpponentText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    matchVenueText: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    resultBadge: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 20,
+    },
+    resultText: {
+      fontSize: 10,
+      fontWeight: 'bold',
+    },
+    emptyActivityCard: {
+      backgroundColor: theme.border,
+      borderRadius: 16,
+      padding: 10,
+      alignItems: 'center',
+    },
+    emptyActivityMessage: {
+      color: theme.textSecondary,
+      textAlign: 'center',
+      marginBottom: 15,
+    },
+    emptyActionBtn: {
+      backgroundColor: theme.success,
+      alignSelf: 'center',
+    }
+  });
 
   return (
     <View style={styles.container}>

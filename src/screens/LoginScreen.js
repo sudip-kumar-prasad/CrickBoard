@@ -30,6 +30,7 @@ import { AuthService } from '../utils/auth';
  * in the same file using a single boolean flag, which makes the code easy to follow."
  */
 export default function LoginScreen({ navigation, onLoginSuccess }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -81,109 +82,109 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
   };
 
   const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background, // Deep Navy
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 40,
-    justifyContent: 'center',
-  },
-  heroSection: {
-    alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 60,
-  },
-  logoBadge: {
-    width: 120,
-    height: 120,
-    backgroundColor: theme.border,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: theme.success,
-    elevation: 10,
-  },
-  brandTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    letterSpacing: 4,
-  },
-  brandTagline: {
-    fontSize: 14,
-    color: theme.success,
-    fontWeight: '600',
-    marginTop: 5,
-  },
-  authCard: {
-    backgroundColor: theme.border,
-    marginHorizontal: 24,
-    borderRadius: 30,
-    padding: 30,
-    elevation: 8,
-  },
-  formTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
-  },
-  formSubtitle: {
-    fontSize: 14,
-    color: theme.textSecondary,
-    textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 25,
-  },
-  form: {
-    gap: 15,
-  },
-  input: {
-    backgroundColor: theme.background,
-  },
-  submitBtn: {
-    marginTop: 10,
-    backgroundColor: theme.success,
-    borderRadius: 15,
-  },
-  submitBtnText: {
-    fontWeight: 'bold',
-    letterSpacing: 1,
-    fontSize: 16,
-  },
-  divider: {
-    marginVertical: 25,
-    backgroundColor: theme.borderLight,
-  },
-  toggleBtn: {
-    alignItems: 'center',
-  },
-  toggleText: {
-    color: theme.textSecondary,
-    fontSize: 14,
-  },
-  toggleLink: {
-    color: theme.success,
-    fontWeight: 'bold',
-  },
-  footerInfo: {
-    marginTop: 40,
-    alignItems: 'center',
-  },
-  footerText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  versionText: {
-    color: theme.borderLight,
-    fontSize: 10,
-    marginTop: 5,
-  }
-});
+    container: {
+      flex: 1,
+      backgroundColor: theme.background, // Deep Navy
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingBottom: 40,
+      justifyContent: 'center',
+    },
+    heroSection: {
+      alignItems: 'center',
+      marginBottom: 40,
+      marginTop: 60,
+    },
+    logoBadge: {
+      width: 120,
+      height: 120,
+      backgroundColor: theme.border,
+      borderRadius: 60,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 20,
+      borderWidth: 2,
+      borderColor: theme.success,
+      elevation: 10,
+    },
+    brandTitle: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: '#ffffff',
+      letterSpacing: 4,
+    },
+    brandTagline: {
+      fontSize: 14,
+      color: theme.success,
+      fontWeight: '600',
+      marginTop: 5,
+    },
+    authCard: {
+      backgroundColor: theme.border,
+      marginHorizontal: 24,
+      borderRadius: 30,
+      padding: 30,
+      elevation: 8,
+    },
+    formTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#ffffff',
+      textAlign: 'center',
+    },
+    formSubtitle: {
+      fontSize: 14,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      marginTop: 8,
+      marginBottom: 25,
+    },
+    form: {
+      gap: 15,
+    },
+    input: {
+      backgroundColor: theme.background,
+    },
+    submitBtn: {
+      marginTop: 10,
+      backgroundColor: theme.success,
+      borderRadius: 15,
+    },
+    submitBtnText: {
+      fontWeight: 'bold',
+      letterSpacing: 1,
+      fontSize: 16,
+    },
+    divider: {
+      marginVertical: 25,
+      backgroundColor: theme.borderLight,
+    },
+    toggleBtn: {
+      alignItems: 'center',
+    },
+    toggleText: {
+      color: theme.textSecondary,
+      fontSize: 14,
+    },
+    toggleLink: {
+      color: theme.success,
+      fontWeight: 'bold',
+    },
+    footerInfo: {
+      marginTop: 40,
+      alignItems: 'center',
+    },
+    footerText: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    versionText: {
+      color: theme.borderLight,
+      fontSize: 10,
+      marginTop: 5,
+    }
+  });
 
   return (
     <View style={styles.container}>

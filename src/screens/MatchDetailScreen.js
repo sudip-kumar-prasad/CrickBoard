@@ -35,6 +35,7 @@ import { StorageService } from '../utils/storage';
  * ensuring compatibility with the newest mobile devices."
  */
 export default function MatchDetailScreen({ route, navigation }) {
+    const { theme } = useTheme();
     const { match } = route.params || {};
     const [isCelebrating, setIsCelebrating] = useState(false);
     const [caption, setCaption] = useState('');
@@ -367,289 +368,289 @@ export default function MatchDetailScreen({ route, navigation }) {
     );
 
     const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.background,
-    },
-    headerBanner: {
-        backgroundColor: theme.border,
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-        paddingBottom: 25,
-    },
-    headerTop: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-        paddingTop: 10,
-    },
-    headerTitle: {
-        color: '#ffffff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    matchHero: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    teamInfo: {
-        alignItems: 'center',
-        width: '30%',
-    },
-    teamName: {
-        color: '#ffffff',
-        fontSize: 14,
-        fontWeight: '600',
-        marginTop: 8,
-        textAlign: 'center',
-    },
-    vsContainer: {
-        alignItems: 'center',
-    },
-    vsText: {
-        color: theme.textSecondary,
-        fontSize: 18,
-        fontWeight: '900',
-        marginBottom: 5,
-    },
-    resultChip: {
-        height: 24,
-    },
-    resultChipText: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        color: '#ffffff',
-    },
-    metaRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5,
-    },
-    metaText: {
-        color: theme.textSecondary,
-        fontSize: 12,
-    },
-    scrollContent: {
-        padding: 16,
-    },
-    momCard: {
-        backgroundColor: theme.border,
-        borderRadius: 20,
-        padding: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 25,
-        borderLeftWidth: 4,
-        borderLeftColor: theme.warning,
-    },
-    momLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    momLabel: {
-        color: theme.warning,
-        fontSize: 10,
-        fontWeight: 'bold',
-        letterSpacing: 1,
-    },
-    momName: {
-        color: '#ffffff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    momStats: {
-        alignItems: 'flex-end',
-    },
-    momStatText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    momStatSub: {
-        color: theme.textSecondary,
-        fontSize: 12,
-    },
-    section: {
-        marginBottom: 25,
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: 12,
-    },
-    sectionTitle: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    tableCard: {
-        backgroundColor: theme.border,
-        borderRadius: 20,
-        overflow: 'hidden',
-    },
-    tableRowHeader: {
-        flexDirection: 'row',
-        backgroundColor: theme.borderLight,
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-    },
-    tableRow: {
-        flexDirection: 'row',
-        paddingVertical: 12,
-        paddingHorizontal: 12,
-        borderBottomWidth: 0.5,
-        borderBottomColor: theme.borderLight,
-        alignItems: 'center',
-    },
-    headerLabel: {
-        color: theme.textSecondary,
-        fontSize: 10,
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-    },
-    colName: {
-        flex: 2,
-        color: '#ffffff',
-        fontSize: 13,
-        fontWeight: '600',
-    },
-    colStat: {
-        flex: 1,
-        color: theme.textSecondary,
-        fontSize: 13,
-        textAlign: 'center',
-    },
-    colStatBold: {
-        flex: 1,
-        color: '#ffffff',
-        fontSize: 13,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    colStatHighlight: {
-        flex: 1.2,
-        color: '#60a5fa',
-        fontSize: 12,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    extrasCard: {
-        backgroundColor: theme.border,
-        borderRadius: 20,
-        padding: 20,
-        alignItems: 'center',
-        marginBottom: 25,
-    },
-    extrasTitle: {
-        color: theme.textSecondary,
-        fontSize: 12,
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        marginBottom: 15,
-    },
-    extrasGrid: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-    },
-    extraItem: {
-        alignItems: 'center',
-    },
-    extraVal: {
-        color: '#ffffff',
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    extraLab: {
-        color: theme.textTertiary,
-        fontSize: 11,
-        marginTop: 4,
-    },
-    extraDivider: {
-        width: 1,
-        height: 30,
-        backgroundColor: theme.borderLight,
-        alignSelf: 'center',
-    },
-    notesCard: {
-        backgroundColor: theme.border,
-        borderRadius: 15,
-        padding: 15,
-    },
-    notesText: {
-        color: theme.textSecondary,
-        fontSize: 13,
-        lineHeight: 20,
-    },
-    celebrateBtn: {
-        marginBottom: 20,
-        borderRadius: 15,
-        elevation: 4,
-    },
-    modalContent: {
-        padding: 20,
-        justifyContent: 'center',
-    },
-    modalCard: {
-        backgroundColor: theme.border,
-        borderRadius: 25,
-        padding: 20,
-    },
-    modalTitle: {
-        color: '#ffffff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    imagePickerBtn: {
-        width: '100%',
-        height: 180,
-        backgroundColor: theme.background,
-        borderRadius: 15,
-        overflow: 'hidden',
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: theme.borderLight,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    imagePlaceholder: {
-        alignItems: 'center',
-    },
-    imagePlaceholderText: {
-        color: theme.textSecondary,
-        fontSize: 12,
-        marginTop: 8,
-    },
-    previewImage: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
-    },
-    captionInput: {
-        backgroundColor: theme.background,
-        marginBottom: 20,
-    },
-    modalActions: {
-        flexDirection: 'row',
-        gap: 10,
-    },
-    cancelBtn: {
-        flex: 1,
-        borderColor: theme.borderLight,
-    },
-    publishBtn: {
-        flex: 1,
-    }
-});
+        container: {
+            flex: 1,
+            backgroundColor: theme.background,
+        },
+        headerBanner: {
+            backgroundColor: theme.border,
+            borderBottomLeftRadius: 30,
+            borderBottomRightRadius: 30,
+            paddingBottom: 25,
+        },
+        headerTop: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: 15,
+            paddingTop: 10,
+        },
+        headerTitle: {
+            color: '#ffffff',
+            fontSize: 18,
+            fontWeight: 'bold',
+        },
+        matchHero: {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            marginTop: 20,
+        },
+        teamInfo: {
+            alignItems: 'center',
+            width: '30%',
+        },
+        teamName: {
+            color: '#ffffff',
+            fontSize: 14,
+            fontWeight: '600',
+            marginTop: 8,
+            textAlign: 'center',
+        },
+        vsContainer: {
+            alignItems: 'center',
+        },
+        vsText: {
+            color: theme.textSecondary,
+            fontSize: 18,
+            fontWeight: '900',
+            marginBottom: 5,
+        },
+        resultChip: {
+            height: 24,
+        },
+        resultChipText: {
+            fontSize: 10,
+            fontWeight: 'bold',
+            color: '#ffffff',
+        },
+        metaRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 5,
+        },
+        metaText: {
+            color: theme.textSecondary,
+            fontSize: 12,
+        },
+        scrollContent: {
+            padding: 16,
+        },
+        momCard: {
+            backgroundColor: theme.border,
+            borderRadius: 20,
+            padding: 20,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 25,
+            borderLeftWidth: 4,
+            borderLeftColor: theme.warning,
+        },
+        momLeft: {
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+        momLabel: {
+            color: theme.warning,
+            fontSize: 10,
+            fontWeight: 'bold',
+            letterSpacing: 1,
+        },
+        momName: {
+            color: '#ffffff',
+            fontSize: 18,
+            fontWeight: 'bold',
+        },
+        momStats: {
+            alignItems: 'flex-end',
+        },
+        momStatText: {
+            color: '#ffffff',
+            fontSize: 16,
+            fontWeight: 'bold',
+        },
+        momStatSub: {
+            color: theme.textSecondary,
+            fontSize: 12,
+        },
+        section: {
+            marginBottom: 25,
+        },
+        sectionHeader: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: 12,
+        },
+        sectionTitle: {
+            color: '#ffffff',
+            fontSize: 16,
+            fontWeight: 'bold',
+        },
+        tableCard: {
+            backgroundColor: theme.border,
+            borderRadius: 20,
+            overflow: 'hidden',
+        },
+        tableRowHeader: {
+            flexDirection: 'row',
+            backgroundColor: theme.borderLight,
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+        },
+        tableRow: {
+            flexDirection: 'row',
+            paddingVertical: 12,
+            paddingHorizontal: 12,
+            borderBottomWidth: 0.5,
+            borderBottomColor: theme.borderLight,
+            alignItems: 'center',
+        },
+        headerLabel: {
+            color: theme.textSecondary,
+            fontSize: 10,
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+        },
+        colName: {
+            flex: 2,
+            color: '#ffffff',
+            fontSize: 13,
+            fontWeight: '600',
+        },
+        colStat: {
+            flex: 1,
+            color: theme.textSecondary,
+            fontSize: 13,
+            textAlign: 'center',
+        },
+        colStatBold: {
+            flex: 1,
+            color: '#ffffff',
+            fontSize: 13,
+            fontWeight: 'bold',
+            textAlign: 'center',
+        },
+        colStatHighlight: {
+            flex: 1.2,
+            color: '#60a5fa',
+            fontSize: 12,
+            fontWeight: 'bold',
+            textAlign: 'center',
+        },
+        extrasCard: {
+            backgroundColor: theme.border,
+            borderRadius: 20,
+            padding: 20,
+            alignItems: 'center',
+            marginBottom: 25,
+        },
+        extrasTitle: {
+            color: theme.textSecondary,
+            fontSize: 12,
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            marginBottom: 15,
+        },
+        extrasGrid: {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            width: '100%',
+        },
+        extraItem: {
+            alignItems: 'center',
+        },
+        extraVal: {
+            color: '#ffffff',
+            fontSize: 20,
+            fontWeight: 'bold',
+        },
+        extraLab: {
+            color: theme.textTertiary,
+            fontSize: 11,
+            marginTop: 4,
+        },
+        extraDivider: {
+            width: 1,
+            height: 30,
+            backgroundColor: theme.borderLight,
+            alignSelf: 'center',
+        },
+        notesCard: {
+            backgroundColor: theme.border,
+            borderRadius: 15,
+            padding: 15,
+        },
+        notesText: {
+            color: theme.textSecondary,
+            fontSize: 13,
+            lineHeight: 20,
+        },
+        celebrateBtn: {
+            marginBottom: 20,
+            borderRadius: 15,
+            elevation: 4,
+        },
+        modalContent: {
+            padding: 20,
+            justifyContent: 'center',
+        },
+        modalCard: {
+            backgroundColor: theme.border,
+            borderRadius: 25,
+            padding: 20,
+        },
+        modalTitle: {
+            color: '#ffffff',
+            fontSize: 20,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: 20,
+        },
+        imagePickerBtn: {
+            width: '100%',
+            height: 180,
+            backgroundColor: theme.background,
+            borderRadius: 15,
+            overflow: 'hidden',
+            marginBottom: 15,
+            borderWidth: 1,
+            borderColor: theme.borderLight,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        imagePlaceholder: {
+            alignItems: 'center',
+        },
+        imagePlaceholderText: {
+            color: theme.textSecondary,
+            fontSize: 12,
+            marginTop: 8,
+        },
+        previewImage: {
+            width: '100%',
+            height: '100%',
+            resizeMode: 'cover',
+        },
+        captionInput: {
+            backgroundColor: theme.background,
+            marginBottom: 20,
+        },
+        modalActions: {
+            flexDirection: 'row',
+            gap: 10,
+        },
+        cancelBtn: {
+            flex: 1,
+            borderColor: theme.borderLight,
+        },
+        publishBtn: {
+            flex: 1,
+        }
+    });
 
-  return (
+    return (
         <SafeAreaView style={styles.container}>
             {renderHeader()}
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>

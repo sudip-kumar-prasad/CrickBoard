@@ -29,6 +29,7 @@ const RESULT_FILTERS = ['ALL', 'WIN', 'LOSS', 'DRAW'];
  * The code is structured to handle data safely using null-checks and simple filter logic."
  */
 export default function MatchesScreen({ navigation }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const [matches, setMatches] = useState([]);
   const [filter, setFilter] = useState('ALL');

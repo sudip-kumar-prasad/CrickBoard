@@ -27,6 +27,7 @@ import { StorageService } from '../utils/storage';
  * we visit this page, ensuring the stats are always accurate."
  */
 export default function PlayerDetailScreen({ navigation, route }) {
+  const { theme } = useTheme();
   // --- STATE ---
   const { player: initialPlayer } = route.params;
   const [player, setPlayer] = useState(initialPlayer);

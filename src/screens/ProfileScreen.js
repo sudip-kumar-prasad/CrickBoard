@@ -32,6 +32,7 @@ import * as ImagePicker from 'expo-image-picker';
  * to load user data and a simple toggle for editing/viewing modes."
  */
 export default function ProfileScreen({ navigation, onLogout }) {
+  const { theme } = useTheme();
     // --- STATE ---
     const [user, setUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
