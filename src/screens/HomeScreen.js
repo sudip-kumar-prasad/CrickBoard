@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Dimensions,
   ImageBackground,
+  Image,
   Platform
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
@@ -182,15 +183,29 @@ export default function HomeScreen({ navigation }) {
       alignItems: 'center',
       marginTop: Platform.OS === 'android' ? 30 : 10,
     },
-    greetingText: {
-      color: '#ffffff',
-      fontSize: 16,
-      fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    logoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
     },
-    userNameText: {
+    logoImage: {
+      width: 50,
+      height: 50,
+      borderRadius: 12,
+    },
+    logoText: {
       color: '#ffffff',
-      fontSize: 28,
+      fontSize: 32,
+      fontWeight: '900',
+      letterSpacing: -1,
+      fontFamily: Platform.OS === 'ios' ? 'Outfit-Bold' : 'sans-serif-condensed',
+    },
+    subLogoText: {
+      color: theme.success,
+      fontSize: 12,
       fontWeight: 'bold',
+      textTransform: 'uppercase',
+      letterSpacing: 2,
     },
     avatarBorder: {
       backgroundColor: theme.success,
@@ -408,9 +423,15 @@ export default function HomeScreen({ navigation }) {
         >
           <SafeAreaView style={styles.heroOverlay}>
             <View style={styles.headerRow}>
-              <View>
-                <Text style={styles.greetingText}>Welcome back,</Text>
-                <Text style={styles.userNameText}>{currentUser ? currentUser.name : 'Champion'}</Text>
+              <View style={styles.logoContainer}>
+                <Image
+                  source={require('../../assets/logo/logo.png')}
+                  style={styles.logoImage}
+                />
+                <View>
+                  <Text style={styles.logoText}>CrickBoard</Text>
+                  <Text style={styles.subLogoText}>Professional Manager</Text>
+                </View>
               </View>
               <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                 <Avatar.Text
