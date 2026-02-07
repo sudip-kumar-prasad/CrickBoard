@@ -151,7 +151,7 @@ export default function RecordMatchScreen({ navigation, route }) {
     <Surface key={perf.playerId} style={styles.perfCard} elevation={2}>
       <View style={styles.perfHeader}>
         <View style={styles.avatarMini}>
-          <Avatar.Text size={30} label={perf.playerName.substring(0, 1).toUpperCase()} backgroundColor={theme.background} labelStyle={{ fontSize: 12, color: theme.success }} />
+          <Avatar.Text size={30} label={perf.playerName.substring(0, 1).toUpperCase()} backgroundColor={theme.backgroundSecondary} labelStyle={{ fontSize: 12, color: theme.success }} />
           <Text style={styles.perfPlayerName}>{perf.playerName}</Text>
         </View>
         <TouchableOpacity onPress={() => removePlayerFromMatch(perf.playerId)}>
@@ -184,7 +184,7 @@ export default function RecordMatchScreen({ navigation, route }) {
         onChangeText={(val) => updatePlayerStat(playerId, field, val)}
         keyboardType="numeric"
         style={styles.miniStatInput}
-        textColor="#ffffff"
+        textColor={theme.text}
         activeUnderlineColor={theme.success}
       />
     </View>
@@ -203,7 +203,7 @@ export default function RecordMatchScreen({ navigation, route }) {
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: 20,
-      backgroundColor: theme.border,
+      backgroundColor: theme.primary,
       borderBottomLeftRadius: 30,
       borderBottomRightRadius: 30,
       marginBottom: 20,
@@ -214,16 +214,18 @@ export default function RecordMatchScreen({ navigation, route }) {
       fontWeight: 'bold',
     },
     headerAction: {
-      color: theme.success,
+      color: '#ffffff',
       fontWeight: 'bold',
       fontSize: 16,
     },
     sectionCard: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       marginHorizontal: 16,
       borderRadius: 20,
       padding: 20,
       marginBottom: 25,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     sectionHeader: {
       flexDirection: 'row',
@@ -232,7 +234,7 @@ export default function RecordMatchScreen({ navigation, route }) {
       marginBottom: 20,
     },
     sectionTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
     },
@@ -318,11 +320,13 @@ export default function RecordMatchScreen({ navigation, route }) {
       lineHeight: 18,
     },
     perfCard: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       marginHorizontal: 16,
       borderRadius: 20,
       padding: 15,
       marginBottom: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     perfHeader: {
       flexDirection: 'row',
@@ -336,7 +340,7 @@ export default function RecordMatchScreen({ navigation, route }) {
       gap: 10,
     },
     perfPlayerName: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 14,
       fontWeight: 'bold',
     },
@@ -369,7 +373,7 @@ export default function RecordMatchScreen({ navigation, route }) {
       justifyContent: 'flex-end',
     },
     modalContent: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       height: '70%',
@@ -383,7 +387,7 @@ export default function RecordMatchScreen({ navigation, route }) {
       borderBottomColor: theme.borderLight,
     },
     modalTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 20,
       fontWeight: 'bold',
     },
@@ -395,7 +399,7 @@ export default function RecordMatchScreen({ navigation, route }) {
       borderBottomColor: theme.borderLight,
     },
     pickName: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
     },
@@ -456,7 +460,7 @@ export default function RecordMatchScreen({ navigation, route }) {
                 style={styles.mainInput}
                 outlineColor={theme.borderLight}
                 activeOutlineColor={theme.success}
-                textColor="#ffffff"
+                textColor={theme.text}
               />
               <PaperTextInput
                 label="Venue"
@@ -466,7 +470,7 @@ export default function RecordMatchScreen({ navigation, route }) {
                 style={styles.mainInput}
                 outlineColor={theme.borderLight}
                 activeOutlineColor={theme.success}
-                textColor="#ffffff"
+                textColor={theme.text}
               />
             </View>
 
@@ -494,7 +498,7 @@ export default function RecordMatchScreen({ navigation, route }) {
                   style={[styles.mainInput, { height: 40 }]}
                   outlineColor={theme.borderLight}
                   activeOutlineColor="#60a5fa"
-                  textColor="#ffffff"
+                  textColor={theme.text}
                   dense
                 />
               </View>
@@ -512,7 +516,7 @@ export default function RecordMatchScreen({ navigation, route }) {
                   style={styles.miniInput}
                   outlineColor={theme.borderLight}
                   activeOutlineColor={theme.success}
-                  textColor="#ffffff"
+                  textColor={theme.text}
                   dense
                 />
               </View>
@@ -526,7 +530,7 @@ export default function RecordMatchScreen({ navigation, route }) {
                   style={styles.miniInput}
                   outlineColor={theme.borderLight}
                   activeOutlineColor={theme.success}
-                  textColor="#ffffff"
+                  textColor={theme.text}
                   dense
                 />
               </View>
@@ -562,7 +566,7 @@ export default function RecordMatchScreen({ navigation, route }) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Player</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#ffffff" />
+                <Ionicons name="close" size={24} color={theme.text} />
               </TouchableOpacity>
             </View>
             <FlatList
