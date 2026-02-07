@@ -117,7 +117,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
     brandTitle: {
       fontSize: 32,
       fontWeight: '900',
-      color: '#ffffff',
+      color: theme.text,
       letterSpacing: 2,
     },
     brandTagline: {
@@ -136,7 +136,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
     formTitle: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#ffffff',
+      color: theme.success,
       textAlign: 'center',
     },
     formSubtitle: {
