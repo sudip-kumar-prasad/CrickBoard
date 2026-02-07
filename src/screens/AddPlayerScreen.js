@@ -113,6 +113,124 @@ export default function AddPlayerScreen({ navigation }) {
     </View>
   );
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background, // Deep Navy
+    },
+    scrollContent: {
+      paddingBottom: 40,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: theme.border,
+      borderBottomLeftRadius: 25,
+      borderBottomRightRadius: 25,
+      marginBottom: 20,
+    },
+    headerTitle: {
+      color: '#ffffff',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    sectionCard: {
+      backgroundColor: theme.border,
+      marginHorizontal: 16,
+      marginBottom: 16,
+      borderRadius: 20,
+      padding: 20,
+    },
+    sectionTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 20,
+    },
+    sectionTitle: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    mainInput: {
+      backgroundColor: theme.background,
+      marginBottom: 15,
+    },
+    label: {
+      color: theme.textSecondary,
+      fontSize: 14,
+      fontWeight: '600',
+      marginTop: 5,
+      marginBottom: 12,
+    },
+    roleRow: {
+      flexDirection: 'row',
+    },
+    roleChip: {
+      backgroundColor: theme.background,
+      marginRight: 8,
+      borderRadius: 12,
+    },
+    roleChipActive: {
+      backgroundColor: theme.success,
+    },
+    roleText: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    roleTextActive: {
+      color: '#ffffff',
+      fontWeight: '600',
+    },
+    collapsedNote: {
+      color: theme.textTertiary,
+      fontSize: 12,
+      textAlign: 'center',
+      fontStyle: 'italic',
+    },
+    statsGrid: {
+      marginTop: 5,
+    },
+    statsHint: {
+      color: theme.textTertiary,
+      fontSize: 11,
+      marginBottom: 15,
+      borderLeftWidth: 2,
+      borderLeftColor: '#60a5fa',
+      paddingLeft: 8,
+    },
+    gridRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 12,
+    },
+    statBox: {
+      width: '48%',
+    },
+    statLabel: {
+      color: theme.textSecondary,
+      fontSize: 11,
+      marginBottom: 5,
+      textTransform: 'uppercase',
+    },
+    miniInput: {
+      backgroundColor: theme.background,
+      height: 40,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    footer: {
+      padding: 20,
+      marginTop: 10,
+    },
+    saveBtn: {
+      backgroundColor: theme.success,
+      borderRadius: 15,
+    }
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -237,121 +355,3 @@ export default function AddPlayerScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background, // Deep Navy
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: theme.border,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-    marginBottom: 20,
-  },
-  headerTitle: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  sectionCard: {
-    backgroundColor: theme.border,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 20,
-    padding: 20,
-  },
-  sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  mainInput: {
-    backgroundColor: theme.background,
-    marginBottom: 15,
-  },
-  label: {
-    color: theme.textSecondary,
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 5,
-    marginBottom: 12,
-  },
-  roleRow: {
-    flexDirection: 'row',
-  },
-  roleChip: {
-    backgroundColor: theme.background,
-    marginRight: 8,
-    borderRadius: 12,
-  },
-  roleChipActive: {
-    backgroundColor: theme.success,
-  },
-  roleText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  roleTextActive: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  collapsedNote: {
-    color: theme.textTertiary,
-    fontSize: 12,
-    textAlign: 'center',
-    fontStyle: 'italic',
-  },
-  statsGrid: {
-    marginTop: 5,
-  },
-  statsHint: {
-    color: theme.textTertiary,
-    fontSize: 11,
-    marginBottom: 15,
-    borderLeftWidth: 2,
-    borderLeftColor: '#60a5fa',
-    paddingLeft: 8,
-  },
-  gridRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  statBox: {
-    width: '48%',
-  },
-  statLabel: {
-    color: theme.textSecondary,
-    fontSize: 11,
-    marginBottom: 5,
-    textTransform: 'uppercase',
-  },
-  miniInput: {
-    backgroundColor: theme.background,
-    height: 40,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  footer: {
-    padding: 20,
-    marginTop: 10,
-  },
-  saveBtn: {
-    backgroundColor: theme.success,
-    borderRadius: 15,
-  }
-});

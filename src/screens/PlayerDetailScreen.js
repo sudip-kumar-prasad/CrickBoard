@@ -86,6 +86,138 @@ export default function PlayerDetailScreen({ navigation, route }) {
     </Surface>
   );
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    heroProfile: {
+      backgroundColor: theme.border,
+      padding: 30,
+      alignItems: 'center',
+      borderBottomLeftRadius: 40,
+      borderBottomRightRadius: 40,
+      position: 'relative',
+    },
+    backBtn: {
+      position: 'absolute',
+      left: 20,
+      top: 20,
+    },
+    heroName: {
+      color: '#ffffff',
+      fontSize: 28,
+      fontWeight: 'bold',
+      marginTop: 15,
+    },
+    heroSubRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 10,
+      gap: 10,
+    },
+    roleChip: {
+      backgroundColor: theme.background,
+      height: 30,
+    },
+    roleText: {
+      color: theme.success,
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+    heroTeam: {
+      color: theme.textSecondary,
+      fontSize: 14,
+    },
+    statsSection: {
+      padding: 20,
+      marginTop: 10,
+    },
+    sectionTitle: {
+      color: '#ffffff',
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    },
+    widgetRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    statWidget: {
+      width: '48%',
+      backgroundColor: theme.border,
+      borderRadius: 20,
+      padding: 15,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    widgetIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    widgetValue: {
+      color: '#ffffff',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    widgetLabel: {
+      color: theme.textSecondary,
+      fontSize: 10,
+      textTransform: 'uppercase',
+    },
+    detailCard: {
+      backgroundColor: theme.border,
+      borderRadius: 20,
+      padding: 20,
+      flexDirection: 'row',
+      marginTop: 10,
+    },
+    detailItem: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    detailLabel: {
+      color: theme.textSecondary,
+      fontSize: 12,
+      marginBottom: 5,
+    },
+    detailValue: {
+      color: '#60a5fa',
+      fontSize: 22,
+      fontWeight: 'bold',
+    },
+    verticalDiv: {
+      width: 1,
+      height: '100%',
+      backgroundColor: theme.borderLight,
+    },
+    actionSection: {
+      padding: 20,
+      gap: 15,
+    },
+    editBtn: {
+      backgroundColor: theme.success,
+      borderRadius: 15,
+      paddingVertical: 5,
+    },
+    deleteBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      padding: 10,
+    },
+    deleteText: {
+      color: theme.error,
+      fontWeight: 'bold',
+    }
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -164,135 +296,3 @@ export default function PlayerDetailScreen({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  heroProfile: {
-    backgroundColor: theme.border,
-    padding: 30,
-    alignItems: 'center',
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    position: 'relative',
-  },
-  backBtn: {
-    position: 'absolute',
-    left: 20,
-    top: 20,
-  },
-  heroName: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginTop: 15,
-  },
-  heroSubRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-    gap: 10,
-  },
-  roleChip: {
-    backgroundColor: theme.background,
-    height: 30,
-  },
-  roleText: {
-    color: theme.success,
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  heroTeam: {
-    color: theme.textSecondary,
-    fontSize: 14,
-  },
-  statsSection: {
-    padding: 20,
-    marginTop: 10,
-  },
-  sectionTitle: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  widgetRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  statWidget: {
-    width: '48%',
-    backgroundColor: theme.border,
-    borderRadius: 20,
-    padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  widgetIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  widgetValue: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  widgetLabel: {
-    color: theme.textSecondary,
-    fontSize: 10,
-    textTransform: 'uppercase',
-  },
-  detailCard: {
-    backgroundColor: theme.border,
-    borderRadius: 20,
-    padding: 20,
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-  detailItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  detailLabel: {
-    color: theme.textSecondary,
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  detailValue: {
-    color: '#60a5fa',
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  verticalDiv: {
-    width: 1,
-    height: '100%',
-    backgroundColor: theme.borderLight,
-  },
-  actionSection: {
-    padding: 20,
-    gap: 15,
-  },
-  editBtn: {
-    backgroundColor: theme.success,
-    borderRadius: 15,
-    paddingVertical: 5,
-  },
-  deleteBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    padding: 10,
-  },
-  deleteText: {
-    color: theme.error,
-    fontWeight: 'bold',
-  }
-});

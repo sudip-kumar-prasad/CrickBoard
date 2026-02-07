@@ -166,6 +166,174 @@ export default function MatchesScreen({ navigation }) {
     );
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background, // Deep Navy
+    },
+    statsHeader: {
+      flexDirection: 'row',
+      backgroundColor: '#ffffff',
+      margin: 16,
+      padding: 20,
+      borderRadius: 20,
+      justifyContent: 'space-around',
+      alignItems: 'center',
+    },
+    statMainItem: {
+      alignItems: 'center',
+    },
+    statLabel: {
+      color: theme.textTertiary,
+      fontSize: 10,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      marginBottom: 4,
+    },
+    statValue: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      color: theme.background,
+    },
+    statDivider: {
+      width: 1,
+      height: 35,
+      backgroundColor: theme.text,
+    },
+    filterSection: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      marginBottom: 10,
+    },
+    filterScroll: {
+      flex: 1,
+    },
+    filterChip: {
+      backgroundColor: theme.border,
+      marginRight: 8,
+      borderRadius: 12,
+    },
+    filterChipActive: {
+      backgroundColor: theme.success,
+    },
+    filterChipText: {
+      color: theme.textSecondary,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    filterChipTextActive: {
+      color: '#ffffff',
+    },
+    addButton: {
+      marginLeft: 10,
+    },
+    listContainer: {
+      padding: 16,
+      paddingBottom: 40,
+    },
+    matchStrip: {
+      backgroundColor: theme.border,
+      borderRadius: 18,
+      padding: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    dateBox: {
+      width: 55,
+      alignItems: 'center',
+      paddingRight: 12,
+      borderRightWidth: 1,
+      borderRightColor: theme.borderLight,
+    },
+    dateDay: {
+      color: '#ffffff',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    dateMonth: {
+      color: theme.textSecondary,
+      fontSize: 10,
+      fontWeight: '600',
+    },
+    matchInfo: {
+      flex: 1,
+      paddingHorizontal: 12,
+    },
+    opponentText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 4,
+    },
+    venueRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    venueText: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    perfSnippet: {
+      marginTop: 6,
+      backgroundColor: theme.background,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 8,
+      alignSelf: 'flex-start',
+    },
+    perfText: {
+      color: '#60a5fa',
+      fontSize: 10,
+      fontWeight: '500',
+    },
+    outcomeBadge: {
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 14,
+      alignItems: 'center',
+      minWidth: 70,
+    },
+    outcomeText: {
+      fontSize: 9,
+      fontWeight: 'bold',
+      letterSpacing: 0.5,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 40,
+    },
+    emptyIconCircle: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      backgroundColor: theme.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    emptyTitle: {
+      color: '#ffffff',
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    emptySub: {
+      color: theme.textSecondary,
+      textAlign: 'center',
+      lineHeight: 20,
+      marginBottom: 25,
+    },
+    emptyBtn: {
+      backgroundColor: theme.success,
+      borderRadius: 12,
+    }
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       {/* 1. Statistics Summary */}
@@ -223,171 +391,3 @@ export default function MatchesScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background, // Deep Navy
-  },
-  statsHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    margin: 16,
-    padding: 20,
-    borderRadius: 20,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  statMainItem: {
-    alignItems: 'center',
-  },
-  statLabel: {
-    color: theme.textTertiary,
-    fontSize: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  statValue: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: theme.background,
-  },
-  statDivider: {
-    width: 1,
-    height: 35,
-    backgroundColor: theme.text,
-  },
-  filterSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 10,
-  },
-  filterScroll: {
-    flex: 1,
-  },
-  filterChip: {
-    backgroundColor: theme.border,
-    marginRight: 8,
-    borderRadius: 12,
-  },
-  filterChipActive: {
-    backgroundColor: theme.success,
-  },
-  filterChipText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  filterChipTextActive: {
-    color: '#ffffff',
-  },
-  addButton: {
-    marginLeft: 10,
-  },
-  listContainer: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  matchStrip: {
-    backgroundColor: theme.border,
-    borderRadius: 18,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  dateBox: {
-    width: 55,
-    alignItems: 'center',
-    paddingRight: 12,
-    borderRightWidth: 1,
-    borderRightColor: theme.borderLight,
-  },
-  dateDay: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  dateMonth: {
-    color: theme.textSecondary,
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  matchInfo: {
-    flex: 1,
-    paddingHorizontal: 12,
-  },
-  opponentText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  venueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  venueText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  perfSnippet: {
-    marginTop: 6,
-    backgroundColor: theme.background,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-  },
-  perfText: {
-    color: '#60a5fa',
-    fontSize: 10,
-    fontWeight: '500',
-  },
-  outcomeBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 14,
-    alignItems: 'center',
-    minWidth: 70,
-  },
-  outcomeText: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
-  },
-  emptyIconCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: theme.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  emptyTitle: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  emptySub: {
-    color: theme.textSecondary,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 25,
-  },
-  emptyBtn: {
-    backgroundColor: theme.success,
-    borderRadius: 12,
-  }
-});

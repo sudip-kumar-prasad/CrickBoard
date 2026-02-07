@@ -186,6 +186,181 @@ export default function InsightsScreen({ navigation }) {
     </TouchableOpacity>
   );
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background, // Deep Navy
+    },
+    scrollContent: {
+      padding: 16,
+      paddingBottom: 40,
+    },
+    sectionTitle: {
+      color: '#ffffff',
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 15,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 25,
+      marginBottom: 15,
+    },
+    viewAll: {
+      color: theme.success,
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    heroGrid: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 25,
+    },
+    heroCard: {
+      width: '48%',
+      backgroundColor: theme.border,
+      borderRadius: 20,
+      padding: 20,
+      alignItems: 'center',
+      elevation: 4,
+    },
+    heroIconCircle: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: theme.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    heroName: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 4,
+    },
+    heroStat: {
+      color: theme.success,
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 2,
+    },
+    heroLabel: {
+      color: theme.textSecondary,
+      fontSize: 10,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+    },
+    chartCard: {
+      backgroundColor: theme.border,
+      borderRadius: 20,
+      marginBottom: 10,
+    },
+    cardTitle: {
+      color: '#ffffff',
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    chartNote: {
+      color: theme.textSecondary,
+      fontSize: 10,
+      fontStyle: 'italic',
+      marginTop: 5,
+      textAlign: 'center',
+    },
+    progressRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 10,
+    },
+    progressInfo: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    progressLabel: {
+      color: '#ffffff',
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+    progressValue: {
+      color: theme.warning,
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    progressSub: {
+      color: theme.textSecondary,
+      fontSize: 10,
+    },
+    rankStrip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.border,
+      borderRadius: 15,
+      padding: 12,
+      marginBottom: 10,
+    },
+    rankBadge: {
+      width: 35,
+      height: 35,
+      borderRadius: 18,
+      backgroundColor: theme.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    rankNum: {
+      color: theme.textSecondary,
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    rankInfo: {
+      flex: 1,
+    },
+    rankName: {
+      color: '#ffffff',
+      fontSize: 15,
+      fontWeight: '600',
+    },
+    rankRole: {
+      color: theme.textSecondary,
+      fontSize: 11,
+    },
+    rankValueBox: {
+      alignItems: 'flex-end',
+    },
+    rankValue: {
+      color: theme.success,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    rankLabel: {
+      color: theme.textSecondary,
+      fontSize: 9,
+      textTransform: 'uppercase',
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    emptyText: {
+      color: theme.textSecondary,
+      marginTop: 20,
+      fontSize: 16,
+      textAlign: 'center',
+    },
+    emptyBtn: {
+      marginTop: 25,
+      backgroundColor: theme.success,
+      borderRadius: 12,
+      paddingHorizontal: 10,
+    }
+  });
+
   if (players.length === 0) {
     return (
       <SafeAreaView style={styles.container}>
@@ -316,178 +491,3 @@ export default function InsightsScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background, // Deep Navy
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  sectionTitle: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 25,
-    marginBottom: 15,
-  },
-  viewAll: {
-    color: theme.success,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  heroGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 25,
-  },
-  heroCard: {
-    width: '48%',
-    backgroundColor: theme.border,
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-    elevation: 4,
-  },
-  heroIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: theme.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  heroName: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  heroStat: {
-    color: theme.success,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  heroLabel: {
-    color: theme.textSecondary,
-    fontSize: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  chartCard: {
-    backgroundColor: theme.border,
-    borderRadius: 20,
-    marginBottom: 10,
-  },
-  cardTitle: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  chartNote: {
-    color: theme.textSecondary,
-    fontSize: 10,
-    fontStyle: 'italic',
-    marginTop: 5,
-    textAlign: 'center',
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-  },
-  progressInfo: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  progressLabel: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  progressValue: {
-    color: theme.warning,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  progressSub: {
-    color: theme.textSecondary,
-    fontSize: 10,
-  },
-  rankStrip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.border,
-    borderRadius: 15,
-    padding: 12,
-    marginBottom: 10,
-  },
-  rankBadge: {
-    width: 35,
-    height: 35,
-    borderRadius: 18,
-    backgroundColor: theme.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  rankNum: {
-    color: theme.textSecondary,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  rankInfo: {
-    flex: 1,
-  },
-  rankName: {
-    color: '#ffffff',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  rankRole: {
-    color: theme.textSecondary,
-    fontSize: 11,
-  },
-  rankValueBox: {
-    alignItems: 'flex-end',
-  },
-  rankValue: {
-    color: theme.success,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  rankLabel: {
-    color: theme.textSecondary,
-    fontSize: 9,
-    textTransform: 'uppercase',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  emptyText: {
-    color: theme.textSecondary,
-    marginTop: 20,
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  emptyBtn: {
-    marginTop: 25,
-    backgroundColor: theme.success,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-  }
-});

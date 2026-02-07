@@ -133,6 +133,150 @@ export default function PlayersScreen({ navigation }) {
     );
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background, // Deep Navy
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+    },
+    headerTitle: {
+      color: '#ffffff',
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    headerSub: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    addBtn: {
+      flexDirection: 'row',
+      backgroundColor: theme.success,
+      paddingHorizontal: 15,
+      paddingVertical: 8,
+      borderRadius: 20,
+      alignItems: 'center',
+      gap: 5,
+    },
+    addBtnText: {
+      color: '#ffffff',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+    filterSection: {
+      padding: 16,
+    },
+    searchBar: {
+      backgroundColor: theme.border,
+      borderRadius: 15,
+      elevation: 0,
+      height: 45,
+      marginBottom: 15,
+    },
+    searchBarInput: {
+      fontSize: 14,
+      color: '#ffffff',
+      minHeight: 0,
+    },
+    roleScroll: {
+      flexDirection: 'row',
+    },
+    roleChip: {
+      backgroundColor: theme.border,
+      marginRight: 8,
+      borderRadius: 12,
+    },
+    roleChipActive: {
+      backgroundColor: theme.success,
+    },
+    roleText: {
+      color: theme.textSecondary,
+      fontSize: 12,
+    },
+    roleTextActive: {
+      color: '#ffffff',
+      fontWeight: '600',
+    },
+    listContainer: {
+      paddingHorizontal: 16,
+      paddingBottom: 40,
+    },
+    playerStrip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.border,
+      borderRadius: 18,
+      padding: 12,
+      marginBottom: 12,
+    },
+    profileCircle: {
+      marginRight: 15,
+    },
+    playerInfo: {
+      flex: 1,
+    },
+    playerName: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 4,
+    },
+    roleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    roleTag: {
+      color: '#60a5fa',
+      fontSize: 11,
+      fontWeight: '600',
+    },
+    teamTag: {
+      color: theme.textSecondary,
+      fontSize: 11,
+    },
+    stripStats: {
+      flexDirection: 'row',
+      gap: 12,
+      borderLeftWidth: 1,
+      borderLeftColor: theme.borderLight,
+      paddingLeft: 12,
+    },
+    miniStat: {
+      alignItems: 'center',
+    },
+    miniVal: {
+      color: '#ffffff',
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    miniLab: {
+      color: theme.textSecondary,
+      fontSize: 9,
+      textTransform: 'uppercase',
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    emptyText: {
+      color: theme.textSecondary,
+      marginTop: 15,
+      fontSize: 14,
+    },
+    emptyMainBtn: {
+      marginTop: 20,
+      backgroundColor: theme.success,
+    }
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       {/* 1. HEADER SECTION */}
@@ -196,147 +340,3 @@ export default function PlayersScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background, // Deep Navy
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  headerTitle: {
-    color: '#ffffff',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  headerSub: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  addBtn: {
-    flexDirection: 'row',
-    backgroundColor: theme.success,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-    alignItems: 'center',
-    gap: 5,
-  },
-  addBtnText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  filterSection: {
-    padding: 16,
-  },
-  searchBar: {
-    backgroundColor: theme.border,
-    borderRadius: 15,
-    elevation: 0,
-    height: 45,
-    marginBottom: 15,
-  },
-  searchBarInput: {
-    fontSize: 14,
-    color: '#ffffff',
-    minHeight: 0,
-  },
-  roleScroll: {
-    flexDirection: 'row',
-  },
-  roleChip: {
-    backgroundColor: theme.border,
-    marginRight: 8,
-    borderRadius: 12,
-  },
-  roleChipActive: {
-    backgroundColor: theme.success,
-  },
-  roleText: {
-    color: theme.textSecondary,
-    fontSize: 12,
-  },
-  roleTextActive: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  listContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 40,
-  },
-  playerStrip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.border,
-    borderRadius: 18,
-    padding: 12,
-    marginBottom: 12,
-  },
-  profileCircle: {
-    marginRight: 15,
-  },
-  playerInfo: {
-    flex: 1,
-  },
-  playerName: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  roleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  roleTag: {
-    color: '#60a5fa',
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  teamTag: {
-    color: theme.textSecondary,
-    fontSize: 11,
-  },
-  stripStats: {
-    flexDirection: 'row',
-    gap: 12,
-    borderLeftWidth: 1,
-    borderLeftColor: theme.borderLight,
-    paddingLeft: 12,
-  },
-  miniStat: {
-    alignItems: 'center',
-  },
-  miniVal: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  miniLab: {
-    color: theme.textSecondary,
-    fontSize: 9,
-    textTransform: 'uppercase',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  emptyText: {
-    color: theme.textSecondary,
-    marginTop: 15,
-    fontSize: 14,
-  },
-  emptyMainBtn: {
-    marginTop: 20,
-    backgroundColor: theme.success,
-  }
-});
