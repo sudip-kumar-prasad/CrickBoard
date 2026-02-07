@@ -176,19 +176,19 @@ export default function MatchDetailScreen({ route, navigation }) {
                         <Ionicons name="chevron-back" size={24} color="#ffffff" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Match Report</Text>
-                    <IconButton icon="share-variant" iconColor="#22c55e" size={20} />
+                    <IconButton icon="share-variant" iconColor=theme.success size={20} />
                 </View>
 
                 <View style={styles.matchHero}>
                     <View style={styles.teamInfo}>
-                        <Avatar.Text size={50} label="CB" backgroundColor="#22c55e" labelStyle={{ fontWeight: 'bold' }} />
+                        <Avatar.Text size={50} label="CB" backgroundColor=theme.success labelStyle={{ fontWeight: 'bold' }} />
                         <Text style={styles.teamName}>CrickBoard</Text>
                     </View>
 
                     <View style={styles.vsContainer}>
                         <Text style={styles.vsText}>VS</Text>
                         <Chip
-                            style={[styles.resultChip, { backgroundColor: isWin ? '#22c55e' : '#ef4444' }]}
+                            style={[styles.resultChip, { backgroundColor: isWin ? theme.success : theme.error }]}
                             textStyle={styles.resultChipText}
                         >
                             {matchResultStr}
@@ -196,15 +196,15 @@ export default function MatchDetailScreen({ route, navigation }) {
                     </View>
 
                     <View style={styles.teamInfo}>
-                        <Avatar.Text size={50} label={opponentInitial} backgroundColor="#334155" />
+                        <Avatar.Text size={50} label={opponentInitial} backgroundColor=theme.borderLight />
                         <Text style={styles.teamName}>{opponentName}</Text>
                     </View>
                 </View>
 
                 <View style={[styles.metaRow, { justifyContent: 'center', marginTop: 10 }]}>
-                    <Ionicons name="location" size={14} color="#94a3b8" />
+                    <Ionicons name="location" size={14} color=theme.textSecondary />
                     <Text style={styles.metaText}>{match.venue || 'Unknown Venue'}  •  </Text>
-                    <Ionicons name="calendar" size={14} color="#94a3b8" />
+                    <Ionicons name="calendar" size={14} color=theme.textSecondary />
                     <Text style={styles.metaText}>{match.date ? new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown Date'}</Text>
                 </View>
             </Surface>
@@ -226,7 +226,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                             <Image source={{ uri: victoryImage }} style={styles.previewImage} />
                         ) : (
                             <View style={styles.imagePlaceholder}>
-                                <Ionicons name="camera-outline" size={30} color="#94a3b8" />
+                                <Ionicons name="camera-outline" size={30} color=theme.textSecondary />
                                 <Text style={styles.imagePlaceholderText}>Add Victory Photo</Text>
                             </View>
                         )}
@@ -240,8 +240,8 @@ export default function MatchDetailScreen({ route, navigation }) {
                         multiline
                         numberOfLines={3}
                         style={styles.captionInput}
-                        outlineColor="#334155"
-                        activeOutlineColor="#22c55e"
+                        outlineColor=theme.borderLight
+                        activeOutlineColor=theme.success
                         textColor="#ffffff"
                     />
 
@@ -250,7 +250,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                             mode="outlined"
                             onPress={() => setIsCelebrating(false)}
                             style={styles.cancelBtn}
-                            textColor="#94a3b8"
+                            textColor=theme.textSecondary
                         >
                             Cancel
                         </Button>
@@ -258,7 +258,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                             mode="contained"
                             onPress={handleConfirmPublish}
                             style={styles.publishBtn}
-                            buttonColor="#22c55e"
+                            buttonColor=theme.success
                             loading={publishing}
                         >
                             Publish
@@ -274,7 +274,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         return (
             <Surface style={styles.momCard} elevation={2}>
                 <View style={styles.momLeft}>
-                    <MaterialCommunityIcons name="trophy-variant" size={40} color="#f59e0b" />
+                    <MaterialCommunityIcons name="trophy-variant" size={40} color=theme.warning />
                     <View style={{ marginLeft: 15 }}>
                         <Text style={styles.momLabel}>PLAYER OF THE MATCH</Text>
                         <Text style={styles.momName}>{mom.playerName}</Text>
@@ -291,7 +291,7 @@ export default function MatchDetailScreen({ route, navigation }) {
     const renderBattingScorecard = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="cricket" size={20} color="#22c55e" />
+                <MaterialCommunityIcons name="cricket" size={20} color=theme.success />
                 <Text style={styles.sectionTitle}>Batting Performance</Text>
             </View>
             <Surface style={styles.tableCard} elevation={1}>
@@ -369,10 +369,10 @@ export default function MatchDetailScreen({ route, navigation }) {
     const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
     },
     headerBanner: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
         paddingBottom: 25,
@@ -410,7 +410,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         alignItems: 'center',
     },
     vsText: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 18,
         fontWeight: '900',
         marginBottom: 5,
@@ -429,14 +429,14 @@ export default function MatchDetailScreen({ route, navigation }) {
         gap: 5,
     },
     metaText: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 12,
     },
     scrollContent: {
         padding: 16,
     },
     momCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderRadius: 20,
         padding: 20,
         flexDirection: 'row',
@@ -444,14 +444,14 @@ export default function MatchDetailScreen({ route, navigation }) {
         alignItems: 'center',
         marginBottom: 25,
         borderLeftWidth: 4,
-        borderLeftColor: '#f59e0b',
+        borderLeftColor: theme.warning,
     },
     momLeft: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     momLabel: {
-        color: '#f59e0b',
+        color: theme.warning,
         fontSize: 10,
         fontWeight: 'bold',
         letterSpacing: 1,
@@ -470,7 +470,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         fontWeight: 'bold',
     },
     momStatSub: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 12,
     },
     section: {
@@ -488,13 +488,13 @@ export default function MatchDetailScreen({ route, navigation }) {
         fontWeight: 'bold',
     },
     tableCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderRadius: 20,
         overflow: 'hidden',
     },
     tableRowHeader: {
         flexDirection: 'row',
-        backgroundColor: '#334155',
+        backgroundColor: theme.borderLight,
         paddingVertical: 10,
         paddingHorizontal: 12,
     },
@@ -503,11 +503,11 @@ export default function MatchDetailScreen({ route, navigation }) {
         paddingVertical: 12,
         paddingHorizontal: 12,
         borderBottomWidth: 0.5,
-        borderBottomColor: '#334155',
+        borderBottomColor: theme.borderLight,
         alignItems: 'center',
     },
     headerLabel: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 10,
         fontWeight: 'bold',
         textTransform: 'uppercase',
@@ -520,7 +520,7 @@ export default function MatchDetailScreen({ route, navigation }) {
     },
     colStat: {
         flex: 1,
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 13,
         textAlign: 'center',
     },
@@ -539,14 +539,14 @@ export default function MatchDetailScreen({ route, navigation }) {
         textAlign: 'center',
     },
     extrasCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderRadius: 20,
         padding: 20,
         alignItems: 'center',
         marginBottom: 25,
     },
     extrasTitle: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 12,
         fontWeight: 'bold',
         textTransform: 'uppercase',
@@ -566,23 +566,23 @@ export default function MatchDetailScreen({ route, navigation }) {
         fontWeight: 'bold',
     },
     extraLab: {
-        color: '#64748b',
+        color: theme.textTertiary,
         fontSize: 11,
         marginTop: 4,
     },
     extraDivider: {
         width: 1,
         height: 30,
-        backgroundColor: '#334155',
+        backgroundColor: theme.borderLight,
         alignSelf: 'center',
     },
     notesCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderRadius: 15,
         padding: 15,
     },
     notesText: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 13,
         lineHeight: 20,
     },
@@ -596,7 +596,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         justifyContent: 'center',
     },
     modalCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderRadius: 25,
         padding: 20,
     },
@@ -610,12 +610,12 @@ export default function MatchDetailScreen({ route, navigation }) {
     imagePickerBtn: {
         width: '100%',
         height: 180,
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
         borderRadius: 15,
         overflow: 'hidden',
         marginBottom: 15,
         borderWidth: 1,
-        borderColor: '#334155',
+        borderColor: theme.borderLight,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -623,7 +623,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         alignItems: 'center',
     },
     imagePlaceholderText: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 12,
         marginTop: 8,
     },
@@ -633,7 +633,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         resizeMode: 'cover',
     },
     captionInput: {
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
         marginBottom: 20,
     },
     modalActions: {
@@ -642,7 +642,7 @@ export default function MatchDetailScreen({ route, navigation }) {
     },
     cancelBtn: {
         flex: 1,
-        borderColor: '#334155',
+        borderColor: theme.borderLight,
     },
     publishBtn: {
         flex: 1,
@@ -659,7 +659,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                     icon="party-popper"
                     onPress={() => setIsCelebrating(true)}
                     style={styles.celebrateBtn}
-                    buttonColor="#22c55e"
+                    buttonColor=theme.success
                     contentStyle={{ height: 50 }}
                 >
                     Celebrate this Win!

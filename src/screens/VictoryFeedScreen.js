@@ -197,7 +197,7 @@ export default function VictoryFeedScreen() {
                         <Avatar.Text
                             size={40}
                             label="MY"
-                            backgroundColor="#22c55e"
+                            backgroundColor=theme.success
                         />
                         <View style={{ marginLeft: 12 }}>
                             <Text style={styles.posterName}>My Victory</Text>
@@ -206,7 +206,7 @@ export default function VictoryFeedScreen() {
                     </View>
                     <IconButton
                         icon="trash-can-outline"
-                        iconColor="#ef4444"
+                        iconColor=theme.error
                         size={20}
                         onPress={() => handleDeletePost(item.id)}
                     />
@@ -218,7 +218,7 @@ export default function VictoryFeedScreen() {
                         <Image source={{ uri: item.imageUri }} style={styles.victoryImage} />
                     ) : (
                         <View style={styles.placeholderBanner}>
-                            <MaterialCommunityIcons name="trophy" size={50} color="#f59e0b" />
+                            <MaterialCommunityIcons name="trophy" size={50} color=theme.warning />
                             <Text style={styles.placeholderText}>VICTORY!</Text>
                         </View>
                     )}
@@ -237,7 +237,7 @@ export default function VictoryFeedScreen() {
 
                 {/* 4. FOOTER (Simple tag) */}
                 <View style={styles.footer}>
-                    <MaterialCommunityIcons name="cricket" size={16} color="#22c55e" />
+                    <MaterialCommunityIcons name="cricket" size={16} color=theme.success />
                     <Text style={styles.footerText}>Celebrated on CrickBoard</Text>
                 </View>
             </Surface>
@@ -266,8 +266,8 @@ export default function VictoryFeedScreen() {
                         multiline
                         numberOfLines={3}
                         style={styles.captionInput}
-                        outlineColor="#334155"
-                        activeOutlineColor="#22c55e"
+                        outlineColor=theme.borderLight
+                        activeOutlineColor=theme.success
                         textColor="#ffffff"
                     />
 
@@ -276,7 +276,7 @@ export default function VictoryFeedScreen() {
                             mode="outlined"
                             onPress={() => setIsAddingPost(false)}
                             style={styles.cancelBtn}
-                            textColor="#94a3b8"
+                            textColor=theme.textSecondary
                         >
                             Cancel
                         </Button>
@@ -284,7 +284,7 @@ export default function VictoryFeedScreen() {
                             mode="contained"
                             onPress={handleConfirmManualPublish}
                             style={styles.publishBtn}
-                            buttonColor="#22c55e"
+                            buttonColor=theme.success
                             loading={publishing}
                         >
                             Publish
@@ -298,7 +298,7 @@ export default function VictoryFeedScreen() {
     const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
     },
     header: {
         flexDirection: 'row',
@@ -316,7 +316,7 @@ export default function VictoryFeedScreen() {
         padding: 16,
     },
     postCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderRadius: 25,
         marginBottom: 20,
         overflow: 'hidden',
@@ -337,13 +337,13 @@ export default function VictoryFeedScreen() {
         fontWeight: 'bold',
     },
     postTime: {
-        color: '#64748b',
+        color: theme.textTertiary,
         fontSize: 11,
     },
     imageContainer: {
         width: '100%',
         height: 250,
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
     },
     victoryImage: {
         width: '100%',
@@ -354,14 +354,14 @@ export default function VictoryFeedScreen() {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderWidth: 1,
-        borderColor: '#334155',
+        borderColor: theme.borderLight,
         margin: 10,
         borderRadius: 20,
     },
     placeholderText: {
-        color: '#22c55e',
+        color: theme.success,
         fontSize: 32,
         fontWeight: '900',
         letterSpacing: 2,
@@ -382,18 +382,18 @@ export default function VictoryFeedScreen() {
         fontWeight: 'bold',
     },
     matchResult: {
-        color: '#22c55e',
+        color: theme.success,
         fontSize: 12,
         fontWeight: 'bold',
     },
     captionText: {
-        color: '#e2e8f0',
+        color: theme.text,
         fontSize: 14,
         lineHeight: 22,
         fontStyle: 'italic',
     },
     divider: {
-        backgroundColor: '#334155',
+        backgroundColor: theme.borderLight,
         marginHorizontal: 15,
     },
     footer: {
@@ -404,7 +404,7 @@ export default function VictoryFeedScreen() {
         gap: 8,
     },
     footerText: {
-        color: '#64748b',
+        color: theme.textTertiary,
         fontSize: 11,
         fontWeight: '600',
     },
@@ -421,7 +421,7 @@ export default function VictoryFeedScreen() {
         marginTop: 20,
     },
     emptySub: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 14,
         textAlign: 'center',
         marginTop: 10,
@@ -433,7 +433,7 @@ export default function VictoryFeedScreen() {
         justifyContent: 'center',
     },
     modalCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         borderRadius: 25,
         padding: 20,
     },
@@ -452,7 +452,7 @@ export default function VictoryFeedScreen() {
         resizeMode: 'cover',
     },
     captionInput: {
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
         marginBottom: 20,
     },
     modalActions: {
@@ -461,7 +461,7 @@ export default function VictoryFeedScreen() {
     },
     cancelBtn: {
         flex: 1,
-        borderColor: '#334155',
+        borderColor: theme.borderLight,
     },
     publishBtn: {
         flex: 1,
@@ -481,7 +481,7 @@ export default function VictoryFeedScreen() {
 
             {posts.length === 0 ? (
                 <View style={styles.emptyState}>
-                    <MaterialCommunityIcons name="trophy-variant-outline" size={80} color="#334155" />
+                    <MaterialCommunityIcons name="trophy-variant-outline" size={80} color=theme.borderLight />
                     <Text style={styles.emptyTitle}>Your Wall is Empty</Text>
                     <Text style={styles.emptySub}>Record a match and 'Celebrate' it to see your wins here!</Text>
                 </View>

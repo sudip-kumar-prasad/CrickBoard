@@ -98,7 +98,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
           <Avatar.Text
             size={100}
             label={player.name.substring(0, 1).toUpperCase()}
-            backgroundColor="#22c55e"
+            backgroundColor=theme.success
             labelStyle={{ fontWeight: 'bold' }}
           />
 
@@ -115,11 +115,11 @@ export default function PlayerDetailScreen({ navigation, route }) {
 
           <View style={styles.widgetRow}>
             {renderStatWidget('Matches', player.stats?.matches || 0, 'calendar', '#60a5fa')}
-            {renderStatWidget('Total Runs', player.stats?.runs || 0, 'baseball', '#22c55e')}
+            {renderStatWidget('Total Runs', player.stats?.runs || 0, 'baseball', theme.success)}
           </View>
 
           <View style={styles.widgetRow}>
-            {renderStatWidget('Wickets', player.stats?.wickets || 0, 'disc', '#f59e0b')}
+            {renderStatWidget('Wickets', player.stats?.wickets || 0, 'disc', theme.warning)}
             {renderStatWidget('Catches', player.stats?.catches || 0, 'hand-left', '#ec4899')}
           </View>
 
@@ -153,7 +153,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
           </Button>
 
           <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
-            <Ionicons name="trash-outline" size={20} color="#ef4444" />
+            <Ionicons name="trash-outline" size={20} color=theme.error />
             <Text style={styles.deleteText}>Remove Player</Text>
           </TouchableOpacity>
         </View>
@@ -167,10 +167,10 @@ export default function PlayerDetailScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
   },
   heroProfile: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     padding: 30,
     alignItems: 'center',
     borderBottomLeftRadius: 40,
@@ -195,16 +195,16 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   roleChip: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     height: 30,
   },
   roleText: {
-    color: '#22c55e',
+    color: theme.success,
     fontSize: 12,
     fontWeight: 'bold',
   },
   heroTeam: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 14,
   },
   statsSection: {
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   statWidget: {
     width: '48%',
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 20,
     padding: 15,
     flexDirection: 'row',
@@ -244,12 +244,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   widgetLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 10,
     textTransform: 'uppercase',
   },
   detailCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 20,
     padding: 20,
     flexDirection: 'row',
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   detailLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
     marginBottom: 5,
   },
@@ -272,14 +272,14 @@ const styles = StyleSheet.create({
   verticalDiv: {
     width: 1,
     height: '100%',
-    backgroundColor: '#334155',
+    backgroundColor: theme.borderLight,
   },
   actionSection: {
     padding: 20,
     gap: 15,
   },
   editBtn: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderRadius: 15,
     paddingVertical: 5,
   },
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   deleteText: {
-    color: '#ef4444',
+    color: theme.error,
     fontWeight: 'bold',
   }
 });

@@ -148,11 +148,11 @@ export default function RecordMatchScreen({ navigation }) {
     <Surface key={perf.playerId} style={styles.perfCard} elevation={2}>
       <View style={styles.perfHeader}>
         <View style={styles.avatarMini}>
-          <Avatar.Text size={30} label={perf.playerName.substring(0, 1).toUpperCase()} backgroundColor="#0f172a" labelStyle={{ fontSize: 12, color: '#22c55e' }} />
+          <Avatar.Text size={30} label={perf.playerName.substring(0, 1).toUpperCase()} backgroundColor=theme.background labelStyle={{ fontSize: 12, color: theme.success }} />
           <Text style={styles.perfPlayerName}>{perf.playerName}</Text>
         </View>
         <TouchableOpacity onPress={() => removePlayerFromMatch(perf.playerId)}>
-          <Ionicons name="trash-outline" size={18} color="#ef4444" />
+          <Ionicons name="trash-outline" size={18} color=theme.error />
         </TouchableOpacity>
       </View>
 
@@ -182,7 +182,7 @@ export default function RecordMatchScreen({ navigation }) {
         keyboardType="numeric"
         style={styles.miniStatInput}
         textColor="#ffffff"
-        activeUnderlineColor="#22c55e"
+        activeUnderlineColor=theme.success
       />
     </View>
   );
@@ -190,7 +190,7 @@ export default function RecordMatchScreen({ navigation }) {
   const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
   },
   scrollContent: {
     paddingBottom: 40,
@@ -200,7 +200,7 @@ export default function RecordMatchScreen({ navigation }) {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     marginBottom: 20,
@@ -211,12 +211,12 @@ export default function RecordMatchScreen({ navigation }) {
     fontWeight: 'bold',
   },
   headerAction: {
-    color: '#22c55e',
+    color: theme.success,
     fontWeight: 'bold',
     fontSize: 16,
   },
   sectionCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     marginHorizontal: 16,
     borderRadius: 20,
     padding: 20,
@@ -240,11 +240,11 @@ export default function RecordMatchScreen({ navigation }) {
   },
   mainInput: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     height: 50,
   },
   miniInput: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     height: 40,
   },
   metaRow: {
@@ -252,14 +252,14 @@ export default function RecordMatchScreen({ navigation }) {
     marginTop: 10,
   },
   label: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
     marginBottom: 8,
     fontWeight: 'bold',
   },
   resultPicker: {
     flexDirection: 'row',
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     borderRadius: 10,
     padding: 4,
   },
@@ -270,10 +270,10 @@ export default function RecordMatchScreen({ navigation }) {
     borderRadius: 8,
   },
   resBtnActive: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
   },
   resText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   resTextActive: {
@@ -308,14 +308,14 @@ export default function RecordMatchScreen({ navigation }) {
     paddingHorizontal: 40,
   },
   emptyNote: {
-    color: '#64748b',
+    color: theme.textTertiary,
     fontSize: 13,
     textAlign: 'center',
     marginTop: 15,
     lineHeight: 18,
   },
   perfCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     marginHorizontal: 16,
     borderRadius: 20,
     padding: 15,
@@ -348,13 +348,13 @@ export default function RecordMatchScreen({ navigation }) {
     width: '31%',
   },
   statLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 9,
     textTransform: 'uppercase',
     marginBottom: 4,
   },
   miniStatInput: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     height: 35,
     fontSize: 14,
     textAlign: 'center',
@@ -366,7 +366,7 @@ export default function RecordMatchScreen({ navigation }) {
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     height: '70%',
@@ -377,7 +377,7 @@ export default function RecordMatchScreen({ navigation }) {
     alignItems: 'center',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    borderBottomColor: theme.borderLight,
   },
   modalTitle: {
     color: '#ffffff',
@@ -389,7 +389,7 @@ export default function RecordMatchScreen({ navigation }) {
     alignItems: 'center',
     paddingVertical: 15,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#334155',
+    borderBottomColor: theme.borderLight,
   },
   pickName: {
     color: '#ffffff',
@@ -397,11 +397,11 @@ export default function RecordMatchScreen({ navigation }) {
     fontWeight: 'bold',
   },
   pickRole: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   emptyPickerNote: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     textAlign: 'center',
     marginTop: 50,
   },
@@ -412,7 +412,7 @@ export default function RecordMatchScreen({ navigation }) {
     right: 20,
   },
   mainSaveBtn: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderRadius: 18,
     elevation: 10,
   }
@@ -440,7 +440,7 @@ export default function RecordMatchScreen({ navigation }) {
           {/* 1. MATCH DETAILS SECTION */}
           <Surface style={styles.sectionCard} elevation={1}>
             <View style={styles.sectionHeader}>
-              <Ionicons name="information-circle-outline" size={20} color="#22c55e" />
+              <Ionicons name="information-circle-outline" size={20} color=theme.success />
               <Text style={styles.sectionTitle}>Match Details</Text>
             </View>
 
@@ -451,8 +451,8 @@ export default function RecordMatchScreen({ navigation }) {
                 value={matchDetails.opponent}
                 onChangeText={(val) => setMatchDetails({ ...matchDetails, opponent: val })}
                 style={styles.mainInput}
-                outlineColor="#334155"
-                activeOutlineColor="#22c55e"
+                outlineColor=theme.borderLight
+                activeOutlineColor=theme.success
                 textColor="#ffffff"
               />
               <PaperTextInput
@@ -461,8 +461,8 @@ export default function RecordMatchScreen({ navigation }) {
                 value={matchDetails.venue}
                 onChangeText={(val) => setMatchDetails({ ...matchDetails, venue: val })}
                 style={styles.mainInput}
-                outlineColor="#334155"
-                activeOutlineColor="#22c55e"
+                outlineColor=theme.borderLight
+                activeOutlineColor=theme.success
                 textColor="#ffffff"
               />
             </View>
@@ -489,7 +489,7 @@ export default function RecordMatchScreen({ navigation }) {
                   value={matchDetails.date}
                   onChangeText={(val) => setMatchDetails({ ...matchDetails, date: val })}
                   style={[styles.mainInput, { height: 40 }]}
-                  outlineColor="#334155"
+                  outlineColor=theme.borderLight
                   activeOutlineColor="#60a5fa"
                   textColor="#ffffff"
                   dense
@@ -507,8 +507,8 @@ export default function RecordMatchScreen({ navigation }) {
                   onChangeText={(val) => setMatchDetails({ ...matchDetails, wides: val })}
                   keyboardType="numeric"
                   style={styles.miniInput}
-                  outlineColor="#334155"
-                  activeOutlineColor="#22c55e"
+                  outlineColor=theme.borderLight
+                  activeOutlineColor=theme.success
                   textColor="#ffffff"
                   dense
                 />
@@ -521,8 +521,8 @@ export default function RecordMatchScreen({ navigation }) {
                   onChangeText={(val) => setMatchDetails({ ...matchDetails, noBalls: val })}
                   keyboardType="numeric"
                   style={styles.miniInput}
-                  outlineColor="#334155"
-                  activeOutlineColor="#22c55e"
+                  outlineColor=theme.borderLight
+                  activeOutlineColor=theme.success
                   textColor="#ffffff"
                   dense
                 />
@@ -541,7 +541,7 @@ export default function RecordMatchScreen({ navigation }) {
 
           {performances.length === 0 ? (
             <View style={styles.emptyLineup}>
-              <Ionicons name="people-outline" size={50} color="#1e293b" />
+              <Ionicons name="people-outline" size={50} color=theme.border />
               <Text style={styles.emptyNote}>Add players to start recording their match performance</Text>
             </View>
           ) : (
@@ -567,7 +567,7 @@ export default function RecordMatchScreen({ navigation }) {
               keyExtractor={item => item.id}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.playerPickItem} onPress={() => addPlayerToMatch(item)}>
-                  <Avatar.Text size={35} label={item.name.substring(0, 1).toUpperCase()} backgroundColor="#1e293b" labelStyle={{ color: '#22c55e' }} />
+                  <Avatar.Text size={35} label={item.name.substring(0, 1).toUpperCase()} backgroundColor=theme.border labelStyle={{ color: theme.success }} />
                   <View style={{ marginLeft: 15 }}>
                     <Text style={styles.pickName}>{item.name}</Text>
                     <Text style={styles.pickRole}>{item.role}</Text>

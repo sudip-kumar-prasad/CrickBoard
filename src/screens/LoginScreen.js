@@ -83,7 +83,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
   const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a', // Deep Navy
+    backgroundColor: theme.background, // Deep Navy
   },
   scrollContent: {
     flexGrow: 1,
@@ -98,13 +98,13 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
   logoBadge: {
     width: 120,
     height: 120,
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 60,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#22c55e',
+    borderColor: theme.success,
     elevation: 10,
   },
   brandTitle: {
@@ -115,12 +115,12 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
   },
   brandTagline: {
     fontSize: 14,
-    color: '#22c55e',
+    color: theme.success,
     fontWeight: '600',
     marginTop: 5,
   },
   authCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     marginHorizontal: 24,
     borderRadius: 30,
     padding: 30,
@@ -134,7 +134,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
   },
   formSubtitle: {
     fontSize: 14,
-    color: '#94a3b8',
+    color: theme.textSecondary,
     textAlign: 'center',
     marginTop: 8,
     marginBottom: 25,
@@ -143,11 +143,11 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
     gap: 15,
   },
   input: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
   },
   submitBtn: {
     marginTop: 10,
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderRadius: 15,
   },
   submitBtnText: {
@@ -157,17 +157,17 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
   },
   divider: {
     marginVertical: 25,
-    backgroundColor: '#334155',
+    backgroundColor: theme.borderLight,
   },
   toggleBtn: {
     alignItems: 'center',
   },
   toggleText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 14,
   },
   toggleLink: {
-    color: '#22c55e',
+    color: theme.success,
     fontWeight: 'bold',
   },
   footerInfo: {
@@ -175,11 +175,11 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
     alignItems: 'center',
   },
   footerText: {
-    color: '#475569',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   versionText: {
-    color: '#334155',
+    color: theme.borderLight,
     fontSize: 10,
     marginTop: 5,
   }
@@ -200,7 +200,7 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
           {/* 1. HERO BRANDING SECTION */}
           <View style={styles.heroSection}>
             <View style={styles.logoBadge}>
-              <MaterialCommunityIcons name="cricket" size={80} color="#22c55e" />
+              <MaterialCommunityIcons name="cricket" size={80} color=theme.success />
             </View>
             <Text style={styles.brandTitle}>CRICKBOARD</Text>
             <Text style={styles.brandTagline}>Your Digital Team Manager</Text>
@@ -223,10 +223,10 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                   value={name}
                   onChangeText={setName}
                   style={styles.input}
-                  outlineColor="#334155"
-                  activeOutlineColor="#22c55e"
+                  outlineColor=theme.borderLight
+                  activeOutlineColor=theme.success
                   textColor="#ffffff"
-                  left={<PaperTextInput.Icon icon="account" color="#94a3b8" />}
+                  left={<PaperTextInput.Icon icon="account" color=theme.textSecondary />}
                 />
               )}
 
@@ -238,10 +238,10 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 style={styles.input}
-                outlineColor="#334155"
-                activeOutlineColor="#22c55e"
+                outlineColor=theme.borderLight
+                activeOutlineColor=theme.success
                 textColor="#ffffff"
-                left={<PaperTextInput.Icon icon="email" color="#94a3b8" />}
+                left={<PaperTextInput.Icon icon="email" color=theme.textSecondary />}
               />
 
               <PaperTextInput
@@ -251,14 +251,14 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 style={styles.input}
-                outlineColor="#334155"
-                activeOutlineColor="#22c55e"
+                outlineColor=theme.borderLight
+                activeOutlineColor=theme.success
                 textColor="#ffffff"
-                left={<PaperTextInput.Icon icon="lock" color="#94a3b8" />}
+                left={<PaperTextInput.Icon icon="lock" color=theme.textSecondary />}
                 right={
                   <PaperTextInput.Icon
                     icon={showPassword ? "eye-off" : "eye"}
-                    color="#64748b"
+                    color=theme.textTertiary
                     onPress={() => setShowPassword(!showPassword)}
                   />
                 }

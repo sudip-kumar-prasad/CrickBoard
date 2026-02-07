@@ -189,7 +189,7 @@ export default function InsightsScreen({ navigation }) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.emptyContainer}>
-          <Ionicons name="bar-chart-outline" size={80} color="#1e293b" />
+          <Ionicons name="bar-chart-outline" size={80} color=theme.border />
           <Text style={styles.emptyText}>Record matches to see data insights</Text>
           <Button mode="contained" onPress={() => navigation.navigate('RecordMatch')} style={styles.emptyBtn}>
             Record Match
@@ -220,9 +220,9 @@ export default function InsightsScreen({ navigation }) {
               height={180}
               yAxisLabel=""
               chartConfig={{
-                backgroundColor: '#1e293b',
-                backgroundGradientFrom: '#1e293b',
-                backgroundGradientTo: '#1e293b',
+                backgroundColor: theme.border,
+                backgroundGradientFrom: theme.border,
+                backgroundGradientTo: theme.border,
                 decimalPlaces: 0,
                 color: (opacity = 1) => `rgba(34, 197, 94, ${opacity})`, // Green
                 labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
@@ -248,9 +248,9 @@ export default function InsightsScreen({ navigation }) {
               width={Dimensions.get('window').width - 64}
               height={180}
               chartConfig={{
-                backgroundColor: '#1e293b',
-                backgroundGradientFrom: '#1e293b',
-                backgroundGradientTo: '#1e293b',
+                backgroundColor: theme.border,
+                backgroundGradientFrom: theme.border,
+                backgroundGradientTo: theme.border,
                 decimalPlaces: 1,
                 color: (opacity = 1) => `rgba(96, 165, 250, ${opacity})`, // Blue
                 labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
@@ -269,7 +269,7 @@ export default function InsightsScreen({ navigation }) {
           <Card.Title
             title="Extras Discipline"
             titleStyle={styles.cardTitle}
-            left={(props) => <Ionicons name="shield-checkmark-outline" size={20} color="#f59e0b" />}
+            left={(props) => <Ionicons name="shield-checkmark-outline" size={20} color=theme.warning />}
           />
           <Card.Content style={styles.progressRow}>
             <ProgressChart
@@ -279,9 +279,9 @@ export default function InsightsScreen({ navigation }) {
               strokeWidth={12}
               radius={32}
               chartConfig={{
-                backgroundColor: '#1e293b',
-                backgroundGradientFrom: '#1e293b',
-                backgroundGradientTo: '#1e293b',
+                backgroundColor: theme.border,
+                backgroundGradientFrom: theme.border,
+                backgroundGradientTo: theme.border,
                 color: (opacity = 1) => `rgba(245, 158, 11, ${opacity})`, // Orange
                 labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
               }}
@@ -319,7 +319,7 @@ export default function InsightsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a', // Deep Navy
+    backgroundColor: theme.background, // Deep Navy
   },
   scrollContent: {
     padding: 16,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   viewAll: {
-    color: '#22c55e',
+    color: theme.success,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     width: '48%',
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -372,19 +372,19 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   heroStat: {
-    color: '#22c55e',
+    color: theme.success,
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 2,
   },
   heroLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 10,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   chartCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 20,
     marginBottom: 10,
   },
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   chartNote: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 10,
     fontStyle: 'italic',
     marginTop: 5,
@@ -416,18 +416,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   progressValue: {
-    color: '#f59e0b',
+    color: theme.warning,
     fontSize: 24,
     fontWeight: 'bold',
   },
   progressSub: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 10,
   },
   rankStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 15,
     padding: 12,
     marginBottom: 10,
@@ -436,13 +436,13 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     borderRadius: 18,
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   rankNum: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 14,
     fontWeight: 'bold',
   },
@@ -455,19 +455,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   rankRole: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 11,
   },
   rankValueBox: {
     alignItems: 'flex-end',
   },
   rankValue: {
-    color: '#22c55e',
+    color: theme.success,
     fontSize: 16,
     fontWeight: 'bold',
   },
   rankLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 9,
     textTransform: 'uppercase',
   },
@@ -478,14 +478,14 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   emptyText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     marginTop: 20,
     fontSize: 16,
     textAlign: 'center',
   },
   emptyBtn: {
     marginTop: 25,
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderRadius: 12,
     paddingHorizontal: 10,
   }

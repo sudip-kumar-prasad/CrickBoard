@@ -102,7 +102,7 @@ export default function PlayersScreen({ navigation }) {
         <Surface style={styles.playerStrip} elevation={1}>
           {/* Avatar / Icon */}
           <View style={styles.profileCircle}>
-            <Avatar.Text size={45} label={item.name.substring(0, 1).toUpperCase()} backgroundColor="#0f172a" labelStyle={{ color: '#22c55e' }} />
+            <Avatar.Text size={45} label={item.name.substring(0, 1).toUpperCase()} backgroundColor=theme.background labelStyle={{ color: theme.success }} />
           </View>
 
           {/* Info */}
@@ -126,7 +126,7 @@ export default function PlayersScreen({ navigation }) {
             </View>
           </View>
 
-          <Ionicons name="chevron-forward" size={18} color="#334155" style={{ marginLeft: 10 }} />
+          <Ionicons name="chevron-forward" size={18} color=theme.borderLight style={{ marginLeft: 10 }} />
         </Surface>
       </TouchableOpacity>
     );
@@ -157,7 +157,7 @@ export default function PlayersScreen({ navigation }) {
           value={searchQuery}
           style={styles.searchBar}
           inputStyle={styles.searchBarInput}
-          iconColor="#22c55e"
+          iconColor=theme.success
         />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.roleScroll}>
           {ROLES.map(role => (
@@ -177,7 +177,7 @@ export default function PlayersScreen({ navigation }) {
       {/* 3. PLAYER LIST */}
       {displayPlayers.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="people-outline" size={60} color="#1e293b" />
+          <Ionicons name="people-outline" size={60} color=theme.border />
           <Text style={styles.emptyText}>No players found in squad</Text>
           <Button mode="contained" onPress={() => navigation.navigate('AddPlayer')} style={styles.emptyMainBtn}>
             Add Player
@@ -199,7 +199,7 @@ export default function PlayersScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a', // Deep Navy
+    backgroundColor: theme.background, // Deep Navy
   },
   header: {
     flexDirection: 'row',
@@ -214,12 +214,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerSub: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   addBtn: {
     flexDirection: 'row',
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   searchBar: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 15,
     elevation: 0,
     height: 45,
@@ -250,15 +250,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   roleChip: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     marginRight: 8,
     borderRadius: 12,
   },
   roleChipActive: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
   },
   roleText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   roleTextActive: {
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   playerStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 18,
     padding: 12,
     marginBottom: 12,
@@ -300,14 +300,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   teamTag: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 11,
   },
   stripStats: {
     flexDirection: 'row',
     gap: 12,
     borderLeftWidth: 1,
-    borderLeftColor: '#334155',
+    borderLeftColor: theme.borderLight,
     paddingLeft: 12,
   },
   miniStat: {
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   miniLab: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 9,
     textTransform: 'uppercase',
   },
@@ -330,12 +330,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   emptyText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     marginTop: 15,
     fontSize: 14,
   },
   emptyMainBtn: {
     marginTop: 20,
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
   }
 });

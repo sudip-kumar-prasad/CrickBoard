@@ -107,7 +107,7 @@ export default function AddPlayerScreen({ navigation }) {
         keyboardType="numeric"
         style={styles.miniInput}
         textColor="#ffffff"
-        activeUnderlineColor="#22c55e"
+        activeUnderlineColor=theme.success
       />
     </View>
   );
@@ -132,7 +132,7 @@ export default function AddPlayerScreen({ navigation }) {
           {/* 2. BASIC INFO SECTION */}
           <Surface style={styles.sectionCard} elevation={2}>
             <View style={styles.sectionTitleRow}>
-              <Ionicons name="person-circle-outline" size={20} color="#22c55e" />
+              <Ionicons name="person-circle-outline" size={20} color=theme.success />
               <Text style={styles.sectionTitle}>Basic Information</Text>
             </View>
 
@@ -142,8 +142,8 @@ export default function AddPlayerScreen({ navigation }) {
               value={name}
               onChangeText={setName}
               style={styles.mainInput}
-              outlineColor="#334155"
-              activeOutlineColor="#22c55e"
+              outlineColor=theme.borderLight
+              activeOutlineColor=theme.success
               textColor="#ffffff"
             />
 
@@ -153,8 +153,8 @@ export default function AddPlayerScreen({ navigation }) {
               value={team}
               onChangeText={setTeam}
               style={styles.mainInput}
-              outlineColor="#334155"
-              activeOutlineColor="#22c55e"
+              outlineColor=theme.borderLight
+              activeOutlineColor=theme.success
               textColor="#ffffff"
               placeholder="Optional"
             />
@@ -187,7 +187,7 @@ export default function AddPlayerScreen({ navigation }) {
               <Ionicons
                 name={showStats ? "chevron-up" : "chevron-down"}
                 size={20}
-                color="#94a3b8"
+                color=theme.textSecondary
                 style={{ marginLeft: 'auto' }}
               />
             </TouchableOpacity>
@@ -240,7 +240,7 @@ export default function AddPlayerScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a', // Deep Navy
+    backgroundColor: theme.background, // Deep Navy
   },
   scrollContent: {
     paddingBottom: 40,
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderBottomLeftRadius: 25,
     borderBottomRightRadius: 25,
     marginBottom: 20,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   sectionCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     marginHorizontal: 16,
     marginBottom: 16,
     borderRadius: 20,
@@ -279,11 +279,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   mainInput: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     marginBottom: 15,
   },
   label: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 14,
     fontWeight: '600',
     marginTop: 5,
@@ -293,15 +293,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   roleChip: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     marginRight: 8,
     borderRadius: 12,
   },
   roleChipActive: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
   },
   roleText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   roleTextActive: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   collapsedNote: {
-    color: '#64748b',
+    color: theme.textTertiary,
     fontSize: 12,
     textAlign: 'center',
     fontStyle: 'italic',
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   statsHint: {
-    color: '#64748b',
+    color: theme.textTertiary,
     fontSize: 11,
     marginBottom: 15,
     borderLeftWidth: 2,
@@ -334,13 +334,13 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   statLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 11,
     marginBottom: 5,
     textTransform: 'uppercase',
   },
   miniInput: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     height: 40,
     fontSize: 16,
     fontWeight: 'bold',
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   saveBtn: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderRadius: 15,
   }
 });

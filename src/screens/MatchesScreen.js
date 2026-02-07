@@ -100,13 +100,13 @@ export default function MatchesScreen({ navigation }) {
       </View>
       <View style={styles.statDivider} />
       <View style={styles.statMainItem}>
-        <Text style={[styles.statLabel, { color: '#22c55e' }]}>Wins</Text>
-        <Text style={[styles.statValue, { color: '#22c55e' }]}>{summary.wins}</Text>
+        <Text style={[styles.statLabel, { color: theme.success }]}>Wins</Text>
+        <Text style={[styles.statValue, { color: theme.success }]}>{summary.wins}</Text>
       </View>
       <View style={styles.statDivider} />
       <View style={styles.statMainItem}>
-        <Text style={[styles.statLabel, { color: '#ef4444' }]}>Losses</Text>
-        <Text style={[styles.statValue, { color: '#ef4444' }]}>{summary.losses}</Text>
+        <Text style={[styles.statLabel, { color: theme.error }]}>Losses</Text>
+        <Text style={[styles.statValue, { color: theme.error }]}>{summary.losses}</Text>
       </View>
     </Surface>
   );
@@ -136,7 +136,7 @@ export default function MatchesScreen({ navigation }) {
           <View style={styles.matchInfo}>
             <Text style={styles.opponentText} numberOfLines={1}>vs {item.opponent || 'Friendly Fixture'}</Text>
             <View style={styles.venueRow}>
-              <Ionicons name="location" size={12} color="#94a3b8" />
+              <Ionicons name="location" size={12} color=theme.textSecondary />
               <Text style={styles.venueText} numberOfLines={1}>{item.venue || 'Home Ground'}</Text>
             </View>
 
@@ -150,13 +150,13 @@ export default function MatchesScreen({ navigation }) {
 
           {/* OutCome Badge */}
           <View style={[styles.outcomeBadge, { backgroundColor: isWin ? '#22c55e20' : '#ef444420' }]}>
-            <Text style={[styles.outcomeText, { color: isWin ? '#22c55e' : '#ef4444' }]}>
+            <Text style={[styles.outcomeText, { color: isWin ? theme.success : theme.error }]}>
               {(item.result || 'Played').toUpperCase()}
             </Text>
             <Ionicons
               name={isWin ? "trending-up-outline" : "trending-down-outline"}
               size={14}
-              color={isWin ? "#22c55e" : "#ef4444"}
+              color={isWin ? theme.success : theme.error}
               style={{ marginTop: 2 }}
             />
           </View>
@@ -190,7 +190,7 @@ export default function MatchesScreen({ navigation }) {
           style={styles.addButton}
           onPress={() => navigation.navigate('RecordMatch')}
         >
-          <Ionicons name="add-circle" size={32} color="#22c55e" />
+          <Ionicons name="add-circle" size={32} color=theme.success />
         </TouchableOpacity>
       </View>
 
@@ -198,7 +198,7 @@ export default function MatchesScreen({ navigation }) {
       {filteredMatches.length === 0 ? (
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIconCircle}>
-            <Ionicons name="trophy-outline" size={60} color="#334155" />
+            <Ionicons name="trophy-outline" size={60} color=theme.borderLight />
           </View>
           <Text style={styles.emptyTitle}>No matches found</Text>
           <Text style={styles.emptySub}>Start recording your team's matches to see them here.</Text>
@@ -226,7 +226,7 @@ export default function MatchesScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a', // Deep Navy
+    backgroundColor: theme.background, // Deep Navy
   },
   statsHeader: {
     flexDirection: 'row',
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statLabel: {
-    color: '#64748b',
+    color: theme.textTertiary,
     fontSize: 10,
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -250,12 +250,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#0f172a',
+    color: theme.background,
   },
   statDivider: {
     width: 1,
     height: 35,
-    backgroundColor: '#e2e8f0',
+    backgroundColor: theme.text,
   },
   filterSection: {
     flexDirection: 'row',
@@ -267,15 +267,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filterChip: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     marginRight: 8,
     borderRadius: 12,
   },
   filterChipActive: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
   },
   filterChipText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   matchStrip: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 18,
     padding: 12,
     flexDirection: 'row',
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: 12,
     borderRightWidth: 1,
-    borderRightColor: '#334155',
+    borderRightColor: theme.borderLight,
   },
   dateDay: {
     color: '#ffffff',
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   dateMonth: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 10,
     fontWeight: '600',
   },
@@ -330,12 +330,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   venueText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   perfSnippet: {
     marginTop: 6,
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -380,13 +380,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   emptySub: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 25,
   },
   emptyBtn: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderRadius: 12,
   }
 });

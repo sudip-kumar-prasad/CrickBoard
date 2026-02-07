@@ -209,23 +209,23 @@ export default function ProfileScreen({ navigation, onLogout }) {
     const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
     },
     loadingText: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 16,
     },
     scrollContent: {
         paddingBottom: 40,
     },
     heroSection: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         marginHorizontal: 16,
         marginTop: 20,
         borderRadius: 30,
@@ -245,28 +245,28 @@ export default function ProfileScreen({ navigation, onLogout }) {
         position: 'absolute',
         top: 0,
         right: -5,
-        backgroundColor: '#22c55e',
+        backgroundColor: theme.success,
         width: 36,
         height: 36,
         borderRadius: 18,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
-        borderColor: '#1e293b',
+        borderColor: theme.border,
         zIndex: 1,
     },
     editBadge: {
         position: 'absolute',
         bottom: 0,
         right: -5,
-        backgroundColor: '#3b82f6',
+        backgroundColor: theme.primary,
         width: 36,
         height: 36,
         borderRadius: 18,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 3,
-        borderColor: '#1e293b',
+        borderColor: theme.border,
         zIndex: 1,
     },
     profileInfo: {
@@ -279,16 +279,16 @@ export default function ProfileScreen({ navigation, onLogout }) {
     },
     userEmail: {
         fontSize: 14,
-        color: '#94a3b8',
+        color: theme.textSecondary,
         marginTop: 5,
     },
     statusChip: {
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
         marginTop: 15,
         height: 32,
     },
     statusText: {
-        color: '#22c55e',
+        color: theme.success,
         fontSize: 11,
         fontWeight: 'bold',
     },
@@ -302,7 +302,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
     },
     miniSaveBtn: {
         marginTop: 15,
-        backgroundColor: '#22c55e',
+        backgroundColor: theme.success,
         borderRadius: 10,
     },
     sectionHeader: {
@@ -311,14 +311,14 @@ export default function ProfileScreen({ navigation, onLogout }) {
         marginBottom: 10,
     },
     sectionTitle: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 16,
         fontWeight: 'bold',
         textTransform: 'uppercase',
         letterSpacing: 1.5,
     },
     infoCard: {
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         marginHorizontal: 16,
         borderRadius: 20,
         paddingVertical: 10,
@@ -336,7 +336,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
         gap: 12,
     },
     rowLabelText: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 14,
     },
     rowValueText: {
@@ -345,14 +345,14 @@ export default function ProfileScreen({ navigation, onLogout }) {
         fontWeight: '600',
     },
     divider: {
-        backgroundColor: '#334155',
+        backgroundColor: theme.borderLight,
         marginHorizontal: 20,
     },
     aboutBox: {
         padding: 20,
     },
     aboutText: {
-        color: '#94a3b8',
+        color: theme.textSecondary,
         fontSize: 13,
         lineHeight: 20,
     },
@@ -360,7 +360,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
         marginHorizontal: 16,
         marginTop: 40,
         paddingVertical: 18,
@@ -370,7 +370,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
         borderColor: 'rgba(239, 68, 68, 0.2)',
     },
     logoutText: {
-        color: '#ef4444',
+        color: theme.error,
         fontSize: 16,
         fontWeight: 'bold',
     },
@@ -395,7 +395,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                             <Avatar.Text
                                 size={110}
                                 label={getInitials(user.name)}
-                                backgroundColor="#22c55e"
+                                backgroundColor=theme.success
                                 labelStyle={styles.avatarLabel}
                             />
                         )}
@@ -424,7 +424,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
                                 onChangeText={setName}
                                 style={styles.editInput}
                                 textColor="#ffffff"
-                                activeUnderlineColor="#22c55e"
+                                activeUnderlineColor=theme.success
                             />
                             <Button
                                 mode="contained"
@@ -478,7 +478,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
 
                 {/* 4. LOGOUT BUTTON */}
                 <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-                    <Ionicons name="log-out-outline" size={24} color="#ef4444" />
+                    <Ionicons name="log-out-outline" size={24} color=theme.error />
                     <Text style={styles.logoutText}>Logout from Account</Text>
                 </TouchableOpacity>
 
@@ -492,7 +492,7 @@ export default function ProfileScreen({ navigation, onLogout }) {
 const renderInfoRow = (label, value, icon) => (
     <View style={styles.infoRow}>
         <View style={styles.infoLabelLeft}>
-            <Ionicons name={icon} size={20} color="#22c55e" />
+            <Ionicons name={icon} size={20} color=theme.success />
             <Text style={styles.rowLabelText}>{label}</Text>
         </View>
         <Text style={styles.rowValueText}>{value}</Text>

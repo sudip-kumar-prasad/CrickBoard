@@ -114,7 +114,7 @@ export default function EditPlayerScreen({ navigation, route }) {
         keyboardType="numeric"
         style={styles.miniInput}
         textColor="#ffffff"
-        activeUnderlineColor="#22c55e"
+        activeUnderlineColor=theme.success
       />
     </View>
   );
@@ -130,7 +130,7 @@ export default function EditPlayerScreen({ navigation, route }) {
           {/* HEADER */}
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="close-circle" size={28} color="#94a3b8" />
+              <Ionicons name="close-circle" size={28} color=theme.textSecondary />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Edit Profile</Text>
             <View style={{ width: 28 }} />
@@ -139,7 +139,7 @@ export default function EditPlayerScreen({ navigation, route }) {
           {/* BASIC INFO */}
           <Surface style={styles.sectionCard} elevation={2}>
             <View style={styles.sectionTitleRow}>
-              <Ionicons name="create-outline" size={20} color="#22c55e" />
+              <Ionicons name="create-outline" size={20} color=theme.success />
               <Text style={styles.sectionTitle}>Profile Details</Text>
             </View>
 
@@ -149,8 +149,8 @@ export default function EditPlayerScreen({ navigation, route }) {
               value={name}
               onChangeText={setName}
               style={styles.mainInput}
-              outlineColor="#334155"
-              activeOutlineColor="#22c55e"
+              outlineColor=theme.borderLight
+              activeOutlineColor=theme.success
               textColor="#ffffff"
             />
 
@@ -160,8 +160,8 @@ export default function EditPlayerScreen({ navigation, route }) {
               value={team}
               onChangeText={setTeam}
               style={styles.mainInput}
-              outlineColor="#334155"
-              activeOutlineColor="#22c55e"
+              outlineColor=theme.borderLight
+              activeOutlineColor=theme.success
               textColor="#ffffff"
             />
 
@@ -233,7 +233,7 @@ export default function EditPlayerScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
   },
   scrollContent: {
     paddingBottom: 40,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   sectionCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     marginHorizontal: 16,
     marginBottom: 16,
     borderRadius: 20,
@@ -269,16 +269,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   resetText: {
-    color: '#ef4444',
+    color: theme.error,
     fontSize: 12,
     fontWeight: 'bold',
   },
   mainInput: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     marginBottom: 15,
   },
   label: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 14,
     fontWeight: '600',
     marginTop: 5,
@@ -288,15 +288,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   roleChip: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     marginRight: 8,
     borderRadius: 12,
   },
   roleChipActive: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
   },
   roleText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   roleTextActive: {
@@ -315,13 +315,13 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   statLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 11,
     marginBottom: 5,
     textTransform: 'uppercase',
   },
   miniInput: {
-    backgroundColor: '#0f172a',
+    backgroundColor: theme.background,
     height: 40,
     fontSize: 16,
     fontWeight: 'bold',
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   saveBtn: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderRadius: 15,
   }
 });

@@ -158,7 +158,7 @@ export default function HomeScreen({ navigation }) {
   const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a', // Deep Navy theme
+    backgroundColor: theme.background, // Deep Navy theme
   },
   heroBackground: {
     width: '100%',
@@ -182,7 +182,7 @@ export default function HomeScreen({ navigation }) {
     marginTop: Platform.OS === 'android' ? 30 : 10,
   },
   greetingText: {
-    color: '#e2e8f0',
+    color: theme.text,
     fontSize: 16,
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
   },
@@ -192,7 +192,7 @@ export default function HomeScreen({ navigation }) {
     fontWeight: 'bold',
   },
   avatarBorder: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     borderWidth: 2,
     borderColor: '#ffffff',
   },
@@ -216,21 +216,21 @@ export default function HomeScreen({ navigation }) {
     alignItems: 'center',
   },
   summaryLabel: {
-    color: '#64748b',
+    color: theme.textTertiary,
     fontSize: 12,
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 5,
   },
   summaryValue: {
-    color: '#1e293b',
+    color: theme.border,
     fontSize: 24,
     fontWeight: 'bold',
   },
   summarySeparator: {
     width: 1,
     height: 40,
-    backgroundColor: '#e2e8f0',
+    backgroundColor: theme.text,
   },
   statsSection: {
     marginTop: 70, // Adjust for floating card
@@ -243,7 +243,7 @@ export default function HomeScreen({ navigation }) {
     marginBottom: 15,
   },
   sectionTitleAction: {
-    color: '#1e293b',
+    color: theme.border,
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -255,7 +255,7 @@ export default function HomeScreen({ navigation }) {
   },
   statBox: {
     width: '48%',
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 16,
     padding: 15,
     marginBottom: 15,
@@ -275,7 +275,7 @@ export default function HomeScreen({ navigation }) {
     fontWeight: 'bold',
   },
   statBoxLabel: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 11,
     textTransform: 'uppercase',
   },
@@ -306,7 +306,7 @@ export default function HomeScreen({ navigation }) {
     shadowRadius: 5,
   },
   actionLabel: {
-    color: '#1e293b',
+    color: theme.border,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -320,11 +320,11 @@ export default function HomeScreen({ navigation }) {
     marginBottom: 15,
   },
   seeAllLink: {
-    color: '#22c55e',
+    color: theme.success,
     fontWeight: '600',
   },
   matchStrip: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 16,
     padding: 15,
     flexDirection: 'row',
@@ -335,7 +335,7 @@ export default function HomeScreen({ navigation }) {
     alignItems: 'center',
     paddingRight: 15,
     borderRightWidth: 1,
-    borderRightColor: '#334155',
+    borderRightColor: theme.borderLight,
   },
   matchDateDay: {
     color: '#ffffff',
@@ -343,7 +343,7 @@ export default function HomeScreen({ navigation }) {
     fontWeight: 'bold',
   },
   matchDateMonth: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 10,
   },
   matchInfoMain: {
@@ -356,7 +356,7 @@ export default function HomeScreen({ navigation }) {
     fontWeight: 'bold',
   },
   matchVenueText: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     fontSize: 12,
   },
   resultBadge: {
@@ -369,18 +369,18 @@ export default function HomeScreen({ navigation }) {
     fontWeight: 'bold',
   },
   emptyActivityCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: theme.border,
     borderRadius: 16,
     padding: 10,
     alignItems: 'center',
   },
   emptyActivityMessage: {
-    color: '#94a3b8',
+    color: theme.textSecondary,
     textAlign: 'center',
     marginBottom: 15,
   },
   emptyActionBtn: {
-    backgroundColor: '#22c55e',
+    backgroundColor: theme.success,
     alignSelf: 'center',
   }
 });
@@ -422,7 +422,7 @@ export default function HomeScreen({ navigation }) {
                 <View style={styles.summarySeparator} />
                 <View style={styles.summaryItem}>
                   <Text style={styles.summaryLabel}>Win Rate</Text>
-                  <Text style={[styles.summaryValue, { color: '#22c55e' }]}>{stats.winPercentage}%</Text>
+                  <Text style={[styles.summaryValue, { color: theme.success }]}>{stats.winPercentage}%</Text>
                 </View>
               </View>
             </View>
@@ -434,8 +434,8 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.sectionTitle}>Season Performance</Text>
           <View style={styles.statsGrid}>
             <PerformanceBox label="Total Runs" value={stats.runs} icon="flash" color="#eab308" />
-            <PerformanceBox label="Total Wickets" value={stats.wickets} icon="disc" color="#ef4444" />
-            <PerformanceBox label="Total Catches" value={stats.catches} icon="hand-left" color="#3b82f6" />
+            <PerformanceBox label="Total Wickets" value={stats.wickets} icon="disc" color=theme.error />
+            <PerformanceBox label="Total Catches" value={stats.catches} icon="hand-left" color=theme.primary />
             <PerformanceBox label="Total Players" value={players.length} icon="people" color="#8b5cf6" />
           </View>
         </View>
@@ -447,19 +447,19 @@ export default function HomeScreen({ navigation }) {
             <ActionItem
               label="New Match"
               icon="add-circle"
-              color="#22c55e"
+              color=theme.success
               onPress={() => navigation.navigate('Matches', { screen: 'RecordMatch' })}
             />
             <ActionItem
               label="Add Player"
               icon="person-add"
-              color="#3b82f6"
+              color=theme.primary
               onPress={() => navigation.navigate('Players', { screen: 'AddPlayer' })}
             />
             <ActionItem
               label="Rankings"
               icon="stats-chart"
-              color="#f59e0b"
+              color=theme.warning
               onPress={() => navigation.navigate('Insights')}
             />
           </View>
@@ -500,7 +500,7 @@ export default function HomeScreen({ navigation }) {
                 ]}>
                   <Text style={[
                     styles.resultText,
-                    { color: (match.result || '').toLowerCase().includes('win') ? '#22c55e' : '#ef4444' }
+                    { color: (match.result || '').toLowerCase().includes('win') ? theme.success : theme.error }
                   ]}>
                     {(match.result || 'PLAYED').toUpperCase()}
                   </Text>

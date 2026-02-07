@@ -61,18 +61,18 @@ const TournamentDetailScreen = ({ route }) => {
     const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: theme.background,
     },
     header: {
         padding: 16,
-        backgroundColor: '#0b1223',
+        backgroundColor: theme.backgroundCard,
         borderBottomWidth: 1,
-        borderBottomColor: '#1e293b',
+        borderBottomColor: theme.border,
     },
     tournamentName: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#e2e8f0',
+        color: theme.text,
         marginBottom: 12,
     },
     headerStats: {
@@ -86,7 +86,7 @@ const TournamentDetailScreen = ({ route }) => {
     },
     headerStatText: {
         fontSize: 14,
-        color: '#94a3b8',
+        color: theme.textSecondary,
     },
     section: {
         padding: 16,
@@ -94,40 +94,40 @@ const TournamentDetailScreen = ({ route }) => {
     sectionTitle: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#e2e8f0',
+        color: theme.text,
         marginBottom: 12,
     },
     standingsTable: {
-        backgroundColor: '#0b1223',
+        backgroundColor: theme.backgroundCard,
         borderRadius: 8,
         overflow: 'hidden',
     },
     standingHeader: {
         flexDirection: 'row',
         padding: 12,
-        backgroundColor: '#1e293b',
+        backgroundColor: theme.border,
     },
-    headerPos: { width: 30, fontSize: 12, fontWeight: '600', color: '#94a3b8' },
-    headerTeam: { flex: 1, fontSize: 12, fontWeight: '600', color: '#94a3b8' },
-    headerCol: { width: 30, fontSize: 12, fontWeight: '600', color: '#94a3b8', textAlign: 'center' },
-    headerColPoints: { width: 40, fontSize: 12, fontWeight: '600', color: '#94a3b8', textAlign: 'center' },
+    headerPos: { width: 30, fontSize: 12, fontWeight: '600', color: theme.textSecondary },
+    headerTeam: { flex: 1, fontSize: 12, fontWeight: '600', color: theme.textSecondary },
+    headerCol: { width: 30, fontSize: 12, fontWeight: '600', color: theme.textSecondary, textAlign: 'center' },
+    headerColPoints: { width: 40, fontSize: 12, fontWeight: '600', color: theme.textSecondary, textAlign: 'center' },
     standingRow: {
         flexDirection: 'row',
         padding: 12,
         borderTopWidth: 1,
-        borderTopColor: '#1e293b',
+        borderTopColor: theme.border,
     },
-    position: { width: 30, fontSize: 16, fontWeight: '600', color: '#e2e8f0' },
-    standingTeam: { flex: 1, fontSize: 16, color: '#e2e8f0' },
-    standingStat: { width: 30, fontSize: 16, color: '#94a3b8', textAlign: 'center' },
-    standingPoints: { width: 40, fontSize: 16, fontWeight: '600', color: '#3b82f6', textAlign: 'center' },
+    position: { width: 30, fontSize: 16, fontWeight: '600', color: theme.text },
+    standingTeam: { flex: 1, fontSize: 16, color: theme.text },
+    standingStat: { width: 30, fontSize: 16, color: theme.textSecondary, textAlign: 'center' },
+    standingPoints: { width: 40, fontSize: 16, fontWeight: '600', color: theme.primary, textAlign: 'center' },
     matchCard: {
-        backgroundColor: '#0b1223',
+        backgroundColor: theme.backgroundCard,
         borderRadius: 8,
         padding: 16,
         marginBottom: 12,
         borderWidth: 1,
-        borderColor: '#1e293b',
+        borderColor: theme.border,
     },
     matchTeams: {
         flexDirection: 'row',
@@ -137,17 +137,17 @@ const TournamentDetailScreen = ({ route }) => {
     },
     teamName: {
         fontSize: 16,
-        color: '#e2e8f0',
+        color: theme.text,
         fontWeight: '500',
     },
     score: {
         fontSize: 16,
-        color: '#3b82f6',
+        color: theme.primary,
         fontWeight: '600',
     },
     vs: {
         fontSize: 12,
-        color: '#64748b',
+        color: theme.textTertiary,
         textAlign: 'center',
         marginVertical: 4,
     },
@@ -155,7 +155,7 @@ const TournamentDetailScreen = ({ route }) => {
         marginTop: 8,
         paddingVertical: 4,
         paddingHorizontal: 12,
-        backgroundColor: '#10b981',
+        backgroundColor: theme.success,
         borderRadius: 4,
         alignSelf: 'flex-start',
     },
@@ -166,7 +166,7 @@ const TournamentDetailScreen = ({ route }) => {
     },
     upcomingTime: {
         fontSize: 14,
-        color: '#64748b',
+        color: theme.textTertiary,
         marginTop: 8,
     },
 });
@@ -177,11 +177,11 @@ const TournamentDetailScreen = ({ route }) => {
                 <Text style={styles.tournamentName}>{tournament.name}</Text>
                 <View style={styles.headerStats}>
                     <View style={styles.headerStat}>
-                        <Ionicons name="people-outline" size={20} color="#64748b" />
+                        <Ionicons name="people-outline" size={20} color=theme.textTertiary />
                         <Text style={styles.headerStatText}>{tournament.teams} Teams</Text>
                     </View>
                     <View style={styles.headerStat}>
-                        <Ionicons name="list-outline" size={20} color="#64748b" />
+                        <Ionicons name="list-outline" size={20} color=theme.textTertiary />
                         <Text style={styles.headerStatText}>{tournament.matches} Matches</Text>
                     </View>
                 </View>
