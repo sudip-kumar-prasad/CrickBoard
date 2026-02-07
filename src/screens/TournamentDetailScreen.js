@@ -295,9 +295,12 @@ const TournamentDetailScreen = ({ route, navigation }) => {
                         <Text style={styles.sectionTitle}>Matches</Text>
                         <TouchableOpacity
                             style={styles.addMatchBtn}
-                            onPress={() => navigation.navigate('Matches', {
-                                screen: 'RecordMatch',
-                                params: { tournamentId: tournament.id, tournamentName: tournament.name }
+                            onPress={() => navigation.navigate('Tabs', {
+                                screen: 'Matches',
+                                params: {
+                                    screen: 'RecordMatch',
+                                    params: { tournamentId: tournament.id, tournamentName: tournament.name }
+                                }
                             })}
                         >
                             <Ionicons name="add-circle" size={20} color={theme.primary} />
