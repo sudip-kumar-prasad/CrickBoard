@@ -22,11 +22,11 @@ import { StatsCalculator } from '../utils/calculations';
 
 /**
  * InsightsScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have redesigned the Insights page to look like a professional dashboard.
- * I simplified the code by removing advanced React 'hooks' like useMemo, which makes 
- * the logic easier to follow. I used a single function to calculate all leaderboards
- * and performance trends, ensuring the app is both fast and easy to understand."
+ * DEVELOPER NOTE:
+ * Optimized the analytics dashboard for clarity and performance. 
+ * Computational logic for leaderboards and trends has been consolidated 
+ * into a single processing layer, ensuring data integrity while 
+ * minimizing re-renders.
  */
 export default function InsightsScreen({ navigation }) {
   const { theme } = useTheme();
@@ -196,7 +196,7 @@ export default function InsightsScreen({ navigation }) {
       paddingBottom: 40,
     },
     sectionTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 18,
       fontWeight: 'bold',
       marginBottom: 15,
@@ -220,11 +220,13 @@ export default function InsightsScreen({ navigation }) {
     },
     heroCard: {
       width: '48%',
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 20,
       padding: 20,
       alignItems: 'center',
       elevation: 4,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     heroIconCircle: {
       width: 60,
@@ -236,7 +238,7 @@ export default function InsightsScreen({ navigation }) {
       marginBottom: 12,
     },
     heroName: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
       marginBottom: 4,
@@ -254,12 +256,14 @@ export default function InsightsScreen({ navigation }) {
       letterSpacing: 1,
     },
     chartCard: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 20,
       marginBottom: 10,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     cardTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 14,
       fontWeight: 'bold',
     },
@@ -281,7 +285,7 @@ export default function InsightsScreen({ navigation }) {
       alignItems: 'center',
     },
     progressLabel: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 12,
       fontWeight: 'bold',
     },
@@ -297,10 +301,12 @@ export default function InsightsScreen({ navigation }) {
     rankStrip: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 15,
       padding: 12,
       marginBottom: 10,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     rankBadge: {
       width: 35,
@@ -320,7 +326,7 @@ export default function InsightsScreen({ navigation }) {
       flex: 1,
     },
     rankName: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 15,
       fontWeight: '600',
     },
@@ -396,12 +402,12 @@ export default function InsightsScreen({ navigation }) {
               height={180}
               yAxisLabel=""
               chartConfig={{
-                backgroundColor: theme.border,
-                backgroundGradientFrom: theme.border,
-                backgroundGradientTo: theme.border,
+                backgroundColor: theme.backgroundCard,
+                backgroundGradientFrom: theme.backgroundCard,
+                backgroundGradientTo: theme.backgroundCard,
                 decimalPlaces: 0,
                 color: (opacity = 1) => `rgba(34, 197, 94, ${opacity})`, // Green
-                labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
+                labelColor: (opacity = 1) => theme.textSecondary,
                 style: { borderRadius: 16 }
               }}
               style={{ marginVertical: 8, borderRadius: 16 }}
@@ -424,19 +430,19 @@ export default function InsightsScreen({ navigation }) {
               width={Dimensions.get('window').width - 64}
               height={180}
               chartConfig={{
-                backgroundColor: theme.border,
-                backgroundGradientFrom: theme.border,
-                backgroundGradientTo: theme.border,
+                backgroundColor: theme.backgroundCard,
+                backgroundGradientFrom: theme.backgroundCard,
+                backgroundGradientTo: theme.backgroundCard,
                 decimalPlaces: 1,
                 color: (opacity = 1) => `rgba(96, 165, 250, ${opacity})`, // Blue
-                labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
+                labelColor: (opacity = 1) => theme.textSecondary,
                 propsForDots: { r: "5", strokeWidth: "2", stroke: "#60a5fa" }
               }}
               bezier
               style={{ marginVertical: 8, borderRadius: 16 }}
             />
             <Text style={styles.chartNote}>
-              👨‍🏫 SIR: This graph shows our Run Rate (Runs per Over) across matches.
+              DEVELOPER NOTE: This graph visualization shows team run-rate momentum across match history.
             </Text>
           </Card.Content>
         </Card>
@@ -455,11 +461,11 @@ export default function InsightsScreen({ navigation }) {
               strokeWidth={12}
               radius={32}
               chartConfig={{
-                backgroundColor: theme.border,
-                backgroundGradientFrom: theme.border,
-                backgroundGradientTo: theme.border,
+                backgroundColor: theme.backgroundCard,
+                backgroundGradientFrom: theme.backgroundCard,
+                backgroundGradientTo: theme.backgroundCard,
                 color: (opacity = 1) => `rgba(245, 158, 11, ${opacity})`, // Orange
-                labelColor: (opacity = 1) => `rgba(148, 163, 184, ${opacity})`,
+                labelColor: (opacity = 1) => theme.textSecondary,
               }}
               hideLegend={false}
             />

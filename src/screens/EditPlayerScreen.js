@@ -17,11 +17,10 @@ import { StorageService } from '../utils/storage';
 
 /**
  * EditPlayerScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have updated the Edit Player screen to maintain consistency with our 
- * premium design. The form is now organized into logical sections using 'Surfaces'.
- * I simplified the save logic to focus on merging the existing player data with 
- * the new updates, making it much easier to trace and explain during a demo."
+ * DEVELOPER NOTE:
+ * Modernized the update interface using Surface-based layout patterns. 
+ * The data persistence logic has been refined to ensure stable merging 
+ * of player updates with existing storage objects.
  */
 export default function EditPlayerScreen({ navigation, route }) {
   const { theme } = useTheme();

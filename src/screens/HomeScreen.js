@@ -23,11 +23,11 @@ const { width } = Dimensions.get('window');
 
 /**
  * HomeScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have redesigned the Home Screen to follow modern mobile UI patterns. 
- * I used a 'Hero Section' with a background image to make it visually engaging.
- * The layout uses a 'Card-based Design System' which is standard in professional apps like CrickHeroes.
- * I also prioritized 'Null-Safety' in the code to ensure the app never crashes even if data is missing."
+ * DEVELOPER NOTE:
+ * Implemented modern dashboard patterns using a Hero Section and 
+ * card-based layout. Prioritized defensive coding and null-safety 
+ * to ensure application stability when dealing with empty or 
+ * asynchronously loaded storage data.
  */
 export default function HomeScreen({ navigation }) {
   const { theme } = useTheme();
@@ -85,10 +85,10 @@ export default function HomeScreen({ navigation }) {
 
   /**
    * processStatistics
-   * 👨‍🏫 EXPLANATION FOR SIR:
-   * "This function iterates through the player and match lists to aggregate data.
-   * I added 'Defensive Checks' like (match.result || '') to prevent the app from 
-   * crashing if a value is null in the database."
+   * DEVELOPER NOTE:
+   * Aggregation layer for dashboard stats. Includes defensive checks 
+   * to ensure no runtime errors occur if matches or results are 
+   * undefined in the database.
    */
   const processStatistics = (playersData, matchesData) => {
     let totalRuns = 0;
@@ -159,7 +159,7 @@ export default function HomeScreen({ navigation }) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.background, // Deep Navy theme
+      backgroundColor: theme.background,
     },
     heroBackground: {
       width: '100%',
@@ -183,7 +183,7 @@ export default function HomeScreen({ navigation }) {
       marginTop: Platform.OS === 'android' ? 30 : 10,
     },
     greetingText: {
-      color: theme.text,
+      color: '#ffffff',
       fontSize: 16,
       fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
     },
@@ -195,13 +195,13 @@ export default function HomeScreen({ navigation }) {
     avatarBorder: {
       backgroundColor: theme.success,
       borderWidth: 2,
-      borderColor: '#ffffff',
+      borderColor: theme.background,
     },
     summaryCard: {
-      backgroundColor: '#ffffff',
+      backgroundColor: theme.backgroundCard,
       borderRadius: 20,
       padding: 20,
-      marginBottom: -50, // Floating effect
+      marginBottom: -50,
       elevation: 8,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
@@ -217,34 +217,34 @@ export default function HomeScreen({ navigation }) {
       alignItems: 'center',
     },
     summaryLabel: {
-      color: theme.textTertiary,
+      color: theme.textSecondary,
       fontSize: 12,
       textTransform: 'uppercase',
       letterSpacing: 1,
       marginBottom: 5,
     },
     summaryValue: {
-      color: theme.border,
+      color: theme.text,
       fontSize: 24,
       fontWeight: 'bold',
     },
     summarySeparator: {
       width: 1,
       height: 40,
-      backgroundColor: theme.text,
+      backgroundColor: theme.borderLight,
     },
     statsSection: {
-      marginTop: 70, // Adjust for floating card
+      marginTop: 70,
       padding: 20,
     },
     sectionTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 20,
       fontWeight: 'bold',
       marginBottom: 15,
     },
     sectionTitleAction: {
-      color: theme.border,
+      color: theme.text,
       fontSize: 18,
       fontWeight: 'bold',
       marginBottom: 20,
@@ -256,11 +256,13 @@ export default function HomeScreen({ navigation }) {
     },
     statBox: {
       width: '48%',
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 16,
       padding: 15,
       marginBottom: 15,
       alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     statIconBadge: {
       width: 45,
@@ -271,7 +273,7 @@ export default function HomeScreen({ navigation }) {
       marginBottom: 10,
     },
     statBoxValue: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 22,
       fontWeight: 'bold',
     },
@@ -281,11 +283,13 @@ export default function HomeScreen({ navigation }) {
       textTransform: 'uppercase',
     },
     actionsSection: {
-      backgroundColor: '#ffffff',
+      backgroundColor: theme.backgroundCard,
       marginHorizontal: 20,
       borderRadius: 24,
       padding: 25,
       marginVertical: 10,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     actionsRow: {
       flexDirection: 'row',
@@ -307,7 +311,7 @@ export default function HomeScreen({ navigation }) {
       shadowRadius: 5,
     },
     actionLabel: {
-      color: theme.border,
+      color: theme.text,
       fontSize: 12,
       fontWeight: '600',
     },
@@ -325,12 +329,14 @@ export default function HomeScreen({ navigation }) {
       fontWeight: '600',
     },
     matchStrip: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 16,
       padding: 15,
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     matchDateColumn: {
       alignItems: 'center',
@@ -339,7 +345,7 @@ export default function HomeScreen({ navigation }) {
       borderRightColor: theme.borderLight,
     },
     matchDateDay: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 18,
       fontWeight: 'bold',
     },
@@ -352,7 +358,7 @@ export default function HomeScreen({ navigation }) {
       paddingHorizontal: 15,
     },
     matchOpponentText: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
     },
@@ -370,10 +376,12 @@ export default function HomeScreen({ navigation }) {
       fontWeight: 'bold',
     },
     emptyActivityCard: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 16,
       padding: 10,
       alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     emptyActivityMessage: {
       color: theme.textSecondary,

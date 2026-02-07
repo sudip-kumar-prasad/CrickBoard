@@ -25,14 +25,192 @@ import * as ImagePicker from 'expo-image-picker';
 
 /**
  * ProfileScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have redesigned the profile screen to feel like a premium management 
- * dashboard. I used a 'Hero Profile' section at the top with a large avatar 
- * and status chips. The code is kept very direct: we use focused effects 
- * to load user data and a simple toggle for editing/viewing modes."
+ * DEVELOPER NOTE:
+ * Redesigned the profile interface for a professional management feel. 
+ * Implemented a 'Hero Profile' section using Surface elevation and 
+ * status chips. Data synchronization is handled via localized hooks to 
+ * maintain state consistency between viewing and editing modes.
  */
 export default function ProfileScreen({ navigation, onLogout }) {
     const { theme } = useTheme();
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.background,
+        },
+        loadingContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.background,
+        },
+        loadingText: {
+            color: theme.textSecondary,
+            fontSize: 16,
+        },
+        scrollContent: {
+            paddingBottom: 40,
+        },
+        heroSection: {
+            backgroundColor: theme.backgroundCard,
+            marginHorizontal: 16,
+            marginTop: 20,
+            borderRadius: 30,
+            padding: 30,
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+        avatarWrapper: {
+            position: 'relative',
+            marginBottom: 20,
+        },
+        avatarLabel: {
+            fontSize: 40,
+            fontWeight: 'bold',
+            color: '#ffffff',
+        },
+        cameraBadge: {
+            position: 'absolute',
+            top: 0,
+            right: -5,
+            backgroundColor: theme.success,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 3,
+            borderColor: theme.border,
+            zIndex: 1,
+        },
+        editBadge: {
+            position: 'absolute',
+            bottom: 0,
+            right: -5,
+            backgroundColor: theme.primary,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 3,
+            borderColor: theme.border,
+            zIndex: 1,
+        },
+        profileInfo: {
+            alignItems: 'center',
+        },
+        userName: {
+            fontSize: 26,
+            fontWeight: 'bold',
+            color: theme.text,
+        },
+        userEmail: {
+            fontSize: 14,
+            color: theme.textSecondary,
+            marginTop: 5,
+        },
+        statusChip: {
+            backgroundColor: theme.background,
+            marginTop: 15,
+            height: 32,
+        },
+        statusText: {
+            color: theme.success,
+            fontSize: 11,
+            fontWeight: 'bold',
+        },
+        editContainer: {
+            width: '100%',
+            alignItems: 'center',
+        },
+        editInput: {
+            width: '100%',
+            backgroundColor: 'transparent',
+        },
+        miniSaveBtn: {
+            marginTop: 15,
+            backgroundColor: theme.success,
+            borderRadius: 10,
+        },
+        sectionHeader: {
+            paddingHorizontal: 24,
+            marginTop: 30,
+            marginBottom: 10,
+        },
+        sectionTitle: {
+            color: theme.textSecondary,
+            fontSize: 16,
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            letterSpacing: 1.5,
+        },
+        infoCard: {
+            backgroundColor: theme.backgroundCard,
+            marginHorizontal: 16,
+            borderRadius: 20,
+            paddingVertical: 10,
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+        infoRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 15,
+            paddingHorizontal: 20,
+        },
+        infoLabelLeft: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+        },
+        rowLabelText: {
+            color: theme.textSecondary,
+            fontSize: 14,
+        },
+        rowValueText: {
+            color: theme.text,
+            fontSize: 14,
+            fontWeight: '600',
+        },
+        divider: {
+            backgroundColor: theme.borderLight,
+            marginHorizontal: 20,
+        },
+        aboutBox: {
+            padding: 20,
+        },
+        aboutText: {
+            color: theme.textSecondary,
+            fontSize: 13,
+            lineHeight: 20,
+        },
+        logoutBtn: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: theme.backgroundCard,
+            marginHorizontal: 16,
+            marginTop: 40,
+            paddingVertical: 18,
+            borderRadius: 20,
+            gap: 10,
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+        logoutText: {
+            color: theme.error,
+            fontSize: 16,
+            fontWeight: 'bold',
+        },
+        bottomSpacer: {
+            height: 50,
+        },
+    });
+
     // --- STATE ---
     const [user, setUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -207,178 +385,6 @@ export default function ProfileScreen({ navigation, onLogout }) {
 
     if (!user) return <SafeAreaView style={styles.loadingContainer}><Text style={styles.loadingText}>Loading Profile...</Text></SafeAreaView>;
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            backgroundColor: theme.background,
-        },
-        loadingContainer: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: theme.background,
-        },
-        loadingText: {
-            color: theme.textSecondary,
-            fontSize: 16,
-        },
-        scrollContent: {
-            paddingBottom: 40,
-        },
-        heroSection: {
-            backgroundColor: theme.border,
-            marginHorizontal: 16,
-            marginTop: 20,
-            borderRadius: 30,
-            padding: 30,
-            alignItems: 'center',
-        },
-        avatarWrapper: {
-            position: 'relative',
-            marginBottom: 20,
-        },
-        avatarLabel: {
-            fontSize: 40,
-            fontWeight: 'bold',
-            color: '#ffffff',
-        },
-        cameraBadge: {
-            position: 'absolute',
-            top: 0,
-            right: -5,
-            backgroundColor: theme.success,
-            width: 36,
-            height: 36,
-            borderRadius: 18,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderWidth: 3,
-            borderColor: theme.border,
-            zIndex: 1,
-        },
-        editBadge: {
-            position: 'absolute',
-            bottom: 0,
-            right: -5,
-            backgroundColor: theme.primary,
-            width: 36,
-            height: 36,
-            borderRadius: 18,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderWidth: 3,
-            borderColor: theme.border,
-            zIndex: 1,
-        },
-        profileInfo: {
-            alignItems: 'center',
-        },
-        userName: {
-            fontSize: 26,
-            fontWeight: 'bold',
-            color: '#ffffff',
-        },
-        userEmail: {
-            fontSize: 14,
-            color: theme.textSecondary,
-            marginTop: 5,
-        },
-        statusChip: {
-            backgroundColor: theme.background,
-            marginTop: 15,
-            height: 32,
-        },
-        statusText: {
-            color: theme.success,
-            fontSize: 11,
-            fontWeight: 'bold',
-        },
-        editContainer: {
-            width: '100%',
-            alignItems: 'center',
-        },
-        editInput: {
-            width: '100%',
-            backgroundColor: 'transparent',
-        },
-        miniSaveBtn: {
-            marginTop: 15,
-            backgroundColor: theme.success,
-            borderRadius: 10,
-        },
-        sectionHeader: {
-            paddingHorizontal: 24,
-            marginTop: 30,
-            marginBottom: 10,
-        },
-        sectionTitle: {
-            color: theme.textSecondary,
-            fontSize: 16,
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: 1.5,
-        },
-        infoCard: {
-            backgroundColor: theme.border,
-            marginHorizontal: 16,
-            borderRadius: 20,
-            paddingVertical: 10,
-        },
-        infoRow: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingVertical: 15,
-            paddingHorizontal: 20,
-        },
-        infoLabelLeft: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-        },
-        rowLabelText: {
-            color: theme.textSecondary,
-            fontSize: 14,
-        },
-        rowValueText: {
-            color: '#ffffff',
-            fontSize: 14,
-            fontWeight: '600',
-        },
-        divider: {
-            backgroundColor: theme.borderLight,
-            marginHorizontal: 20,
-        },
-        aboutBox: {
-            padding: 20,
-        },
-        aboutText: {
-            color: theme.textSecondary,
-            fontSize: 13,
-            lineHeight: 20,
-        },
-        logoutBtn: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: theme.border,
-            marginHorizontal: 16,
-            marginTop: 40,
-            paddingVertical: 18,
-            borderRadius: 20,
-            gap: 10,
-            borderWidth: 1,
-            borderColor: 'rgba(239, 68, 68, 0.2)',
-        },
-        logoutText: {
-            color: theme.error,
-            fontSize: 16,
-            fontWeight: 'bold',
-        },
-        bottomSpacer: {
-            height: 50,
-        },
-    });
 
     // Helper function for info rows - must be inside component to access theme and styles
     const renderInfoRow = (label, value, icon) => (

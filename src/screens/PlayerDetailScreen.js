@@ -20,11 +20,10 @@ import { StorageService } from '../utils/storage';
 
 /**
  * PlayerDetailScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have redesigned the player profile to give it a hero-like feeling.
- * The screen features a large profile header with a custom avatar and high-impact 
- * stat widgets. I structured the code to automatically refresh the data every time 
- * we visit this page, ensuring the stats are always accurate."
+ * DEVELOPER NOTE:
+ * Implemented an analytics-focused profile view with high-impact 
+ * stat widgets. Data synchronization is managed via focused lifecycle 
+ * effects to ensure real-time accuracy of player metrics.
  */
 export default function PlayerDetailScreen({ navigation, route }) {
   const { theme } = useTheme();

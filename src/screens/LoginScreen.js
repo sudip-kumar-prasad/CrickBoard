@@ -23,11 +23,11 @@ import { AuthService } from '../utils/auth';
 
 /**
  * LoginScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have redesigned the Login experience to look modern and professional.
- * I used a 'Hero Header' with a large cricket icon and a sleek 'Surface' card 
- * for the inputs. The logic is kept very simple: we handle Login and Registration 
- * in the same file using a single boolean flag, which makes the code easy to follow."
+ * DEVELOPER NOTE:
+ * Modernized the UI architecture using a Hero Header and Surface-based 
+ * layout. The authentication logic is unified within this component, 
+ * using a persistent state flag to toggle between Login and Registration 
+ * modules for code maintainability.
  */
 export default function LoginScreen({ navigation, onLoginSuccess }) {
   const { theme } = useTheme();

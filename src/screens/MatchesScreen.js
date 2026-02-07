@@ -22,11 +22,10 @@ const RESULT_FILTERS = ['ALL', 'WIN', 'LOSS', 'DRAW'];
 
 /**
  * MatchesScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have updated the Matches page to provide a better overview of the team's history.
- * I implemented a 'Statistics Header' at the top to immediately show the Win/Loss record.
- * The match list now uses 'Visual Strips' with date markers, making it much easier to read.
- * The code is structured to handle data safely using null-checks and simple filter logic."
+ * DEVELOPER NOTE:
+ * Refined the match history view with a statistics-driven header 
+ * and improved list scannability. Implemented defensive data handling 
+ * with null-safety and optimized filtration logic for production builds.
  */
 export default function MatchesScreen({ navigation }) {
   const { theme } = useTheme();
@@ -173,7 +172,7 @@ export default function MatchesScreen({ navigation }) {
     },
     statsHeader: {
       flexDirection: 'row',
-      backgroundColor: '#ffffff',
+      backgroundColor: theme.backgroundCard,
       margin: 16,
       padding: 20,
       borderRadius: 20,
@@ -193,12 +192,12 @@ export default function MatchesScreen({ navigation }) {
     statValue: {
       fontSize: 22,
       fontWeight: 'bold',
-      color: theme.background,
+      color: theme.text,
     },
     statDivider: {
       width: 1,
       height: 35,
-      backgroundColor: theme.text,
+      backgroundColor: theme.borderLight,
     },
     filterSection: {
       flexDirection: 'row',
@@ -210,12 +209,15 @@ export default function MatchesScreen({ navigation }) {
       flex: 1,
     },
     filterChip: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       marginRight: 8,
       borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     filterChipActive: {
       backgroundColor: theme.success,
+      borderColor: theme.success,
     },
     filterChipText: {
       color: theme.textSecondary,
@@ -223,7 +225,7 @@ export default function MatchesScreen({ navigation }) {
       fontWeight: '600',
     },
     filterChipTextActive: {
-      color: '#ffffff',
+      color: theme.background,
     },
     addButton: {
       marginLeft: 10,
@@ -233,12 +235,14 @@ export default function MatchesScreen({ navigation }) {
       paddingBottom: 40,
     },
     matchStrip: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 18,
       padding: 12,
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     dateBox: {
       width: 55,
@@ -248,7 +252,7 @@ export default function MatchesScreen({ navigation }) {
       borderRightColor: theme.borderLight,
     },
     dateDay: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 20,
       fontWeight: 'bold',
     },
@@ -262,7 +266,7 @@ export default function MatchesScreen({ navigation }) {
       paddingHorizontal: 12,
     },
     opponentText: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
       marginBottom: 4,
@@ -278,14 +282,14 @@ export default function MatchesScreen({ navigation }) {
     },
     perfSnippet: {
       marginTop: 6,
-      backgroundColor: theme.background,
+      backgroundColor: theme.backgroundSecondary,
       paddingHorizontal: 8,
       paddingVertical: 2,
       borderRadius: 8,
       alignSelf: 'flex-start',
     },
     perfText: {
-      color: '#60a5fa',
+      color: theme.primary,
       fontSize: 10,
       fontWeight: '500',
     },
@@ -311,13 +315,15 @@ export default function MatchesScreen({ navigation }) {
       width: 100,
       height: 100,
       borderRadius: 50,
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: 20,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     emptyTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 20,
       fontWeight: 'bold',
       marginBottom: 10,

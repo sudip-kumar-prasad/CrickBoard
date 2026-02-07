@@ -10,7 +10,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const TournamentDetailScreen = ({ route }) => {
-  const { theme } = useTheme();
+    const { theme } = useTheme();
     const { tournament } = route.params;
 
     const matches = [
@@ -59,119 +59,119 @@ const TournamentDetailScreen = ({ route }) => {
     );
 
     const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.background,
-    },
-    header: {
-        padding: 16,
-        backgroundColor: theme.backgroundCard,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.border,
-    },
-    tournamentName: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: theme.text,
-        marginBottom: 12,
-    },
-    headerStats: {
-        flexDirection: 'row',
-        gap: 16,
-    },
-    headerStat: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
-    headerStatText: {
-        fontSize: 14,
-        color: theme.textSecondary,
-    },
-    section: {
-        padding: 16,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: theme.text,
-        marginBottom: 12,
-    },
-    standingsTable: {
-        backgroundColor: theme.backgroundCard,
-        borderRadius: 8,
-        overflow: 'hidden',
-    },
-    standingHeader: {
-        flexDirection: 'row',
-        padding: 12,
-        backgroundColor: theme.border,
-    },
-    headerPos: { width: 30, fontSize: 12, fontWeight: '600', color: theme.textSecondary },
-    headerTeam: { flex: 1, fontSize: 12, fontWeight: '600', color: theme.textSecondary },
-    headerCol: { width: 30, fontSize: 12, fontWeight: '600', color: theme.textSecondary, textAlign: 'center' },
-    headerColPoints: { width: 40, fontSize: 12, fontWeight: '600', color: theme.textSecondary, textAlign: 'center' },
-    standingRow: {
-        flexDirection: 'row',
-        padding: 12,
-        borderTopWidth: 1,
-        borderTopColor: theme.border,
-    },
-    position: { width: 30, fontSize: 16, fontWeight: '600', color: theme.text },
-    standingTeam: { flex: 1, fontSize: 16, color: theme.text },
-    standingStat: { width: 30, fontSize: 16, color: theme.textSecondary, textAlign: 'center' },
-    standingPoints: { width: 40, fontSize: 16, fontWeight: '600', color: theme.primary, textAlign: 'center' },
-    matchCard: {
-        backgroundColor: theme.backgroundCard,
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: theme.border,
-    },
-    matchTeams: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginVertical: 4,
-    },
-    teamName: {
-        fontSize: 16,
-        color: theme.text,
-        fontWeight: '500',
-    },
-    score: {
-        fontSize: 16,
-        color: theme.primary,
-        fontWeight: '600',
-    },
-    vs: {
-        fontSize: 12,
-        color: theme.textTertiary,
-        textAlign: 'center',
-        marginVertical: 4,
-    },
-    resultBadge: {
-        marginTop: 8,
-        paddingVertical: 4,
-        paddingHorizontal: 12,
-        backgroundColor: theme.success,
-        borderRadius: 4,
-        alignSelf: 'flex-start',
-    },
-    resultText: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#ffffff',
-    },
-    upcomingTime: {
-        fontSize: 14,
-        color: theme.textTertiary,
-        marginTop: 8,
-    },
-});
+        container: {
+            flex: 1,
+            backgroundColor: theme.background,
+        },
+        header: {
+            padding: 16,
+            backgroundColor: theme.backgroundCard,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.border,
+        },
+        tournamentName: {
+            fontSize: 24,
+            fontWeight: 'bold',
+            color: theme.text,
+            marginBottom: 12,
+        },
+        headerStats: {
+            flexDirection: 'row',
+            gap: 16,
+        },
+        headerStat: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+        },
+        headerStatText: {
+            fontSize: 14,
+            color: theme.textSecondary,
+        },
+        section: {
+            padding: 16,
+        },
+        sectionTitle: {
+            fontSize: 18,
+            fontWeight: '600',
+            color: theme.text,
+            marginBottom: 12,
+        },
+        standingsTable: {
+            backgroundColor: theme.backgroundCard,
+            borderRadius: 8,
+            overflow: 'hidden',
+        },
+        standingHeader: {
+            flexDirection: 'row',
+            padding: 12,
+            backgroundColor: theme.border,
+        },
+        headerPos: { width: 30, fontSize: 12, fontWeight: '600', color: theme.textSecondary },
+        headerTeam: { flex: 1, fontSize: 12, fontWeight: '600', color: theme.textSecondary },
+        headerCol: { width: 30, fontSize: 12, fontWeight: '600', color: theme.textSecondary, textAlign: 'center' },
+        headerColPoints: { width: 40, fontSize: 12, fontWeight: '600', color: theme.textSecondary, textAlign: 'center' },
+        standingRow: {
+            flexDirection: 'row',
+            padding: 12,
+            borderTopWidth: 1,
+            borderTopColor: theme.border,
+        },
+        position: { width: 30, fontSize: 16, fontWeight: '600', color: theme.text },
+        standingTeam: { flex: 1, fontSize: 16, color: theme.text },
+        standingStat: { width: 30, fontSize: 16, color: theme.textSecondary, textAlign: 'center' },
+        standingPoints: { width: 40, fontSize: 16, fontWeight: '600', color: theme.primary, textAlign: 'center' },
+        matchCard: {
+            backgroundColor: theme.backgroundCard,
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 12,
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+        matchTeams: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginVertical: 4,
+        },
+        teamName: {
+            fontSize: 16,
+            color: theme.text,
+            fontWeight: '500',
+        },
+        score: {
+            fontSize: 16,
+            color: theme.primary,
+            fontWeight: '600',
+        },
+        vs: {
+            fontSize: 12,
+            color: theme.textTertiary,
+            textAlign: 'center',
+            marginVertical: 4,
+        },
+        resultBadge: {
+            marginTop: 8,
+            paddingVertical: 4,
+            paddingHorizontal: 12,
+            backgroundColor: theme.success,
+            borderRadius: 4,
+            alignSelf: 'flex-start',
+        },
+        resultText: {
+            fontSize: 12,
+            fontWeight: '600',
+            color: theme.background,
+        },
+        upcomingTime: {
+            fontSize: 14,
+            color: theme.textTertiary,
+            marginTop: 8,
+        },
+    });
 
-  return (
+    return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.tournamentName}>{tournament.name}</Text>

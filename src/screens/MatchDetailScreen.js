@@ -28,11 +28,11 @@ import { StorageService } from '../utils/storage';
 
 /**
  * MatchDetailScreen Component - Premium post-match analysis dashboard.
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have added robust null-checks to prevent the app from crashing 
- * if match data is incomplete. I have also updated the icons and 
- * image picker API to follow the latest industry standards, 
- * ensuring compatibility with the newest mobile devices."
+ * DEVELOPER NOTE:
+ * Integrated robust null-safety patterns for match data parsing. 
+ * Updated peripheral APIs (ImagePicker, Icons) to current standards 
+ * to ensure cross-device compatibility and long-term project 
+ * stability.
  */
 export default function MatchDetailScreen({ route, navigation }) {
     const { theme } = useTheme();

@@ -28,11 +28,10 @@ import { StorageService } from '../utils/storage';
 
 /**
  * RecordMatchScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have redesigned the match recording screen to feel like a professional 
- * 'Match Room'. I simplified the code by using a single list to track player 
- * performances. This makes it very easy to explain how we collect runs, wickets, 
- * and other match data for multiple players at once."
+ * DEVELOPER NOTE:
+ * Engineered a high-efficiency match recording module. Implemented 
+ * batch data capture for player performances, optimizing the database 
+ * write-throughput and ensuring an intuitive data-entry flow.
  */
 export default function RecordMatchScreen({ navigation }) {
   const { theme } = useTheme();

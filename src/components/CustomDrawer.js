@@ -16,6 +16,11 @@ const CustomDrawer = ({ visible, onClose, navigation, onLogout }) => {
 
     const menuItems = [
         {
+            name: 'Home',
+            icon: 'home-outline',
+            route: 'Home',
+        },
+        {
             name: 'Tournament',
             icon: 'trophy-outline',
             route: 'Tournament',

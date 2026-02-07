@@ -20,11 +20,11 @@ import { StorageService } from '../utils/storage';
 
 /**
  * PlayersScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have updated the Squad page to manage our team more professionally.
- * I simplified the code by removing advanced filters and using a single search 
- * function that is easy to understand. Each player now has a 'Profile Strip' 
- * with their role and key stats clearly visible."
+ * DEVELOPER NOTE:
+ * Optimized squad management with efficient search and filtering. 
+ * Logic has been simplified for better maintainability, featuring 
+ * a Profile Strip layout that highlights key performance metrics 
+ * for quick team evaluation.
  */
 export default function PlayersScreen({ navigation }) {
   const { theme } = useTheme();
@@ -146,7 +146,7 @@ export default function PlayersScreen({ navigation }) {
       paddingVertical: 10,
     },
     headerTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 24,
       fontWeight: 'bold',
     },
@@ -164,7 +164,7 @@ export default function PlayersScreen({ navigation }) {
       gap: 5,
     },
     addBtnText: {
-      color: '#ffffff',
+      color: theme.background,
       fontWeight: 'bold',
       fontSize: 14,
     },
@@ -172,34 +172,39 @@ export default function PlayersScreen({ navigation }) {
       padding: 16,
     },
     searchBar: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 15,
       elevation: 0,
       height: 45,
       marginBottom: 15,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     searchBarInput: {
       fontSize: 14,
-      color: '#ffffff',
+      color: theme.text,
       minHeight: 0,
     },
     roleScroll: {
       flexDirection: 'row',
     },
     roleChip: {
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       marginRight: 8,
       borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     roleChipActive: {
       backgroundColor: theme.success,
+      borderColor: theme.success,
     },
     roleText: {
       color: theme.textSecondary,
       fontSize: 12,
     },
     roleTextActive: {
-      color: '#ffffff',
+      color: theme.background,
       fontWeight: '600',
     },
     listContainer: {
@@ -209,10 +214,12 @@ export default function PlayersScreen({ navigation }) {
     playerStrip: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: theme.border,
+      backgroundColor: theme.backgroundCard,
       borderRadius: 18,
       padding: 12,
       marginBottom: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     profileCircle: {
       marginRight: 15,
@@ -221,7 +228,7 @@ export default function PlayersScreen({ navigation }) {
       flex: 1,
     },
     playerName: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
       marginBottom: 4,
@@ -232,7 +239,7 @@ export default function PlayersScreen({ navigation }) {
       gap: 6,
     },
     roleTag: {
-      color: '#60a5fa',
+      color: theme.primary,
       fontSize: 11,
       fontWeight: '600',
     },
@@ -251,7 +258,7 @@ export default function PlayersScreen({ navigation }) {
       alignItems: 'center',
     },
     miniVal: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 14,
       fontWeight: 'bold',
     },

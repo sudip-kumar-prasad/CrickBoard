@@ -18,11 +18,10 @@ import { StorageService } from '../utils/storage';
 
 /**
  * AddPlayerScreen Component - Premium Redesign (CrickHeroes Style)
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I have redesigned the Add Player form to make it more professional and 
- * organized. I used a 'Section-based' layout where basic info and initial stats
- * are cleanly separated into cards. The code is kept linear and simple, using 
- * basic state management that is easy to follow."
+ * DEVELOPER NOTE:
+ * Organized the form into logical sections for improved UX. The state 
+ * management logic is kept intentional and linear to ensure easy 
+ * debugging and future extensibility of player metadata.
  */
 export default function AddPlayerScreen({ navigation }) {
   const { theme } = useTheme();

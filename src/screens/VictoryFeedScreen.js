@@ -28,16 +28,15 @@ import { StorageService } from '../utils/storage';
 
 /**
  * VictoryWallScreen - Simplified private celebrations wall.
- * 👨‍🏫 EXPLANATION FOR SIR:
- * "Sir, I've added defensive checks to the Victory Wall. 
- * Even if some match data is missing, the wall will now 
- * display a graceful fallback instead of crashing. I've 
- * also refined the image selection process for maximum 
- * reliability across all Android and iOS versions."
+ * DEVELOPER NOTE:
+ * Defensive data handling is implemented to ensure the wall remains 
+ * functional even with incomplete match datasets. The image selection 
+ * logic has been optimized for reliability across different hardware 
+ * and OS iterations (Android/iOS).
  */
 
 export default function VictoryFeedScreen() {
-  const { theme } = useTheme();
+    const { theme } = useTheme();
     const [posts, setPosts] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
@@ -269,7 +268,7 @@ export default function VictoryFeedScreen() {
                         style={styles.captionInput}
                         outlineColor={theme.borderLight}
                         activeOutlineColor={theme.success}
-                        textColor="#ffffff"
+                        textColor={theme.text}
                     />
 
                     <View style={styles.modalActions}>
@@ -297,185 +296,185 @@ export default function VictoryFeedScreen() {
     );
 
     const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.background,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-    },
-    headerTitle: {
-        color: '#ffffff',
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    feedList: {
-        padding: 16,
-    },
-    postCard: {
-        backgroundColor: theme.border,
-        borderRadius: 25,
-        marginBottom: 20,
-        overflow: 'hidden',
-    },
-    postHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 15,
-    },
-    headerLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    posterName: {
-        color: '#ffffff',
-        fontSize: 15,
-        fontWeight: 'bold',
-    },
-    postTime: {
-        color: theme.textTertiary,
-        fontSize: 11,
-    },
-    imageContainer: {
-        width: '100%',
-        height: 250,
-        backgroundColor: theme.background,
-    },
-    victoryImage: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
-    },
-    placeholderBanner: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: theme.border,
-        borderWidth: 1,
-        borderColor: theme.borderLight,
-        margin: 10,
-        borderRadius: 20,
-    },
-    placeholderText: {
-        color: theme.success,
-        fontSize: 32,
-        fontWeight: '900',
-        letterSpacing: 2,
-        marginTop: 10,
-    },
-    postBody: {
-        padding: 20,
-    },
-    matchSummaryRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    matchTitle: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    matchResult: {
-        color: theme.success,
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
-    captionText: {
-        color: theme.text,
-        fontSize: 14,
-        lineHeight: 22,
-        fontStyle: 'italic',
-    },
-    divider: {
-        backgroundColor: theme.borderLight,
-        marginHorizontal: 15,
-    },
-    footer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 15,
-        gap: 8,
-    },
-    footerText: {
-        color: theme.textTertiary,
-        fontSize: 11,
-        fontWeight: '600',
-    },
-    emptyState: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 40,
-    },
-    emptyTitle: {
-        color: '#ffffff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 20,
-    },
-    emptySub: {
-        color: theme.textSecondary,
-        fontSize: 14,
-        textAlign: 'center',
-        marginTop: 10,
-        lineHeight: 20,
-    },
-    // Modal Styles
-    modalContent: {
-        padding: 20,
-        justifyContent: 'center',
-    },
-    modalCard: {
-        backgroundColor: theme.border,
-        borderRadius: 25,
-        padding: 20,
-    },
-    modalTitle: {
-        color: '#ffffff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    previewImage: {
-        width: '100%',
-        height: 180,
-        borderRadius: 15,
-        marginBottom: 15,
-        resizeMode: 'cover',
-    },
-    captionInput: {
-        backgroundColor: theme.background,
-        marginBottom: 20,
-    },
-    modalActions: {
-        flexDirection: 'row',
-        gap: 10,
-    },
-    cancelBtn: {
-        flex: 1,
-        borderColor: theme.borderLight,
-    },
-    publishBtn: {
-        flex: 1,
-    }
-});
+        container: {
+            flex: 1,
+            backgroundColor: theme.background,
+        },
+        header: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+        },
+        headerTitle: {
+            color: theme.text,
+            fontSize: 24,
+            fontWeight: 'bold',
+        },
+        feedList: {
+            padding: 16,
+        },
+        postCard: {
+            backgroundColor: theme.border,
+            borderRadius: 25,
+            marginBottom: 20,
+            overflow: 'hidden',
+        },
+        postHeader: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: 15,
+        },
+        headerLeft: {
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+        posterName: {
+            color: theme.text,
+            fontSize: 15,
+            fontWeight: 'bold',
+        },
+        bitumen: {
+            color: theme.textTertiary,
+            fontSize: 11,
+        },
+        imageContainer: {
+            width: '100%',
+            height: 250,
+            backgroundColor: theme.background,
+        },
+        victoryImage: {
+            width: '100%',
+            height: '100%',
+            resizeMode: 'cover',
+        },
+        placeholderBanner: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.border,
+            borderWidth: 1,
+            borderColor: theme.borderLight,
+            margin: 10,
+            borderRadius: 20,
+        },
+        placeholderText: {
+            color: theme.success,
+            fontSize: 32,
+            fontWeight: '900',
+            letterSpacing: 2,
+            marginTop: 10,
+        },
+        postBody: {
+            padding: 20,
+        },
+        matchSummaryRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 10,
+        },
+        matchTitle: {
+            color: theme.text,
+            fontSize: 16,
+            fontWeight: 'bold',
+        },
+        matchResult: {
+            color: theme.success,
+            fontSize: 12,
+            fontWeight: 'bold',
+        },
+        captionText: {
+            color: theme.text,
+            fontSize: 14,
+            lineHeight: 22,
+            fontStyle: 'italic',
+        },
+        divider: {
+            backgroundColor: theme.borderLight,
+            marginHorizontal: 15,
+        },
+        footer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: 15,
+            gap: 8,
+        },
+        footerText: {
+            color: theme.textTertiary,
+            fontSize: 11,
+            fontWeight: '600',
+        },
+        emptyState: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 40,
+        },
+        emptyTitle: {
+            color: theme.text,
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginTop: 20,
+        },
+        emptySub: {
+            color: theme.textSecondary,
+            fontSize: 14,
+            textAlign: 'center',
+            marginTop: 10,
+            lineHeight: 20,
+        },
+        // Modal Styles
+        modalContent: {
+            padding: 20,
+            justifyContent: 'center',
+        },
+        modalCard: {
+            backgroundColor: theme.border,
+            borderRadius: 25,
+            padding: 20,
+        },
+        modalTitle: {
+            color: theme.text,
+            fontSize: 20,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: 20,
+        },
+        previewImage: {
+            width: '100%',
+            height: 180,
+            borderRadius: 15,
+            marginBottom: 15,
+            resizeMode: 'cover',
+        },
+        captionInput: {
+            backgroundColor: theme.background,
+            marginBottom: 20,
+        },
+        modalActions: {
+            flexDirection: 'row',
+            gap: 10,
+        },
+        cancelBtn: {
+            flex: 1,
+            borderColor: theme.borderLight,
+        },
+        publishBtn: {
+            flex: 1,
+        }
+    });
 
-  return (
+    return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Victory Wall</Text>
                 <IconButton
                     icon="camera-plus-outline"
-                    iconColor="#ffffff"
+                    iconColor={theme.text}
                     onPress={pickImage}
                 />
             </View>
