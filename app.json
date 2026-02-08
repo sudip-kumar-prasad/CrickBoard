@@ -19,7 +19,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.sudipkumarprasad.CrickBoard"
     },
     "web": {
