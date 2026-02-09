@@ -106,7 +106,7 @@ export default function AddPlayerScreen({ navigation }) {
         onChangeText={(val) => updateStat(key, val)}
         keyboardType="numeric"
         style={styles.miniInput}
-        textColor="#ffffff"
+        textColor={theme.text}
         activeUnderlineColor={theme.success}
       />
     </View>
@@ -131,7 +131,7 @@ export default function AddPlayerScreen({ navigation }) {
       marginBottom: 20,
     },
     headerTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 20,
       fontWeight: 'bold',
     },
@@ -149,7 +149,7 @@ export default function AddPlayerScreen({ navigation }) {
       marginBottom: 20,
     },
     sectionTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
     },
@@ -241,7 +241,7 @@ export default function AddPlayerScreen({ navigation }) {
           {/* 1. HEADER SECTION */}
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={24} color="#ffffff" />
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Add New Player</Text>
             <View style={{ width: 24 }} />
@@ -262,7 +262,7 @@ export default function AddPlayerScreen({ navigation }) {
               style={styles.mainInput}
               outlineColor={theme.borderLight}
               activeOutlineColor={theme.success}
-              textColor="#ffffff"
+              textColor={theme.text}
             />
 
             <PaperTextInput
@@ -273,7 +273,7 @@ export default function AddPlayerScreen({ navigation }) {
               style={styles.mainInput}
               outlineColor={theme.borderLight}
               activeOutlineColor={theme.success}
-              textColor="#ffffff"
+              textColor={theme.text}
               placeholder="Optional"
             />
 
