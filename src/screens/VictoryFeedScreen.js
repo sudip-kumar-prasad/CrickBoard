@@ -336,7 +336,7 @@ export default function VictoryFeedScreen() {
             fontSize: 15,
             fontWeight: 'bold',
         },
-        bitumen: {
+        postTime: {
             color: theme.textTertiary,
             fontSize: 11,
         },

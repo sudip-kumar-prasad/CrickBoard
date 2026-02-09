@@ -89,6 +89,16 @@ export class StorageService {
     }
   }
 
+  static async deleteMatch(matchId) {
+    try {
+      const matches = await this.getMatches();
+      const filteredMatches = matches.filter(m => m.id !== matchId);
+      await this.saveMatches(filteredMatches);
+    } catch (error) {
+      console.error('Error deleting match:', error);
+    }
+  }
+
   // Victory Post management
   static async getVictoryPosts() {
     try {

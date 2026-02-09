@@ -138,7 +138,7 @@ export default function MatchDetailScreen({ route, navigation }) {
                 "Victory Published!",
                 "This win has been added to your personal Victory Wall. 🏆✨",
                 [
-                    { text: "View Wall", onPress: () => navigation.navigate('VictoryWall') }, // Updated navigation name
+                    { text: "View Wall", onPress: () => navigation.navigate('Community') },
                     { text: "Close", style: "cancel" }
                 ]
             );
@@ -386,7 +386,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             paddingTop: 10,
         },
         headerTitle: {
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 18,
             fontWeight: 'bold',
         },
@@ -401,7 +401,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             width: '30%',
         },
         teamName: {
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 14,
             fontWeight: '600',
             marginTop: 8,
@@ -458,7 +458,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             letterSpacing: 1,
         },
         momName: {
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 18,
             fontWeight: 'bold',
         },
@@ -466,7 +466,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             alignItems: 'flex-end',
         },
         momStatText: {
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 16,
             fontWeight: 'bold',
         },
@@ -484,7 +484,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             marginBottom: 12,
         },
         sectionTitle: {
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 16,
             fontWeight: 'bold',
         },
@@ -515,7 +515,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         },
         colName: {
             flex: 2,
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 13,
             fontWeight: '600',
         },
@@ -527,7 +527,7 @@ export default function MatchDetailScreen({ route, navigation }) {
         },
         colStatBold: {
             flex: 1,
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 13,
             fontWeight: 'bold',
             textAlign: 'center',
@@ -562,7 +562,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             alignItems: 'center',
         },
         extraVal: {
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 20,
             fontWeight: 'bold',
         },
@@ -602,7 +602,7 @@ export default function MatchDetailScreen({ route, navigation }) {
             padding: 20,
         },
         modalTitle: {
-            color: '#ffffff',
+            color: theme.text,
             fontSize: 20,
             fontWeight: 'bold',
             textAlign: 'center',
@@ -679,6 +679,31 @@ export default function MatchDetailScreen({ route, navigation }) {
                         </Surface>
                     </View>
                 ) : null}
+
+                {/* DELETE MATCH BUTTON */}
+                <TouchableOpacity
+                    style={[styles.deleteBtn, { marginTop: 20 }]}
+                    onPress={() => {
+                        Alert.alert(
+                            'Delete Match',
+                            'Are you sure you want to delete this match record? This cannot be undone.',
+                            [
+                                { text: 'Cancel', style: 'cancel' },
+                                {
+                                    text: 'Delete',
+                                    style: 'destructive',
+                                    onPress: async () => {
+                                        await StorageService.deleteMatch(match.id);
+                                        navigation.goBack();
+                                    }
+                                }
+                            ]
+                        );
+                    }}
+                >
+                    <Ionicons name="trash-outline" size={20} color={theme.error} />
+                    <Text style={{ color: theme.error, fontWeight: 'bold', marginLeft: 8 }}>Delete Match</Text>
+                </TouchableOpacity>
 
                 <View style={{ height: 40 }} />
             </ScrollView>
