@@ -104,7 +104,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
       top: 20,
     },
     heroName: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 28,
       fontWeight: 'bold',
       marginTop: 15,
@@ -133,7 +133,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
       marginTop: 10,
     },
     sectionTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 18,
       fontWeight: 'bold',
       marginBottom: 20,
@@ -160,7 +160,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
       alignItems: 'center',
     },
     widgetValue: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 18,
       fontWeight: 'bold',
     },
@@ -224,7 +224,7 @@ export default function PlayerDetailScreen({ navigation, route }) {
         {/* 1. HERO PROFILE SECTION */}
         <Surface style={styles.heroProfile} elevation={2}>
           <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="#ffffff" />
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
           </TouchableOpacity>
 
           <Avatar.Text

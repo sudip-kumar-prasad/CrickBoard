@@ -113,7 +113,7 @@ export default function EditPlayerScreen({ navigation, route }) {
         onChangeText={(val) => updateStat(key, val)}
         keyboardType="numeric"
         style={styles.miniInput}
-        textColor="#ffffff"
+        textColor={theme.text}
         activeUnderlineColor={theme.success}
       />
     </View>
@@ -135,7 +135,7 @@ export default function EditPlayerScreen({ navigation, route }) {
       marginBottom: 10,
     },
     headerTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 20,
       fontWeight: 'bold',
     },
@@ -153,7 +153,7 @@ export default function EditPlayerScreen({ navigation, route }) {
       marginBottom: 20,
     },
     sectionTitle: {
-      color: '#ffffff',
+      color: theme.text,
       fontSize: 16,
       fontWeight: 'bold',
     },
@@ -257,7 +257,7 @@ export default function EditPlayerScreen({ navigation, route }) {
               style={styles.mainInput}
               outlineColor={theme.borderLight}
               activeOutlineColor={theme.success}
-              textColor="#ffffff"
+              textColor={theme.text}
             />
 
             <PaperTextInput
@@ -268,7 +268,7 @@ export default function EditPlayerScreen({ navigation, route }) {
               style={styles.mainInput}
               outlineColor={theme.borderLight}
               activeOutlineColor={theme.success}
-              textColor="#ffffff"
+              textColor={theme.text}
             />
 
             <Text style={styles.label}>Team Role</Text>

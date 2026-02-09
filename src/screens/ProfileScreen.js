@@ -241,23 +241,42 @@ export default function ProfileScreen({ navigation, onLogout }) {
     // --- LOGIC ---
 
     const pickImage = async () => {
+        const options = [
+            {
+                text: 'Take Photo',
+                onPress: () => launchCamera(),
+            },
+            {
+                text: 'Choose from Gallery',
+                onPress: () => launchGallery(),
+            },
+            {
+                text: 'Cancel',
+                style: 'cancel',
+            },
+        ];
+
+        if (profileImage) {
+            options.splice(2, 0, {
+                text: 'Remove Photo',
+                style: 'destructive',
+                onPress: async () => {
+                    setProfileImage(null);
+                    try {
+                        await AuthService.updateUser({ profileImage: null });
+                        Alert.alert('Success', 'Profile photo removed');
+                    } catch (error) {
+                        console.error('Error removing profile image:', error);
+                        Alert.alert('Error', 'Failed to remove profile photo');
+                    }
+                },
+            });
+        }
+
         Alert.alert(
             'Update Profile Picture',
             'Choose an option',
-            [
-                {
-                    text: 'Take Photo',
-                    onPress: () => launchCamera(),
-                },
-                {
-                    text: 'Choose from Gallery',
-                    onPress: () => launchGallery(),
-                },
-                {
-                    text: 'Cancel',
-                    style: 'cancel',
-                },
-            ]
+            options
         );
     };
 
