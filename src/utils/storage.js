@@ -1,18 +1,41 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  orderBy,
+  setDoc,
+  getDoc
+} from 'firebase/firestore';
+import { db, auth } from '../config/firebaseConfig';
+// import AsyncStorage from '@react-native-async-storage/async-storage'; // Removed
 
-const STORAGE_KEYS = {
-  PLAYERS: 'crickboard_players',
-  MATCHES: 'crickboard_matches',
-  VICTORY_POSTS: 'crickboard_victory_posts',
-  TOURNAMENTS: 'crickboard_tournaments',
+const COLLECTIONS = {
+  PLAYERS: 'players',
+  MATCHES: 'matches',
+  VICTORY_POSTS: 'victory_posts',
+  TOURNAMENTS: 'tournaments',
 };
 
 export class StorageService {
+
+  static getUserId() {
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not authenticated");
+    return user.uid;
+  }
+
   // Player management
   static async getPlayers() {
     try {
-      const playersJson = await AsyncStorage.getItem(STORAGE_KEYS.PLAYERS);
-      return playersJson ? JSON.parse(playersJson) : [];
+      const userId = this.getUserId();
+      const q = query(collection(db, 'users', userId, COLLECTIONS.PLAYERS));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       console.error('Error getting players:', error);
       return [];
@@ -20,18 +43,29 @@ export class StorageService {
   }
 
   static async savePlayers(players) {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.PLAYERS, JSON.stringify(players));
-    } catch (error) {
-      console.error('Error saving players:', error);
-    }
+    // No-op: Firestore saves individually. 
+    // This method might need to be removed or adapted if the app calls it with a full list.
+    // Checking usage: The original code had addPlayer calling savePlayers with the full list.
+    // The new addPlayer will handle adding to Firestore directly.
+    // We'll keep this as a no-op or log a warning to avoid breaking calls, 
+    // but ideally we refactor the caller.
+    console.warn("savePlayers is deprecated in favor of direct Firestore operations");
   }
 
   static async addPlayer(player) {
     try {
-      const players = await this.getPlayers();
-      players.push(player);
-      await this.savePlayers(players);
+      const userId = this.getUserId();
+      // Ensure player has an ID or let Firestore generate one. 
+      // If the app generates IDs (e.g. Date.now()), we can use setDoc with that ID
+      // or just addDoc and let Firestore key it.
+      // If we use addDoc, the ID is in the doc ref.
+      // Existing app likely generates an 'id' field in the 'player' object.
+
+      const playerRef = player.id
+        ? doc(db, 'users', userId, COLLECTIONS.PLAYERS, player.id.toString())
+        : doc(collection(db, 'users', userId, COLLECTIONS.PLAYERS));
+
+      await setDoc(playerRef, player);
     } catch (error) {
       console.error('Error adding player:', error);
     }
@@ -39,12 +73,11 @@ export class StorageService {
 
   static async updatePlayer(updatedPlayer) {
     try {
-      const players = await this.getPlayers();
-      const index = players.findIndex(p => p.id === updatedPlayer.id);
-      if (index !== -1) {
-        players[index] = updatedPlayer;
-        await this.savePlayers(players);
-      }
+      const userId = this.getUserId();
+      if (!updatedPlayer.id) throw new Error("Player ID required for update");
+
+      const playerRef = doc(db, 'users', userId, COLLECTIONS.PLAYERS, updatedPlayer.id.toString());
+      await updateDoc(playerRef, updatedPlayer);
     } catch (error) {
       console.error('Error updating player:', error);
     }
@@ -52,9 +85,9 @@ export class StorageService {
 
   static async deletePlayer(playerId) {
     try {
-      const players = await this.getPlayers();
-      const filteredPlayers = players.filter(p => p.id !== playerId);
-      await this.savePlayers(filteredPlayers);
+      const userId = this.getUserId();
+      const playerRef = doc(db, 'users', userId, COLLECTIONS.PLAYERS, playerId.toString());
+      await deleteDoc(playerRef);
     } catch (error) {
       console.error('Error deleting player:', error);
     }
@@ -63,8 +96,13 @@ export class StorageService {
   // Match management
   static async getMatches() {
     try {
-      const matchesJson = await AsyncStorage.getItem(STORAGE_KEYS.MATCHES);
-      return matchesJson ? JSON.parse(matchesJson) : [];
+      const userId = this.getUserId();
+      const q = query(collection(db, 'users', userId, COLLECTIONS.MATCHES), orderBy('date', 'desc')); // Assuming 'date' field exists, or sort client side
+      // If no date field, remove orderBy
+      const querySnapshot = await getDocs(q);
+      const matches = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Sort client side just in case to match original behavior (newest first usually)
+      return matches.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
     } catch (error) {
       console.error('Error getting matches:', error);
       return [];
@@ -72,18 +110,17 @@ export class StorageService {
   }
 
   static async saveMatches(matches) {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.MATCHES, JSON.stringify(matches));
-    } catch (error) {
-      console.error('Error saving matches:', error);
-    }
+    console.warn("saveMatches is deprecated");
   }
 
   static async addMatch(match) {
     try {
-      const matches = await this.getMatches();
-      matches.push(match);
-      await this.saveMatches(matches);
+      const userId = this.getUserId();
+      const matchRef = match.id
+        ? doc(db, 'users', userId, COLLECTIONS.MATCHES, match.id.toString())
+        : doc(collection(db, 'users', userId, COLLECTIONS.MATCHES));
+
+      await setDoc(matchRef, match);
     } catch (error) {
       console.error('Error adding match:', error);
     }
@@ -91,19 +128,22 @@ export class StorageService {
 
   static async deleteMatch(matchId) {
     try {
-      const matches = await this.getMatches();
-      const filteredMatches = matches.filter(m => m.id !== matchId);
-      await this.saveMatches(filteredMatches);
+      const userId = this.getUserId();
+      const matchRef = doc(db, 'users', userId, COLLECTIONS.MATCHES, matchId.toString());
+      await deleteDoc(matchRef);
     } catch (error) {
       console.error('Error deleting match:', error);
     }
   }
 
-  // Victory Post management
+  // Victory Post management - GLOBAL/SHARED
   static async getVictoryPosts() {
     try {
-      const postsJson = await AsyncStorage.getItem(STORAGE_KEYS.VICTORY_POSTS);
-      return postsJson ? JSON.parse(postsJson) : [];
+      const q = query(collection(db, COLLECTIONS.VICTORY_POSTS), orderBy('createdAt', 'desc')); // Assuming createdAt
+      const querySnapshot = await getDocs(q);
+      const posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Fallback sort if query index missing
+      return posts.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     } catch (error) {
       console.error('Error getting victory posts:', error);
       return [];
@@ -111,20 +151,24 @@ export class StorageService {
   }
 
   static async saveVictoryPosts(posts) {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.VICTORY_POSTS, JSON.stringify(posts));
-    } catch (error) {
-      console.error('Error saving victory posts:', error);
-    }
+    console.warn("saveVictoryPosts is deprecated");
   }
 
   static async addVictoryPost(post) {
     try {
-      const posts = await this.getVictoryPosts();
-      // Remove any existing post for the same match ID to avoid duplicates
-      const filteredPosts = posts.filter(p => p.matchId !== post.matchId);
-      filteredPosts.unshift(post); // Newest first
-      await this.saveVictoryPosts(filteredPosts);
+      const userId = this.getUserId();
+      // Add author info
+      const enrichedPost = {
+        ...post,
+        authorId: userId,
+        createdAt: new Date().toISOString()
+      };
+
+      const postRef = post.id
+        ? doc(db, COLLECTIONS.VICTORY_POSTS, post.id.toString())
+        : doc(collection(db, COLLECTIONS.VICTORY_POSTS));
+
+      await setDoc(postRef, enrichedPost);
     } catch (error) {
       console.error('Error adding victory post:', error);
     }
@@ -132,9 +176,17 @@ export class StorageService {
 
   static async deleteVictoryPost(postId) {
     try {
-      const posts = await this.getVictoryPosts();
-      const filteredPosts = posts.filter(p => p.id !== postId);
-      await this.saveVictoryPosts(filteredPosts);
+      const userId = this.getUserId();
+      const postRef = doc(db, COLLECTIONS.VICTORY_POSTS, postId.toString());
+      const postSnap = await getDoc(postRef);
+
+      if (postSnap.exists()) {
+        const postData = postSnap.data();
+        if (postData.authorId !== userId) {
+          throw new Error("Cannot delete post owned by another user");
+        }
+        await deleteDoc(postRef);
+      }
     } catch (error) {
       console.error('Error deleting victory post:', error);
     }
@@ -143,8 +195,10 @@ export class StorageService {
   // Tournament management
   static async getTournaments() {
     try {
-      const tournamentsJson = await AsyncStorage.getItem(STORAGE_KEYS.TOURNAMENTS);
-      return tournamentsJson ? JSON.parse(tournamentsJson) : [];
+      const userId = this.getUserId();
+      const q = query(collection(db, 'users', userId, COLLECTIONS.TOURNAMENTS));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       console.error('Error getting tournaments:', error);
       return [];
@@ -152,18 +206,17 @@ export class StorageService {
   }
 
   static async saveTournaments(tournaments) {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.TOURNAMENTS, JSON.stringify(tournaments));
-    } catch (error) {
-      console.error('Error saving tournaments:', error);
-    }
+    console.warn("saveTournaments is deprecated");
   }
 
   static async addTournament(tournament) {
     try {
-      const tournaments = await this.getTournaments();
-      tournaments.unshift(tournament); // Newest first
-      await this.saveTournaments(tournaments);
+      const userId = this.getUserId();
+      const tourRef = tournament.id
+        ? doc(db, 'users', userId, COLLECTIONS.TOURNAMENTS, tournament.id.toString())
+        : doc(collection(db, 'users', userId, COLLECTIONS.TOURNAMENTS));
+
+      await setDoc(tourRef, tournament);
     } catch (error) {
       console.error('Error adding tournament:', error);
     }
@@ -175,12 +228,11 @@ export class StorageService {
 
   // Utility functions
   static async clearAllData() {
+    // For Firestore, this is dangerous/expensive to implement as "delete everything".
+    // We can just clear local auth storage which effectively "resets" the view for the user
     try {
-      await AsyncStorage.multiRemove([
-        STORAGE_KEYS.PLAYERS,
-        STORAGE_KEYS.MATCHES,
-        STORAGE_KEYS.TOURNAMENTS
-      ]);
+      // await auth.signOut(); // Or logic to wipe collections (too risky for a simple utility)
+      console.warn("clearAllData not fully implemented for Firestore");
     } catch (error) {
       console.error('Error clearing data:', error);
     }

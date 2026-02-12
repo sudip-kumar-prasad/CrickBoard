@@ -70,7 +70,7 @@ export default function HomeScreen({ navigation }) {
 
   const fetchAppContent = async () => {
     try {
-      // 1. Fetch data from AsyncStorage
+      // 1. Fetch data from StorageService (Firestore)
       const playersList = await StorageService.getPlayers() || [];
       const matchesList = await StorageService.getMatches() || [];
 

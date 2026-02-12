@@ -1,10 +1,12 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const STORAGE_KEYS = {
-  USER: 'crickboard_user',
-  IS_LOGGED_IN: 'crickboard_is_logged_in',
-  USERS: 'crickboard_users', // Store all registered users
-};
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
+} from 'firebase/auth';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../config/firebaseConfig';
+// import AsyncStorage from '@react-native-async-storage/async-storage'; // Removed
 
 export class AuthService {
   // Register a new user
@@ -19,36 +21,28 @@ export class AuthService {
         throw new Error('Password must be at least 6 characters');
       }
 
-      // Get existing users
-      const usersJson = await AsyncStorage.getItem(STORAGE_KEYS.USERS);
-      const users = usersJson ? JSON.parse(usersJson) : [];
+      // Create auth user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      // Check if user already exists
-      const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (existingUser) {
-        throw new Error('User with this email already exists');
-      }
+      // Update display name
+      await updateProfile(user, { displayName: name });
 
-      // Create new user
-      const newUser = {
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        email: email.toLowerCase().trim(),
-        password: password, // In production, this should be hashed
-        name: name.trim(),
+      // Create user document in Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      const userData = {
+        uid: user.uid,
+        email: email.toLowerCase(),
+        name: name,
         createdAt: new Date().toISOString(),
       };
 
-      // Add user to list
-      users.push(newUser);
-      await AsyncStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+      await setDoc(userDocRef, userData);
 
-      // Auto-login after registration
-      await this.login(email, password);
-
-      return { success: true, user: newUser };
+      return { success: true, user: userData };
     } catch (error) {
       console.error('Registration error:', error);
-      throw error;
+      throw this._handleFirebaseError(error);
     }
   }
 
@@ -59,42 +53,34 @@ export class AuthService {
         throw new Error('Email and password are required');
       }
 
-      // Get users
-      const usersJson = await AsyncStorage.getItem(STORAGE_KEYS.USERS);
-      const users = usersJson ? JSON.parse(usersJson) : [];
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      // Find user
-      const user = users.find(
-        u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-      );
+      // Get user details from Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
 
-      if (!user) {
-        throw new Error('Invalid email or password');
-      }
-
-      // Store logged in user (without password)
-      const userData = {
-        id: user.id,
+      let userData = {
+        uid: user.uid,
         email: user.email,
-        name: user.name,
-        createdAt: user.createdAt,
+        name: user.displayName
       };
 
-      await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
-      await AsyncStorage.setItem(STORAGE_KEYS.IS_LOGGED_IN, 'true');
+      if (userDoc.exists()) {
+        userData = { ...userData, ...userDoc.data() };
+      }
 
       return { success: true, user: userData };
     } catch (error) {
       console.error('Login error:', error);
-      throw error;
+      throw this._handleFirebaseError(error);
     }
   }
 
   // Logout user
   static async logout() {
     try {
-      await AsyncStorage.removeItem(STORAGE_KEYS.USER);
-      await AsyncStorage.setItem(STORAGE_KEYS.IS_LOGGED_IN, 'false');
+      await signOut(auth);
       return { success: true };
     } catch (error) {
       console.error('Logout error:', error);
@@ -103,21 +89,30 @@ export class AuthService {
   }
 
   // Check if user is logged in
-  static async isLoggedIn() {
-    try {
-      const isLoggedIn = await AsyncStorage.getItem(STORAGE_KEYS.IS_LOGGED_IN);
-      return isLoggedIn === 'true';
-    } catch (error) {
-      console.error('Error checking login status:', error);
-      return false;
-    }
+  // Note: For Firebase, we usually use onAuthStateChanged in App.js
+  // safely returning the current user if initialized
+  static isLoggedIn() {
+    return !!auth.currentUser;
   }
 
   // Get current user
   static async getCurrentUser() {
     try {
-      const userJson = await AsyncStorage.getItem(STORAGE_KEYS.USER);
-      return userJson ? JSON.parse(userJson) : null;
+      const user = auth.currentUser;
+      if (!user) return null;
+
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        return userDoc.data();
+      }
+
+      return {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName
+      };
     } catch (error) {
       console.error('Error getting current user:', error);
       return null;
@@ -127,75 +122,37 @@ export class AuthService {
   // Update user profile
   static async updateUser(updatedData) {
     try {
-      const currentUser = await this.getCurrentUser();
-      if (!currentUser) {
+      const user = auth.currentUser;
+      if (!user) {
         throw new Error('No user logged in');
       }
 
-      // Get all users
-      const usersJson = await AsyncStorage.getItem(STORAGE_KEYS.USERS);
-      const users = usersJson ? JSON.parse(usersJson) : [];
+      const userDocRef = doc(db, 'users', user.uid);
+      await updateDoc(userDocRef, updatedData);
 
-      // Update user in list
-      const userIndex = users.findIndex(u => u.id === currentUser.id);
-      if (userIndex !== -1) {
-        users[userIndex] = { ...users[userIndex], ...updatedData };
-        await AsyncStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+      // Also update auth profile if name changed
+      if (updatedData.name) {
+        await updateProfile(user, { displayName: updatedData.name });
       }
 
-      // Update current user
-      const updatedUser = { ...currentUser, ...updatedData };
-      delete updatedUser.password; // Don't store password in current user
-      await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
-
-      return { success: true, user: updatedUser };
+      return { success: true, user: { ...(await this.getCurrentUser()), ...updatedData } };
     } catch (error) {
       console.error('Error updating user:', error);
       throw error;
     }
   }
 
-  // DEBUG: Clear all authentication data (for testing)
-  static async clearAuthData() {
-    try {
-      await AsyncStorage.removeItem(STORAGE_KEYS.USER);
-      await AsyncStorage.setItem(STORAGE_KEYS.IS_LOGGED_IN, 'false');
-      console.log('✅ Auth session cleared! Reload the app to see login screen.');
-      return { success: true };
-    } catch (error) {
-      console.error('Error clearing auth data:', error);
-      throw error;
+  static _handleFirebaseError(error) {
+    let message = error.message;
+    if (error.code === 'auth/email-already-in-use') {
+      message = 'Email is already in use';
+    } else if (error.code === 'auth/invalid-email') {
+      message = 'Invalid email address';
+    } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+      message = 'Invalid email or password';
+    } else if (error.code === 'auth/weak-password') {
+      message = 'Password is too weak';
     }
-  }
-
-  // DEBUG: Clear everything including all registered users
-  static async clearAll() {
-    try {
-      await AsyncStorage.clear();
-      console.log('✅ All AsyncStorage data cleared! Reload the app.');
-      return { success: true };
-    } catch (error) {
-      console.error('Error clearing all data:', error);
-      throw error;
-    }
-  }
-
-  // DEBUG: View all stored auth data
-  static async debugStorage() {
-    try {
-      const users = await AsyncStorage.getItem(STORAGE_KEYS.USERS);
-      const currentUser = await AsyncStorage.getItem(STORAGE_KEYS.USER);
-      const isLoggedIn = await AsyncStorage.getItem(STORAGE_KEYS.IS_LOGGED_IN);
-
-      console.log('📦 AsyncStorage Debug Info:');
-      console.log('----------------------------');
-      console.log('Registered Users:', users ? JSON.parse(users) : 'None');
-      console.log('Current User:', currentUser ? JSON.parse(currentUser) : 'None');
-      console.log('Is Logged In:', isLoggedIn);
-      console.log('----------------------------');
-    } catch (error) {
-      console.error('Error reading storage:', error);
-    }
+    return new Error(message);
   }
 }
-

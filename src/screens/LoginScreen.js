@@ -64,7 +64,22 @@ export default function LoginScreen({ navigation, onLoginSuccess }) {
       } else {
         // 👨‍🏫 EXPLANATION: Calling the Registration service
         await AuthService.register(email.trim(), password, name.trim());
-        onLoginSuccess && onLoginSuccess();
+
+        // Show success message and switch to login mode
+        Alert.alert(
+          'Account Created!',
+          'Your account has been successfully created. Please sign in to continue.',
+          [
+            {
+              text: 'Sign In',
+              onPress: () => {
+                setIsLogin(true);
+                setPassword(''); // Clear password for security
+                setName('');
+              }
+            }
+          ]
+        );
       }
     } catch (error) {
       console.log('Auth Error:', error);

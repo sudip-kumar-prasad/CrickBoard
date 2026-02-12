@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage'; // Removed
 
 const ThemeContext = createContext();
 
@@ -66,30 +66,12 @@ export const ThemeProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        loadTheme();
+        // Theme persistence removed as per request to remove AsyncStorage
+        setIsLoading(false);
     }, []);
 
-    const loadTheme = async () => {
-        try {
-            const savedTheme = await AsyncStorage.getItem('theme');
-            if (savedTheme !== null) {
-                setIsDark(savedTheme === 'dark');
-            }
-        } catch (error) {
-            console.error('Error loading theme:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const toggleTheme = async () => {
-        try {
-            const newTheme = !isDark;
-            setIsDark(newTheme);
-            await AsyncStorage.setItem('theme', newTheme ? 'dark' : 'light');
-        } catch (error) {
-            console.error('Error saving theme:', error);
-        }
+    const toggleTheme = () => {
+        setIsDark(!isDark);
     };
 
     const theme = isDark ? darkTheme : lightTheme;

@@ -28,6 +28,7 @@ import CreateTournamentScreen from './src/screens/CreateTournamentScreen';
 import TournamentDetailScreen from './src/screens/TournamentDetailScreen';
 
 import { AuthService } from './src/utils/auth';
+import { auth } from './src/config/firebaseConfig';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -246,20 +247,14 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    checkAuthStatus();
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setIsLoggedIn(!!user);
+      setIsLoading(false);
+    });
+    return unsubscribe;
   }, []);
 
-  const checkAuthStatus = async () => {
-    try {
-      const loggedIn = await AuthService.isLoggedIn();
-      setIsLoggedIn(loggedIn);
-    } catch (error) {
-      console.error('Error checking auth status:', error);
-      setIsLoggedIn(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Removed checkAuthStatus as it's replaced by the listener
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
