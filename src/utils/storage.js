@@ -42,15 +42,7 @@ export class StorageService {
     }
   }
 
-  static async savePlayers(players) {
-    // No-op: Firestore saves individually. 
-    // This method might need to be removed or adapted if the app calls it with a full list.
-    // Checking usage: The original code had addPlayer calling savePlayers with the full list.
-    // The new addPlayer will handle adding to Firestore directly.
-    // We'll keep this as a no-op or log a warning to avoid breaking calls, 
-    // but ideally we refactor the caller.
-    console.warn("savePlayers is deprecated in favor of direct Firestore operations");
-  }
+
 
   static async addPlayer(player) {
     try {
@@ -109,9 +101,7 @@ export class StorageService {
     }
   }
 
-  static async saveMatches(matches) {
-    console.warn("saveMatches is deprecated");
-  }
+
 
   static async addMatch(match) {
     try {
@@ -150,9 +140,7 @@ export class StorageService {
     }
   }
 
-  static async saveVictoryPosts(posts) {
-    console.warn("saveVictoryPosts is deprecated");
-  }
+
 
   static async addVictoryPost(post) {
     try {
@@ -205,9 +193,7 @@ export class StorageService {
     }
   }
 
-  static async saveTournaments(tournaments) {
-    console.warn("saveTournaments is deprecated");
-  }
+
 
   static async addTournament(tournament) {
     try {
@@ -227,14 +213,5 @@ export class StorageService {
   }
 
   // Utility functions
-  static async clearAllData() {
-    // For Firestore, this is dangerous/expensive to implement as "delete everything".
-    // We can just clear local auth storage which effectively "resets" the view for the user
-    try {
-      // await auth.signOut(); // Or logic to wipe collections (too risky for a simple utility)
-      console.warn("clearAllData not fully implemented for Firestore");
-    } catch (error) {
-      console.error('Error clearing data:', error);
-    }
-  }
+
 }

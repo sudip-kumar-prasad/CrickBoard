@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { AuthService } from '../utils/auth';
 // import AsyncStorage from '@react-native-async-storage/async-storage'; // Removed
 
 const ThemeContext = createContext();
@@ -66,12 +67,31 @@ export const ThemeProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Theme persistence removed as per request to remove AsyncStorage
-        setIsLoading(false);
+        loadTheme();
     }, []);
 
-    const toggleTheme = () => {
-        setIsDark(!isDark);
+    const loadTheme = async () => {
+        try {
+            // Fetch user preference from Firestore
+            const user = await AuthService.getCurrentUser();
+            if (user && user.themePreference) {
+                setIsDark(user.themePreference === 'dark');
+            }
+        } catch (error) {
+            console.error('Error loading theme:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const toggleTheme = async () => {
+        const newMode = !isDark;
+        setIsDark(newMode); // Optimistic update
+        try {
+            await AuthService.updateUser({ themePreference: newMode ? 'dark' : 'light' });
+        } catch (error) {
+            console.error('Error saving theme:', error);
+        }
     };
 
     const theme = isDark ? darkTheme : lightTheme;
