@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     StyleSheet,
@@ -23,12 +23,9 @@ import {
 } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
 import { StorageService } from '../utils/storage';
 
 /**
- * VictoryWallScreen - Simplified private celebrations wall.
- * DEVELOPER NOTE:
  * Defensive data handling is implemented to ensure the wall remains 
  * functional even with incomplete match datasets. The image selection 
  * logic has been optimized for reliability across different hardware 
@@ -46,23 +43,14 @@ export default function VictoryFeedScreen() {
     const [victoryImage, setVictoryImage] = useState(null);
     const [publishing, setPublishing] = useState(false);
 
-    const loadWall = async () => {
-        setRefreshing(true);
-        try {
-            const victoryPosts = await StorageService.getVictoryPosts();
+    // Real-time listener: subscribes once on mount, auto-updates on Firestore changes
+    useEffect(() => {
+        const unsubscribe = StorageService.subscribeToVictoryPosts((victoryPosts) => {
             setPosts(victoryPosts);
-        } catch (error) {
-            console.error("Error loading wall:", error);
-        } finally {
             setRefreshing(false);
-        }
-    };
-
-    useFocusEffect(
-        useCallback(() => {
-            loadWall();
-        }, [])
-    );
+        });
+        return () => unsubscribe();
+    }, []);
 
     // --- LOGIC: Manual Image Add ---
     const pickImage = async () => {
@@ -153,7 +141,7 @@ export default function VictoryFeedScreen() {
             setVictoryImage(null);
             setCaption('');
             setIsAddingPost(false);
-            loadWall();
+            // No need to call loadWall() — the onSnapshot listener auto-updates posts
             Alert.alert("Victory Saved!", "Your celebration has been added to the wall.");
         } catch (error) {
             Alert.alert("Error", "Failed to save post.");
@@ -177,7 +165,7 @@ export default function VictoryFeedScreen() {
                     onPress: async () => {
                         try {
                             await StorageService.deleteVictoryPost(postId);
-                            loadWall();
+                            // No need to call loadWall() — the onSnapshot listener auto-updates posts
                             Alert.alert('Deleted', 'Post removed from your Victory Wall.');
                         } catch (error) {
                             Alert.alert('Error', 'Failed to delete post.');

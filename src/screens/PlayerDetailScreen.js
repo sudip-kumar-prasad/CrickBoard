@@ -19,8 +19,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { StorageService } from '../utils/storage';
 
 /**
- * PlayerDetailScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Implemented an analytics-focused profile view with high-impact 
  * stat widgets. Data synchronization is managed via focused lifecycle 
  * effects to ensure real-time accuracy of player metrics.

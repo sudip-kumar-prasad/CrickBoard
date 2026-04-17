@@ -1,12 +1,12 @@
 # 🏏 CrickBoard - Complete Cricket Management App
 
-**CrickBoard** is a comprehensive React Native mobile application for managing cricket teams, tracking player statistics, recording matches, organizing tournaments, and celebrating victories. Built with Expo, it provides an offline-first solution for cricket coaches, captains, and enthusiasts.
+**CrickBoard** is a comprehensive React Native mobile application for managing cricket teams, tracking player statistics, recording matches, organizing tournaments, and celebrating victories. Built with Expo, it provides a seamless cloud-synced solution for cricket coaches, captains, and enthusiasts.
 
 ## 📱 Project Information
 
 - **Developer**: Sudip Kumar Prasad  
 - **Roll Number**: 2024-B-01112005A  
-- **Tech Stack**: React Native, Expo, React Navigation, React Native Paper, AsyncStorage, react-native-chart-kit
+- **Tech Stack**: React Native, Expo, React Navigation, React Native Paper, Firebase, react-native-chart-kit
 - **Platform**: iOS & Android
 
 ---
@@ -236,7 +236,7 @@ npm start
 
 ```json
 {
-  "@react-native-async-storage/async-storage": "^2.2.0",
+  "firebase": "^12.9.0",
   "@react-navigation/bottom-tabs": "^7.4.7",
   "@react-navigation/native": "^7.1.17",
   "@react-navigation/stack": "^7.4.8",
@@ -269,10 +269,10 @@ npm start
 - **Easy Customization**: Change app-wide theme from a single location
 
 ### Data Management
-- **AsyncStorage**: All data stored locally for offline functionality
-- **Persistent State**: Data survives app restarts
-- **Auto-sync**: Player stats update automatically after matches
-- **Efficient Storage**: Optimized data structure for quick access
+- **Firebase Firestore**: Real-time cloud database storage
+- **Cloud Sync**: Secure and instant data synchronization across devices
+- **Authentication**: Robust user authentication via Firebase Auth
+- **Efficient Querying**: Optimized data structure for quick access
 
 ### Calculations
 - **Strike Rate**: (Runs / Balls) × 100

@@ -21,8 +21,6 @@ import { StorageService } from '../utils/storage';
 import { StatsCalculator } from '../utils/calculations';
 
 /**
- * InsightsScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Optimized the analytics dashboard for clarity and performance. 
  * Computational logic for leaderboards and trends has been consolidated 
  * into a single processing layer, ensuring data integrity while 

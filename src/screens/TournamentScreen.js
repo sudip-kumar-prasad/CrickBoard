@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -10,30 +10,20 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { StorageService } from '../utils/storage';
-import { useFocusEffect } from '@react-navigation/native';
 
 const TournamentScreen = ({ navigation }) => {
     const { theme } = useTheme();
     const [tournaments, setTournaments] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const loadTournaments = async () => {
-        try {
-            setLoading(true);
-            const data = await StorageService.getTournaments();
+    // Real-time listener: subscribes once on mount, auto-updates on Firestore changes
+    useEffect(() => {
+        const unsubscribe = StorageService.subscribeToTournaments((data) => {
             setTournaments(data);
-        } catch (error) {
-            console.error('Error loading tournaments:', error);
-        } finally {
             setLoading(false);
-        }
-    };
-
-    useFocusEffect(
-        useCallback(() => {
-            loadTournaments();
-        }, [])
-    );
+        });
+        return () => unsubscribe();
+    }, []);
 
     const TournamentCard = ({ tournament }) => (
         <TouchableOpacity

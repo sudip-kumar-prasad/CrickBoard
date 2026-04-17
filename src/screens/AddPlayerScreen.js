@@ -18,7 +18,6 @@ import { StorageService } from '../utils/storage';
 
 /**
  * AddPlayerScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Organized the form into logical sections for improved UX. The state 
  * management logic is kept intentional and linear to ensure easy 
  * debugging and future extensibility of player metadata.

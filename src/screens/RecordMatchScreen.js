@@ -27,8 +27,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { StorageService } from '../utils/storage';
 
 /**
- * RecordMatchScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Engineered a high-efficiency match recording module. Implemented 
  * batch data capture for player performances, optimizing the database 
  * write-throughput and ensuring an intuitive data-entry flow.

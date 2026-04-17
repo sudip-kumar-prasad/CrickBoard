@@ -23,8 +23,6 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthService } from '../utils/auth';
 
 /**
- * LoginScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Modernized the UI architecture using a Hero Header and Surface-based 
  * layout. The authentication logic is unified within this component, 
  * using a persistent state flag to toggle between Login and Registration 

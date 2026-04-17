@@ -16,8 +16,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { StorageService } from '../utils/storage';
 
 /**
- * EditPlayerScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Modernized the update interface using Surface-based layout patterns. 
  * The data persistence logic has been refined to ensure stable merging 
  * of player updates with existing storage objects.

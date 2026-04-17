@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
+
 import {
   Card,
   Text,
@@ -21,8 +21,6 @@ import { StorageService } from '../utils/storage';
 const RESULT_FILTERS = ['ALL', 'WIN', 'LOSS', 'DRAW'];
 
 /**
- * MatchesScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Refined the match history view with a statistics-driven header 
  * and improved list scannability. Implemented defensive data handling 
  * with null-safety and optimized filtration logic for production builds.
@@ -43,45 +41,26 @@ export default function MatchesScreen({ navigation }) {
 
   // --- DATA LOADING & LOGIC ---
 
-  // Main function to get matches and calculate totals
-  const getData = async () => {
-    try {
-      setLoading(true);
-      const data = await StorageService.getMatches() || [];
-
-      // 1. Sort matches so newest is on top
-      data.sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Real-time listener: subscribes once on mount, recalculates summary on every change
+  useEffect(() => {
+    setLoading(true);
+    const unsubscribe = StorageService.subscribeToMatches((data) => {
       setMatches(data);
 
-      // 2. Count Wins and Losses for the header
+      // Recalculate Wins and Losses live
       let winCount = 0;
       let lossCount = 0;
-
       data.forEach(match => {
         const res = (match.result || '').toLowerCase();
         if (res.includes('win')) winCount++;
         else if (res.includes('loss')) lossCount++;
       });
 
-      // Update the summary state
-      setSummary({
-        wins: winCount,
-        losses: lossCount,
-        total: data.length
-      });
-
-    } catch (e) {
-      console.log("Error loading matches:", e);
-    } finally {
+      setSummary({ wins: winCount, losses: lossCount, total: data.length });
       setLoading(false);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      getData();
-    }, [])
-  );
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Apply the selected filter
   const filteredMatches = matches.filter((match) => {

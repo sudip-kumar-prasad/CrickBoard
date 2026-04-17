@@ -9,7 +9,8 @@ import {
   where,
   orderBy,
   setDoc,
-  getDoc
+  getDoc,
+  onSnapshot
 } from 'firebase/firestore';
 import { db, auth } from '../config/firebaseConfig';
 // import AsyncStorage from '@react-native-async-storage/async-storage'; // Removed
@@ -210,6 +211,108 @@ export class StorageService {
 
   static async recordMatch(match) {
     await this.addMatch(match);
+  }
+
+  // ─── REAL-TIME LISTENERS ───────────────────────────────────────────────────
+  // Each method registers a Firestore onSnapshot listener and returns the
+  // unsubscribe function so the caller can clean up on component unmount.
+
+  /**
+   * subscribes to the current user's players collection.
+   * @param {(players: Array) => void} callback - called immediately and on every change
+   * @returns {() => void} unsubscribe function
+   */
+  static subscribeToPlayers(callback) {
+    try {
+      const userId = this.getUserId();
+      const q = query(collection(db, 'users', userId, COLLECTIONS.PLAYERS));
+      return onSnapshot(q, (snapshot) => {
+        const players = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(p => p && p.name)
+          .sort((a, b) => a.name.localeCompare(b.name));
+        callback(players);
+      }, (error) => {
+        console.error('subscribeToPlayers error:', error);
+        callback([]);
+      });
+    } catch (error) {
+      console.error('subscribeToPlayers setup error:', error);
+      callback([]);
+      return () => {}; // no-op unsubscribe if setup failed
+    }
+  }
+
+  /**
+   * Subscribes to the current user's matches collection.
+   * @param {(matches: Array) => void} callback
+   * @returns {() => void} unsubscribe function
+   */
+  static subscribeToMatches(callback) {
+    try {
+      const userId = this.getUserId();
+      const q = query(collection(db, 'users', userId, COLLECTIONS.MATCHES));
+      return onSnapshot(q, (snapshot) => {
+        const matches = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+        callback(matches);
+      }, (error) => {
+        console.error('subscribeToMatches error:', error);
+        callback([]);
+      });
+    } catch (error) {
+      console.error('subscribeToMatches setup error:', error);
+      callback([]);
+      return () => {};
+    }
+  }
+
+  /**
+   * Subscribes to the global victory_posts collection (shared across all users).
+   * @param {(posts: Array) => void} callback
+   * @returns {() => void} unsubscribe function
+   */
+  static subscribeToVictoryPosts(callback) {
+    try {
+      const q = query(collection(db, COLLECTIONS.VICTORY_POSTS));
+      return onSnapshot(q, (snapshot) => {
+        const posts = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        callback(posts);
+      }, (error) => {
+        console.error('subscribeToVictoryPosts error:', error);
+        callback([]);
+      });
+    } catch (error) {
+      console.error('subscribeToVictoryPosts setup error:', error);
+      callback([]);
+      return () => {};
+    }
+  }
+
+  /**
+   * Subscribes to the current user's tournaments collection.
+   * @param {(tournaments: Array) => void} callback
+   * @returns {() => void} unsubscribe function
+   */
+  static subscribeToTournaments(callback) {
+    try {
+      const userId = this.getUserId();
+      const q = query(collection(db, 'users', userId, COLLECTIONS.TOURNAMENTS));
+      return onSnapshot(q, (snapshot) => {
+        const tournaments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        callback(tournaments);
+      }, (error) => {
+        console.error('subscribeToTournaments error:', error);
+        callback([]);
+      });
+    } catch (error) {
+      console.error('subscribeToTournaments setup error:', error);
+      callback([]);
+      return () => {};
+    }
   }
 
   // Utility functions

@@ -1,8 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
 import {
   Text,
   Card,
@@ -19,8 +18,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { StorageService } from '../utils/storage';
 
 /**
- * PlayersScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Optimized squad management with efficient search and filtering. 
  * Logic has been simplified for better maintainability, featuring 
  * a Profile Strip layout that highlights key performance metrics 
@@ -39,22 +36,16 @@ export default function PlayersScreen({ navigation }) {
 
   // --- DATA LOADING & FILTERING ---
 
-  // Load players from storage
-  const loadPlayers = async () => {
-    try {
-      setLoading(true);
-      const data = await StorageService.getPlayers() || [];
-      // Filter out any empty items and sort by name
-      const validPlayers = data.filter(p => p && p.name).sort((a, b) => a.name.localeCompare(b.name));
-
-      setAllPlayers(validPlayers);
-      applyFilters(validPlayers, searchQuery, activeRole);
-    } catch (e) {
-      console.log("Error loading players:", e);
-    } finally {
+  // Real-time listener: subscribes once on mount, auto-updates on Firestore changes
+  useEffect(() => {
+    setLoading(true);
+    const unsubscribe = StorageService.subscribeToPlayers((data) => {
+      setAllPlayers(data);
+      applyFilters(data, searchQuery, activeRole);
       setLoading(false);
-    }
-  };
+    });
+    return () => unsubscribe(); // clean up listener on unmount
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 👨‍🏫 EXPLANATION: Simple function to handle searching and role filtering
   const applyFilters = (list, query, role) => {
@@ -83,12 +74,6 @@ export default function PlayersScreen({ navigation }) {
     setActiveRole(role);
     applyFilters(allPlayers, searchQuery, role);
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadPlayers();
-    }, [])
-  );
 
   // --- UI COMPONENTS ---
 

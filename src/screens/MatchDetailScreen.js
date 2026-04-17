@@ -27,8 +27,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { StorageService } from '../utils/storage';
 
 /**
- * MatchDetailScreen Component - Premium post-match analysis dashboard.
- * DEVELOPER NOTE:
  * Integrated robust null-safety patterns for match data parsing. 
  * Updated peripheral APIs (ImagePicker, Icons) to current standards 
  * to ensure cross-device compatibility and long-term project 

@@ -24,8 +24,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 /**
- * ProfileScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Redesigned the profile interface for a professional management feel. 
  * Implemented a 'Hero Profile' section using Surface elevation and 
  * status chips. Data synchronization is handled via localized hooks to 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,7 +13,6 @@ import {
 import { useTheme } from '../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Card, Button, Avatar, Divider, IconButton, Surface } from 'react-native-paper';
-import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 // Utility imports
@@ -23,8 +22,6 @@ import { AuthService } from '../utils/auth';
 const { width } = Dimensions.get('window');
 
 /**
- * HomeScreen Component - Premium Redesign (CrickHeroes Style)
- * DEVELOPER NOTE:
  * Implemented modern dashboard patterns using a Hero Section and 
  * card-based layout. Prioritized defensive coding and null-safety 
  * to ensure application stability when dealing with empty or 
@@ -52,41 +49,34 @@ export default function HomeScreen({ navigation }) {
     loadProfile();
   }, []);
 
-  // Refresh data every time we come back to this screen
-  useFocusEffect(
-    useCallback(() => {
-      fetchAppContent();
-    }, [])
-  );
+  // Two parallel real-time subscriptions — players and matches.
+  // Stats are recalculated whenever either collection changes.
+  useEffect(() => {
+    const latestPlayers = { current: [] };
+    const latestMatches = { current: [] };
 
-  const loadProfile = async () => {
-    try {
-      const user = await AuthService.getCurrentUser();
-      setCurrentUser(user);
-    } catch (e) {
-      console.log("Profile error:", e);
-    }
-  };
+    const recompute = () => processStatistics(latestPlayers.current, latestMatches.current);
 
-  const fetchAppContent = async () => {
-    try {
-      // 1. Fetch data from StorageService (Firestore)
-      const playersList = await StorageService.getPlayers() || [];
-      const matchesList = await StorageService.getMatches() || [];
+    const unsubPlayers = StorageService.subscribeToPlayers((data) => {
+      setPlayers(data);
+      latestPlayers.current = data;
+      recompute();
+    });
 
-      setPlayers(playersList);
-      setMatches(matchesList);
+    const unsubMatches = StorageService.subscribeToMatches((data) => {
+      setMatches(data);
+      latestMatches.current = data;
+      recompute();
+    });
 
-      // 2. Perform calculations for the dashboard
-      processStatistics(playersList, matchesList);
-    } catch (e) {
-      console.log("Content fetch error:", e);
-    }
-  };
+    return () => {
+      unsubPlayers();
+      unsubMatches();
+    };
+  }, []);
 
   /**
    * processStatistics
-   * DEVELOPER NOTE:
    * Aggregation layer for dashboard stats. Includes defensive checks 
    * to ensure no runtime errors occur if matches or results are 
    * undefined in the database.
@@ -128,9 +118,19 @@ export default function HomeScreen({ navigation }) {
     });
   };
 
+  const loadProfile = async () => {
+    try {
+      const user = await AuthService.getCurrentUser();
+      setCurrentUser(user);
+    } catch (e) {
+      console.log("Profile error:", e);
+    }
+  };
+
   const onRefresh = async () => {
+    // Data is already live via subscriptions; just re-trigger profile load
     setRefreshing(true);
-    await fetchAppContent();
+    await loadProfile();
     setRefreshing(false);
   };
 
