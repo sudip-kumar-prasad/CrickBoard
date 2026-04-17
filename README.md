@@ -269,7 +269,7 @@ npm start
 - **Easy Customization**: Change app-wide theme from a single location
 
 ### Data Management
-- **Firebase Firestore**: Real-time cloud database storage
+- **Firebase Firestore (Real-Time)**: Utilizes `onSnapshot` listeners to provide instant UI updates across all active sessions. When a match is recorded, a victory is celebrated, or a player is added, dashboards and lists update automatically without needing a screen refresh.
 - **Cloud Sync**: Secure and instant data synchronization across devices
 - **Authentication**: Robust user authentication via Firebase Auth
 - **Efficient Querying**: Optimized data structure for quick access
